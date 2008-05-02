@@ -39,6 +39,7 @@ module ValidatesTimeliness
               end
             end
           rescue
+            record.send(attr_name + "=", nil)
             record.errors.add(attr_name, "is not a valid time")
             next
           end      
