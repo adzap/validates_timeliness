@@ -26,7 +26,6 @@ module ValidatesTimeliness
         evaluate_attribute_method attr_name, method_body
       end
       
-      # TODO rails 2.0 time casting better with timezone
       def define_write_method_for_time_zone_conversion(attr_name)
         method_body = <<-EOV
           def #{attr_name}=(time)            
@@ -34,7 +33,7 @@ module ValidatesTimeliness
               time = time.in_time_zone
             elsif time && time.acts_like?(:time)              
               # Rails 2.0.x compatibility
-              time = @@default_timezone == :utc ? time.to_time : time.to_time
+              time = @@default_timezone == :utc ? time.utc : time.localtime
             end
             write_attribute(:#{attr_name}, time)
           end

@@ -33,14 +33,17 @@ describe ValidatesTimeliness::AttributeMethods do
     end
     
     if ActiveRecord::VERSION::STRING < '2.1'
-      it "should return stored time string as Time with correct timezone" do
+      it "should return stored time string as Time with correct timezone" do        
         @person.birth_date_and_time = "1980-12-25 01:02:03"
-        @person.birth_date_and_time.zone == Time.new.zone
+        @person.birth_date_and_time.zone == 'EST'
+        ActiveRecord::Base.default_timezone = :utc
+        @person.birth_date_and_time.zone == 'UTC'
       end
     end    
     
     unless ActiveRecord::VERSION::STRING < '2.1'
       it "should return stored time string as Time with correct timezone" do
+        Time.zone = TimeZone['Sydney'] # no I'm not from Sydney but there is no Melbourne timezone!
         @person.birth_date_and_time = "1980-12-25 01:02:03"
         @person.birth_date_and_time.zone == Time.zone
       end
