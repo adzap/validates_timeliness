@@ -23,24 +23,37 @@ describe ValidatesTimeliness::AttributeMethods do
     end
     
     it "should return Time object for attribute_before_type_cast when written as Time" do
-      @person.birth_date_and_time = time = Time.mktime(1980, 12, 25, 1, 2, 3)
-      @person.birth_date_and_time_before_type_cast.should == time
+      @person.birth_date_and_time = Time.mktime(1980, 12, 25, 1, 2, 3)
+      @person.birth_date_and_time_before_type_cast.should be_kind_of(Time)
     end
 
     it "should return Time object using attribute read method when written with string" do
       @person.birth_date_and_time = "1980-12-25 01:02:03"
-      @person.birth_date_and_time.should == Time.mktime(1980, 12, 25, 1, 2, 3)
+      @person.birth_date_and_time.should be_kind_of(Time)
     end
     
-    it "should read stored time with correct timezone"
+    if ActiveRecord::VERSION::STRING < '2.1'
+      it "should return stored time string as Time with correct timezone" do
+        @person.birth_date_and_time = "1980-12-25 01:02:03"
+        @person.birth_date_and_time.zone == Time.new.zone
+      end
+    end    
     
-    it "should return nil when date is invalid"
+    unless ActiveRecord::VERSION::STRING < '2.1'
+      it "should return stored time string as Time with correct timezone" do
+        @person.birth_date_and_time = "1980-12-25 01:02:03"
+        @person.birth_date_and_time.zone == Time.zone
+      end
+    end    
+    
+    it "should return nil when time is invalid" do
+      @person.birth_date_and_time = "1980-02-30 01:02:03"
+      @person.birth_date_and_time.should be_nil
+    end
   end  
   
   describe "for Date columns" do
     before do
-      Person.define_read_method_for_time_zone_conversion(:birth_date)
-      Person.define_write_method_for_time_zone_conversion(:birth_date)
       @person = Person.new
     end
     
@@ -59,12 +72,12 @@ describe ValidatesTimeliness::AttributeMethods do
     
     it "should return Date object for attribute_before_type_cast when written as Date" do
       @person.birth_date = date = Date.new(1980, 12, 25)
-      @person.birth_date_before_type_cast.should == date
+      @person.birth_date_before_type_cast.should be_kind_of(Date)
     end
 
     it "should return Date object using attribute read method when written with string" do
       @person.birth_date = "1980-12-25"
-      @person.birth_date.should == Date.new(1980, 12, 25)
+      @person.birth_date.should be_kind_of(Date)
     end
     
     it "should read stored time with correct timezone"

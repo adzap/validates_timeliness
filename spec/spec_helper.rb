@@ -2,7 +2,14 @@ $: << File.dirname(__FILE__) + '/../lib' << File.dirname(__FILE__)
 
 require 'rubygems'
 require 'spec'
-require 'active_record'
+
+if File.exists?(File.dirname(__FILE__) + '/../../../rails')
+  require 'activerecord/lib/active_record'
+  require 'activerecord/lib/active_record/version' 
+else  
+  require 'active_record'
+  require 'active_record/version'
+end
 
 require 'validates_timeliness'
 
