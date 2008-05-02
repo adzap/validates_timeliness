@@ -20,14 +20,18 @@ module ValidatesTimeliness
           next if raw_value.is_nil? and options[:allow_nil]
           
           begin
-            time_array = ParseDate.parsedate(raw_value)            
+            if raw_value.acts_like?(:time)
+              time = raw_value
+            else
+              time_array = ParseDate.parsedate(raw_value)            
 
-            # checks if date is valid and enforces number of days in a month unlike Time
-            date = Date.new(*time_array[0..2])
+              # checks if date is valid and enforces number of days in a month unlike Time
+              date = Date.new(*time_array[0..2])
+              
+              # checks if time is valid as it will accept bad date values
+              time = Time.mktime(*time_array)
+            end
             
-            # checks if time is valid as it will accept bad date values
-            time = Time.mktime(*time_array)
-          
             restriction_methods.each do |option, method|
               if restriction = options[option]
                 restriction = restriction.to_time
