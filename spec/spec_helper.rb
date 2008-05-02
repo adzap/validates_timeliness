@@ -2,7 +2,6 @@ $: << File.dirname(__FILE__) + '/../lib' << File.dirname(__FILE__)
 
 require 'rubygems'
 require 'spec'
-require 'active_support'
 require 'active_record'
 
 require 'validates_timeliness'
