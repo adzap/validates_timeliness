@@ -9,7 +9,7 @@ describe ValidatesTimeliness::AttributeMethods do
 
     it "should return string value for attribute_before_type_cast when written as string" do
       @person.birth_date_and_time = "1980-12-25 01:02:03"
-      @person.birth_date_and_time_before_type_cast.should == "1980-12-25 01:02:03" 
+      @person.birth_date_and_time_before_type_cast.should == "1980-12-25 01:02:03"
     end
     
     it "should return Time object for attribute_before_type_cast when written as Time" do
