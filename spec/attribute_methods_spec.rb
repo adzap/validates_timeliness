@@ -4,17 +4,7 @@ describe ValidatesTimeliness::AttributeMethods do
  
   describe "for Time columns" do
     before do
-      Person.define_read_method_for_time_zone_conversion(:birth_date_and_time)
-      Person.define_write_method_for_time_zone_conversion(:birth_date_and_time)
       @person = Person.new
-    end
-    
-    it "should define attribute read method for column" do
-      @person.respond_to?(:birth_date_and_time).should be_true
-    end
-
-    it "should define attribute write method for column" do
-      @person.respond_to?(:birth_date_and_time=).should be_true
     end
 
     it "should return string value for attribute_before_type_cast when written as string" do
@@ -30,62 +20,20 @@ describe ValidatesTimeliness::AttributeMethods do
     it "should return Time object using attribute read method when written with string" do
       @person.birth_date_and_time = "1980-12-25 01:02:03"
       @person.birth_date_and_time.should be_kind_of(Time)
-    end
-    
-    if ActiveRecord::VERSION::STRING < '2.1'
-      it "should return stored time string as Time with correct timezone" do        
-        @person.birth_date_and_time = "1980-12-25 01:02:03"
-        @person.birth_date_and_time.zone == 'EST'
-        ActiveRecord::Base.default_timezone = :utc
-        @person.birth_date_and_time.zone == 'UTC'
-      end
     end    
-    
+   
     unless ActiveRecord::VERSION::STRING < '2.1'
       it "should return stored time string as Time with correct timezone" do
         Time.zone = TimeZone['Sydney'] # no I'm not from Sydney but there is no Melbourne timezone!
         @person.birth_date_and_time = "1980-12-25 01:02:03"
         @person.birth_date_and_time.zone == Time.zone
       end
-    end    
+    end
     
     it "should return nil when time is invalid" do
       @person.birth_date_and_time = "1980-02-30 01:02:03"
       @person.birth_date_and_time.should be_nil
-    end
-  end  
-  
-  describe "for Date columns" do
-    before do
-      @person = Person.new
-    end
+    end   
     
-    it "should define attribute read method for column" do
-      @person.respond_to?(:birth_date).should be_true
-    end
-
-    it "should define attribute write method for column" do
-      @person.respond_to?(:birth_date=).should be_true
-    end
-
-    it "should return string value for attribute_before_type_cast when written as string" do
-      @person.birth_date = "1980-12-25"
-      @person.birth_date_before_type_cast.should == "1980-12-25" 
-    end
-    
-    it "should return Date object for attribute_before_type_cast when written as Date" do
-      @person.birth_date = date = Date.new(1980, 12, 25)
-      @person.birth_date_before_type_cast.should be_kind_of(Date)
-    end
-
-    it "should return Date object using attribute read method when written with string" do
-      @person.birth_date = "1980-12-25"
-      @person.birth_date.should be_kind_of(Date)
-    end
-    
-    it "should read stored time with correct timezone"
-    
-    it "should return nil when date is invalid"
-  end  
- 
+  end
 end
