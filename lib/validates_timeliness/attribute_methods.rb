@@ -15,7 +15,7 @@ module ValidatesTimeliness
   module AttributeMethods
     
     def self.included(base)
-      if ActiveRecord::VERSION::STRING < '2.1'
+      if Rails::VERSION::STRING < '2.1'
         base.extend ClassMethods::Old
       else
         base.extend ClassMethods::New
@@ -23,7 +23,7 @@ module ValidatesTimeliness
     end
     
     module ClassMethods
-      # ActiveRecord >= 2.1
+      # Rails >= 2.1
       module New
         def define_read_method_for_time_zone_conversion(attr_name)
           method_body = <<-EOV          
@@ -57,7 +57,7 @@ module ValidatesTimeliness
         end
       end # New
     
-      # ActiveRecord < 2.1
+      # Rails < 2.1
       module Old
         def define_attribute_methods
           return if generated_methods?

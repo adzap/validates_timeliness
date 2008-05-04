@@ -7,11 +7,14 @@ if File.exists?(File.dirname(__FILE__) + '/../../../../vendor/rails')
   $: << File.dirname(__FILE__) + '/../../../../vendor/rails'
   require 'activesupport/lib/active_support'
   require 'activerecord/lib/active_record'  
-  require 'activerecord/lib/active_record/version'  
+  require 'railties/lib/rails/version'  
+  
   puts "Using vendored ActiveRecord version #{ActiveRecord::VERSION::STRING}"
 else  
   require 'active_record'
   require 'active_record/version'
+  require 'rails/version'
+  
   puts "Using gem ActiveRecord version #{ActiveRecord::VERSION::STRING}"
 end
 
