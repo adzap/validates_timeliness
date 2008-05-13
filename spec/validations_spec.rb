@@ -37,7 +37,13 @@ describe ValidatesTimeliness::Validations do
       @person.should be_valid
     end
     
-    it "should be valid with valid values" do
+    it "should be valid with values before epoch" do
+      @person.birth_date_and_time = "1960-01-31 12:12:12"
+      @person.birth_date = "1960-01-31"
+      @person.should be_valid
+    end
+    
+    it "should be valid with nil values when allow_blank si true" do
       @person.birth_date_and_time = nil
       @person.birth_date = nil
       @person.should be_valid
