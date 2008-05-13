@@ -22,7 +22,7 @@ describe ValidatesTimeliness::AttributeMethods do
       @person.birth_date_and_time.should be_kind_of(Time)
     end    
    
-    unless ActiveRecord::VERSION::STRING < '2.1'
+    unless Rails::VERSION::STRING < '2.1'
       it "should return stored time string as Time with correct timezone" do
         Time.zone = TimeZone['Sydney'] # no I'm not from Sydney but there is no Melbourne timezone!
         @person.birth_date_and_time = "1980-12-25 01:02:03"
