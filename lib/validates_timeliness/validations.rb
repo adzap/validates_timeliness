@@ -1,12 +1,33 @@
 module ValidatesTimeliness
-  module Validations
-    
+
+  class DateTimeInvalid < StandardError; end
+
+  module Validations    
+        
     def self.included(base)
       base.extend ClassMethods
     end
     
     module ClassMethods
-    
+
+      def timeliness_date_time_parser(time)
+        begin        
+          if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
+            raw_value
+          else
+            time_array = ParseDate.parsedate(raw_value)            
+
+            # checks if date is valid which enforces number of days in a month unlike Time
+            Date.new(*time_array[0..2])
+            
+            # checks if time is valid and return object
+            Time.mktime(*time_array)          
+          end
+        rescue
+          raise ValidatesTimeliness::DateTimeInvalid
+        end
+      end
+      
       def validates_timeliness_of(*attr_names)
         configuration = { :on => :save, :allow_nil => false, :allow_blank => false }
         configuration.update(attr_names.extract_options!)
@@ -26,17 +47,7 @@ module ValidatesTimeliness
           
           column = record.column_for_attribute(attr_name)
           begin
-            time = if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
-              raw_value
-            else
-              time_array = ParseDate.parsedate(raw_value)            
-
-              # checks if date is valid which enforces number of days in a month unlike Time
-              Date.new(*time_array[0..2])
-              
-              # checks if time is valid and return object
-              Time.mktime(*time_array)
-            end
+            time = timeliness_date_time_parser(raw_value)
             
             conversion_method = column.type == :date ? :to_date : :to_time
             time = time.send(conversion_method)
@@ -64,7 +75,7 @@ module ValidatesTimeliness
                 end
               end
             end
-          rescue
+          rescue ValidatesTimeliness::DateTimeInvalid
             record.send("#{attr_name}=", nil)
             record.errors.add(attr_name, "is not a valid #{column.type}")
             next
