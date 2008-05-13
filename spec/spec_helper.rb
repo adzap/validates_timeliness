@@ -9,13 +9,13 @@ if File.exists?(File.dirname(__FILE__) + '/../../../../vendor/rails')
   require 'activerecord/lib/active_record'  
   require 'railties/lib/rails/version'  
   
-  puts "Using vendored ActiveRecord version #{ActiveRecord::VERSION::STRING}"
+  puts "Using vendored Rails version #{Rails::VERSION::STRING}"
 else  
   require 'active_record'
   require 'active_record/version'
   require 'rails/version'
   
-  puts "Using gem ActiveRecord version #{ActiveRecord::VERSION::STRING}"
+  puts "Using gem Rails version #{Rails::VERSION::STRING}"
 end
 
 require 'validates_timeliness'
