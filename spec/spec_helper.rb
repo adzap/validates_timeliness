@@ -18,6 +18,8 @@ else
   puts "Using gem Rails version #{Rails::VERSION::STRING}"
 end
 
+Time.zone_default = Time.send!(:get_zone, 'UTC')
+
 require 'validates_timeliness'
 
 ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})
