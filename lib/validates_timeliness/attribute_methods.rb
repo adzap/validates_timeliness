@@ -1,4 +1,4 @@
-# For Rails 2.0.x:
+# For Rails 2.0.2:
 #   This module adds method to create reader method for Time attributes
 #   to allow for invalid date checking. If date is invalid then returns nil for
 #   time value.
@@ -15,7 +15,7 @@ module ValidatesTimeliness
   module AttributeMethods
     
     def self.included(base)
-      if Rails::VERSION::STRING < '2.1'
+      if Rails::VERSION::STRING <= '2.0.2'
         base.extend ClassMethods::Old
       else
         base.extend ClassMethods::New
@@ -23,7 +23,7 @@ module ValidatesTimeliness
     end
     
     module ClassMethods
-      # Rails >= 2.1
+      # Rails > 2.0.2
       module New
         def define_read_method_for_time_zone_conversion(attr_name)
           method_body = <<-EOV          
@@ -36,7 +36,7 @@ module ValidatesTimeliness
               elsif time
                 # check invalid date
                 time.to_date rescue time = nil
-                time = time.in_time_zone if time
+                time = time.is_a?(String) ? Time.zone.parse(time) : time.to_time rescue time if time
               end
               @attributes_cache['#{attr_name}'] = time
             end
@@ -57,7 +57,7 @@ module ValidatesTimeliness
         end
       end # New
     
-      # Rails < 2.1
+      # Rails <= 2.0.2
       module Old
         def define_attribute_methods
           return if generated_methods?
