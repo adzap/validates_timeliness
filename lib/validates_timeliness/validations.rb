@@ -6,12 +6,47 @@ module ValidatesTimeliness
         
     def self.included(base)
       base.extend ClassMethods
+      
+      error_messages = {
+        :invalid_date => "is not a valid %s",
+        :before       => "must be before %s",
+        :on_or_before => "must be on or before %s",
+        :after        => "must be after %s",
+        :on_or_after  => "must be on or after %s"
+      }
+      
+      ActiveRecord::Errors.default_error_messages.update(error_messages)
     end
     
-    module ClassMethods
+    module ClassMethods      
       
+      # Override this method to use any date parsing algorithm you like such as 
+      # Chronic. Just return nil for an invalid value and a Time object for a 
+      # valid parsed value.
+      def timeliness_date_time_parse(raw_value)
+        begin
+          time_array = ParseDate.parsedate(raw_value)            
+
+          # checks if date is valid which enforces number of days in a month unlike Time
+          Date.new(*time_array[0..2])
+          
+          # checks if time is valid and return object
+          Time.mktime(*time_array)
+        rescue
+          nil
+        end
+      end
+      
+      def timeliness_default_error_messages
+        defaults = ActiveRecord::Errors.default_error_messages.slice(:blank, :invalid_date, :before, :on_or_before, :after, :on_or_after)
+        returning({}) do |messages|
+          defaults.each {|k, v| messages["#{k}_message".to_sym] = v }
+        end
+      end      
+            
       def validates_timeliness_of(*attr_names)
         configuration = { :on => :save, :allow_nil => false, :allow_blank => false }
+        configuration.update(timeliness_default_error_messages)
         configuration.update(attr_names.extract_options!)
         
         restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
@@ -25,20 +60,18 @@ module ValidatesTimeliness
 
           next if (raw_value.nil? && allow_nil) || (raw_value.blank? && allow_blank)
 
-          record.errors.add(attr_name, "can't be blank") and next if raw_value.blank?
+          record.errors.add(attr_name, configuration["blank_message".to_sym]) and next if raw_value.blank?
           
           column = record.column_for_attribute(attr_name)
           begin
-            time = if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
-              raw_value
+            if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
+              time = raw_value
             else
-              time_array = ParseDate.parsedate(raw_value)            
-
-              # checks if date is valid which enforces number of days in a month unlike Time
-              Date.new(*time_array[0..2])
-              
-              # checks if time is valid and return object
-              Time.mktime(*time_array)          
+              unless time = timeliness_date_time_parse(raw_value)
+                record.send("#{attr_name}=", nil)
+                record.errors.add(attr_name, configuration[:invalid_date_message] % column.type)
+                next
+              end
             end
             
             conversion_method = column.type == :date ? :to_date : :to_time
@@ -61,7 +94,7 @@ module ValidatesTimeliness
                   next if compare.nil?
                   compare = compare.send(conversion_method) if compare
                   
-                  record.errors.add(attr_name, "must be #{option.to_s.humanize.downcase} #{compare}") unless time.send(method, compare)
+                  record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare) unless time.send(method, compare)
                 rescue
                   record.errors.add(attr_name, "restriction '#{option}' value was invalid")
                 end
@@ -69,7 +102,7 @@ module ValidatesTimeliness
             end
           rescue
             record.send("#{attr_name}=", nil)
-            record.errors.add(attr_name, "is not a valid #{column.type}")
+            record.errors.add(attr_name, configuration[:invalid_date_message] % column.type)
             next
           end      
           
