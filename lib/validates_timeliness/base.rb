@@ -33,7 +33,7 @@ module ValidatesTimeliness
     
     def strict_time_type_cast(time)
       if time.acts_like?(:time)
-        time.respond_to?(:in_time_zone) ? time.time.in_time_zone : time
+        time.respond_to?(:in_time_zone) ? time.in_time_zone : time
       else
         klass = ActiveRecord::ConnectionAdapters::Column
         # check for invalid date

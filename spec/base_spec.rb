@@ -47,6 +47,10 @@ describe ValidatesTimeliness::Base do
     it "should return nil for time string with invalid time part" do
       strict_time_type_cast("2000-02-01 25:13:14").should be_nil      
     end
+    
+    it "should return time object for time object" do
+      strict_time_type_cast(Time.now).should be_kind_of(Time)
+    end
   end
   
   describe "read_attribute" do
