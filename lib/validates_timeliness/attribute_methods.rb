@@ -91,9 +91,11 @@ module ValidatesTimeliness
             return cached if cached && !reload
             time = read_attribute_before_type_cast('#{attr_name}')
             unless time.acts_like?(:time)
-              # check invalid date
-              time.to_date rescue time = nil
-              time = time.to_time if time
+              klass = ActiveRecord::ConnectionAdapters::Column
+              # check for invalid date
+              time = nil unless klass.string_to_date(time)
+              # convert to time if still valid
+              time = klass.string_to_time(time) if time
             end
             @attributes_cache['#{attr_name}'] = time
           end
