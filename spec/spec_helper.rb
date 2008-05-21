@@ -21,7 +21,9 @@ else
 end
 
 
-Time.zone_default = Time.send!(:get_zone, 'UTC') if vendored_rails
+Time.zone_default = TimeZone['UTC']
+ActiveRecord::Base.default_timezone = :utc
+ActiveRecord::Base.time_zone_aware_attributes = true
 
 require 'validates_timeliness'
 

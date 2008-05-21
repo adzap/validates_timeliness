@@ -22,7 +22,37 @@ module ValidatesTimeliness
       end
     end
     
+    def strict_time_type_cast(time)
+      unless time.acts_like?(:time)
+        # check for invalid date
+        time.to_date rescue time = nil
+        # convert to time if still valid        
+        time = defined?(ActiveSupport::TimeWithZone) ? Time.zone.parse(time) : time.to_time rescue nil
+      end
+      time.respond_to?(:in_time_zone) ? time.in_time_zone : time
+    end
+    
+    def read_attribute(attr_name)
+      attr_name = attr_name.to_s
+      if !(value = @attributes[attr_name]).nil?
+        if column = column_for_attribute(attr_name)
+          if unserializable_attribute?(attr_name, column)
+            unserialize_attribute(attr_name)
+          elsif column.klass == Time
+            strict_time_type_cast(value)
+          else
+            column.type_cast(value)
+          end
+        else
+          value
+        end
+      else
+        nil
+      end
+    end
+
     module ClassMethods
+      
       # Rails > 2.0.2
       module New
         # Store time value as is including as a string. Only convert on read
