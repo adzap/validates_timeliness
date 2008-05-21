@@ -30,7 +30,7 @@ module ValidatesTimeliness
           # checks if date is valid which enforces number of days in a month unlike Time
           Date.new(*time_array[0..2])
           
-          # checks if time is valid and return object
+          # checks if time part is valid and returns object
           Time.mktime(*time_array)
         rescue
           nil
