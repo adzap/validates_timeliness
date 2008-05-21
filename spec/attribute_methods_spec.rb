@@ -33,6 +33,9 @@ describe ValidatesTimeliness::AttributeMethods do
       end
     end
     
+    # This fails running as plugin under vendor using Rails 2.1RC
+    # due to write_attribute_with_dirty ignoring the write method for time zone
+    # method. But invalid dates do return nil when running app.
     it "should return nil when time is invalid" do
       @person.birth_date_and_time = "2000-02-30 01:02:03"
       @person.birth_date_and_time.should be_nil
