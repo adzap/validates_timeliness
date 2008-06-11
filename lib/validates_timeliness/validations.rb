@@ -60,7 +60,7 @@ module ValidatesTimeliness
 
           next if (raw_value.nil? && allow_nil) || (raw_value.blank? && allow_blank)
 
-          record.errors.add(attr_name, configuration["blank_message".to_sym]) and next if raw_value.blank?
+          record.errors.add(attr_name, configuration[:blank_message]) and next if raw_value.blank?
           
           column = record.column_for_attribute(attr_name)
           begin
