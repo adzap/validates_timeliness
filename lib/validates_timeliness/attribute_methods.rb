@@ -1,4 +1,4 @@
-# For Rails 2.0.2:
+# For Rails 2.0.x:
 #   This module adds method to create reader method for Time attributes
 #   to allow for invalid date checking. If date is invalid then returns nil for
 #   time value.
@@ -15,7 +15,7 @@ module ValidatesTimeliness
   module AttributeMethods
     
     def self.included(base)
-      if Rails::VERSION::STRING <= '2.0.2'
+      if RAILS_VER <= '2.1'
         base.extend ClassMethods::Old
       else
         base.extend ClassMethods::New
@@ -95,7 +95,7 @@ module ValidatesTimeliness
           end
         end
 
-        # defines time attribute reader and does conversion strict
+        # defines time attribute reader and does strict conversion
         def define_read_method_for_time_attribute(attr_name)
           method_body = <<-EOV          
           def #{attr_name}(reload = false)

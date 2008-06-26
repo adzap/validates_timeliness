@@ -4,26 +4,29 @@ require 'rubygems'
 require 'spec'
 
 if File.exists?(File.dirname(__FILE__) + '/../../../../vendor/rails')
-  $: << File.dirname(__FILE__) + '/../../../../vendor/rails'
+  $:.unshift File.dirname(__FILE__) + '/../../../../vendor/rails'
   require 'activesupport/lib/active_support'
   require 'activerecord/lib/active_record'  
-  require 'railties/lib/rails/version'  
-  
-  vendored_rails = true  
+  require 'railties/lib/rails/version'
+    
   puts "Using vendored Rails version #{Rails::VERSION::STRING}"
 else  
+  gem 'rails', "=#{ENV['VERSION']}" if ENV['VERSION']
+  require 'rails/version'
   require 'active_record'
   require 'active_record/version'
-  require 'rails/version'
-  
-  vendored_rails = false
+
   puts "Using gem Rails version #{Rails::VERSION::STRING}"
 end
 
+RAILS_VER = Rails::VERSION::STRING
 
-Time.zone_default = TimeZone['UTC']
 ActiveRecord::Base.default_timezone = :utc
-ActiveRecord::Base.time_zone_aware_attributes = true
+
+if RAILS_VER >= '2.1'
+  Time.zone_default = TimeZone['UTC']
+  ActiveRecord::Base.time_zone_aware_attributes = true
+end
 
 require 'validates_timeliness'
 

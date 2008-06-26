@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe ValidatesTimeliness::Base do
+  include ValidatesTimeliness::Base
 
   class AttributeAssignmentError;       def initialize(*args); end; end
   class MultiparameterAssignmentErrors; def initialize(*args); end; end

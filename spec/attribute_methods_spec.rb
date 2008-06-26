@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe ValidatesTimeliness::AttributeMethods do
+  include ValidatesTimeliness::AttributeMethods
+  
   before do
     @person = Person.new
   end
@@ -42,10 +44,12 @@ describe ValidatesTimeliness::AttributeMethods do
       strict_time_type_cast(Time.now).should be_kind_of(Time)
     end
     
-    it "should convert time string into current timezone" do
-      time = strict_time_type_cast("2000-01-01 12:13:14")
-      Time.zone.utc_offset.should == 0
-      time.zone.should == 'UTC'
+    if RAILS_VER >= '2.1'
+      it "should convert time string into current timezone" do
+        time = strict_time_type_cast("2000-01-01 12:13:14")
+        Time.zone.utc_offset.should == 0
+        time.zone.should == 'UTC'
+      end
     end
   end
   
@@ -73,7 +77,7 @@ describe ValidatesTimeliness::AttributeMethods do
     @person.birth_date_and_time.should be_nil
   end
 
-  unless Rails::VERSION::STRING <= '2.0.2'
+  unless RAILS_VER < '2.1'
     it "should return stored time string as Time with correct timezone" do
       Time.zone = 'Melbourne'
       time_string = "2000-06-01 01:02:03"
@@ -84,7 +88,7 @@ describe ValidatesTimeliness::AttributeMethods do
   end
   
   describe "time attribute persistance" do
-    unless Rails::VERSION::STRING <= '2.0.2'
+    unless RAILS_VER < '2.1'
       it "should return time object from database in correct timezone" do        
         Time.zone = 'Melbourne'
         time_string = "1980-06-01 09:00:00"
