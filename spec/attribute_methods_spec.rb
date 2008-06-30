@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-# TODO test dirty
 describe ValidatesTimeliness::AttributeMethods do
   include ValidatesTimeliness::AttributeMethods
   
@@ -82,6 +81,18 @@ describe ValidatesTimeliness::AttributeMethods do
       @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z %z').should == time_string + ' EST +1000'
     end
     
+    it "should return true for attribute changed?" do
+      time_string = "2000-06-01 01:02:03"
+      @person.birth_date_and_time = time_string
+      @person.birth_date_and_time_changed?.should be_true
+    end
+    
+    it "should show changes for time attribute as nil to Time object" do
+      time_string = "2000-06-01 01:02:03"
+      @person.birth_date_and_time = time_string
+      time = @person.birth_date_and_time
+      @person.changes.should == {"birth_date_and_time" => [nil, time]}
+    end
   end
   
   it "should return same time object on repeat reads" do

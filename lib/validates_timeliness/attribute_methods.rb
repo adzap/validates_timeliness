@@ -10,14 +10,20 @@ module ValidatesTimeliness
   # be converted to local timezone and then stored and cached to avoid the need
   # for any subsequent differentiation.
   #
-  # A wholesale replacement of the Rails time type casting is not done to preserve
+  # The wholesale replacement of the Rails time type casting is not done to preserve
   # the quick conversion for timestamp columns and also any value which is never 
   # touched during the life of the record object.
   module AttributeMethods
     
     def self.included(base)
       base.extend ClassMethods
-      if RAILS_VER <= '2.1'
+      if Rails::VERSION::STRING <= '2.1'
+        base.class_eval do 
+          class << self
+            alias_method :define_read_method_for_time,  :define_read_method_for_time_zone_conversion 
+            alias_method :define_write_method_for_time, :define_write_method_for_time_zone_conversion 
+          end
+        end
         base.extend ClassMethodsOld
       end
     end
@@ -29,7 +35,12 @@ module ValidatesTimeliness
         # convert to time if still valid. Check for pre Rails 2.1
         time = time && defined?(ActiveSupport::TimeWithZone) ? Time.zone.parse(time) : time.to_time rescue nil
       end
-      time.respond_to?(:in_time_zone) ? time.in_time_zone : time rescue time
+      time_in_time_zone(time)
+    end
+    
+    # Handles timezone shift for Rails 2.1 or just returns time for old versions
+    def time_in_time_zone(time)
+      time.respond_to?(:in_time_zone) ? time.in_time_zone : time
     end
 
     def read_attribute(attr_name)
@@ -53,16 +64,20 @@ module ValidatesTimeliness
     
     module ClassMethods
       
-      # Define time attribute write r method to store time value as is without
+      # Define time attribute write method to store time value as is without
       # conversion and then convert time with strict conversion and cache it.
       def define_write_method_for_time_zone_conversion(attr_name)
         method_body = <<-EOV
           def #{attr_name}=(time)
+            old = read_attribute('#{attr_name}') if defined?(Dirty)
             @attributes['#{attr_name}'] = time
             unless time.acts_like?(:time)
-              time = strict_time_type_cast(time)                
+              time = strict_time_type_cast(time)
             end
-            time = time.respond_to?(:in_time_zone) ? time.in_time_zone : time
+            time = time_in_time_zone(time)
+            if defined?(Dirty) && old != time
+              changed_attributes['#{attr_name}'] = (old.duplicable? ? old.clone : old)
+            end
             @attributes_cache['#{attr_name}'] = time
           end
         EOV
@@ -83,9 +98,9 @@ module ValidatesTimeliness
             time = strict_time_type_cast(time)
           else
             time = read_attribute('#{attr_name}')
-            @attributes['#{attr_name}'] = time.respond_to?(:in_time_zone) ? time.in_time_zone : time
+            @attributes['#{attr_name}'] = time_in_time_zone(time)
           end
-          @attributes_cache['#{attr_name}'] = time.respond_to?(:in_time_zone) ? time.in_time_zone : time
+          @attributes_cache['#{attr_name}'] = time_in_time_zone(time)
         end
         EOV
         evaluate_attribute_method attr_name, method_body
@@ -97,6 +112,7 @@ module ValidatesTimeliness
     module ClassMethodsOld
       # Modified from AR to define Time attribute reader and writer methods with 
       # strict time type casting. Timezone conversion is ignored for pre Rails 2.1
+      
       def define_attribute_methods
         return if generated_methods?
         columns_hash.each do |name, column|
@@ -104,7 +120,7 @@ module ValidatesTimeliness
             if self.serialized_attributes[name]
               define_read_method_for_serialized_attribute(name)
             elsif column.klass == Time
-              define_read_method_for_time_zone_conversion(name.to_sym)
+              define_read_method_for_time(name.to_sym)
             else
               define_read_method(name.to_sym, name, column)
             end
@@ -112,7 +128,7 @@ module ValidatesTimeliness
 
           unless instance_method_already_implemented?("#{name}=")
             if column.klass == Time
-              define_write_method_for_time_zone_conversion(name.to_sym)
+              define_write_method_for_time(name.to_sym)
             else
               define_write_method(name.to_sym)
             end
