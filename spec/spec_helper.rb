@@ -6,18 +6,19 @@ require 'spec'
 if File.exists?(File.dirname(__FILE__) + '/../../../../vendor/rails')
   $:.unshift File.dirname(__FILE__) + '/../../../../vendor/rails'
   require 'activesupport/lib/active_support'
-  require 'activerecord/lib/active_record'  
+  require 'activerecord/lib/active_record' 
+  require 'activerecord/lib/active_record/version'
   require 'railties/lib/rails/version'
-    
-  puts "Using vendored Rails version #{Rails::VERSION::STRING}"
+  vendored = true
 else  
   gem 'rails', "=#{ENV['VERSION']}" if ENV['VERSION']
   require 'rails/version'
   require 'active_record'
   require 'active_record/version'
-
-  puts "Using gem Rails version #{Rails::VERSION::STRING}"
+  vendored = false
 end
+
+puts "Using #{vendored ? 'vendored' : 'gem'} Rails version #{Rails::VERSION::STRING} (ActiveRecord version #{ActiveRecord::VERSION::STRING})"
 
 RAILS_VER = Rails::VERSION::STRING
 
