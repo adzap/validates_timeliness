@@ -88,7 +88,9 @@ module ValidatesTimeliness
                     when Symbol
                       record.send(restriction)
                     when Proc
-                      restriction.call(record)                  
+                      restriction.call(record)
+                    else
+                      timeliness_date_time_parse(restriction)
                   end            
                   
                   next if compare.nil?
