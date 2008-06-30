@@ -69,8 +69,7 @@ describe ValidatesTimeliness::AttributeMethods do
       Time.zone = 'Melbourne'
       time_string = "2000-06-01 01:02:03"
       @person.birth_date_and_time = time_string
-      @person.birth_date_and_time.utc_offset.should == 10.hours
-      @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S').should == time_string
+      @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z %z').should == time_string + ' EST +1000'
     end
 
     it "should return time object from database in correct timezone" do        
@@ -80,8 +79,9 @@ describe ValidatesTimeliness::AttributeMethods do
       @person.birth_date_and_time = time_string
       @person.save
       @person.reload
-      @person.birth_date_and_time.to_s(:db).should == time_string
+      @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z %z').should == time_string + ' EST +1000'
     end
+    
   end
   
   it "should return same time object on repeat reads" do

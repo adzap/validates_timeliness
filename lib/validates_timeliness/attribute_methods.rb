@@ -10,10 +10,6 @@ module ValidatesTimeliness
   # be converted to local timezone and then stored and cached to avoid the need
   # for any subsequent differentiation.
   #
-  # One last check is made before values are persisted to the database so that 
-  # the original raw user entered value is not improperly type cast by the default
-  # Rails time type casting. 
-  #
   # A wholesale replacement of the Rails time type casting is not done to preserve
   # the quick conversion for timestamp columns and also any value which is never 
   # touched during the life of the record object.
@@ -35,22 +31,15 @@ module ValidatesTimeliness
       end
       time.respond_to?(:in_time_zone) ? time.in_time_zone : time rescue time
     end
-    
-    # checks if an attribute value has been cached as nil but has a nono-nil
-    # stored value which indicates the time value failed the type casting.
-    def failed_strict_time_type_cast?(attr_name)
-      attr_name = attr_name.to_s
-      @attributes_cache.has_key?(attr_name) && @attributes_cache[attr_name].nil? && !@attributes[attr_name].nil?
-    end
-    
+
     def read_attribute(attr_name)
       attr_name = attr_name.to_s
       if !(value = @attributes[attr_name]).nil?
         if column = column_for_attribute(attr_name)
           if unserializable_attribute?(attr_name, column)
             unserialize_attribute(attr_name)
-          elsif column.klass == Time && failed_strict_time_type_cast?(attr_name)
-            nil
+          elsif column.klass == Time && @attributes_cache.has_key?(attr_name)          
+            @attributes_cache[attr_name]
           else
             column.type_cast(value)
           end
@@ -70,9 +59,11 @@ module ValidatesTimeliness
         method_body = <<-EOV
           def #{attr_name}=(time)
             @attributes['#{attr_name}'] = time
-            time = strict_time_type_cast(time)                
-            
-            @attributes_cache['#{attr_name}'] = time.respond_to?(:in_time_zone) ? time.in_time_zone : time
+            unless time.acts_like?(:time)
+              time = strict_time_type_cast(time)                
+            end
+            time = time.respond_to?(:in_time_zone) ? time.in_time_zone : time
+            @attributes_cache['#{attr_name}'] = time
           end
         EOV
         evaluate_attribute_method attr_name, method_body, "#{attr_name}="
@@ -114,7 +105,6 @@ module ValidatesTimeliness
               define_read_method_for_serialized_attribute(name)
             elsif column.klass == Time
               define_read_method_for_time_zone_conversion(name.to_sym)
-              define_write_method_for_time_zone_conversion(name.to_sym)
             else
               define_read_method(name.to_sym, name, column)
             end
