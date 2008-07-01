@@ -31,13 +31,12 @@ module ValidatesTimeliness
     # Does strict time type cast checking for Rails 2.1 timezone handling    
     def strict_time_type_cast(time)
       unless time.acts_like?(:time)
-        time.to_date rescue time = nil
-        time = time && defined?(ActiveSupport::TimeWithZone) ? Time.zone.parse(time) : time.to_time rescue nil
+        time = self.class.timeliness_date_time_parse(time)
       end
       time_in_time_zone(time)
     end
     
-    # Handles timezone shift for Rails 2.1 or just returns time for old versions
+    # Handles timezone shift if Rails 2.1
     def time_in_time_zone(time)
       time.respond_to?(:in_time_zone) ? time.in_time_zone : time
     end
