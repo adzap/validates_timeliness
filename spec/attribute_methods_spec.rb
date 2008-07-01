@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe ValidatesTimeliness::AttributeMethods do
   include ValidatesTimeliness::AttributeMethods
+  include ValidatesTimeliness::Validations
   
   before do
     @person = Person.new

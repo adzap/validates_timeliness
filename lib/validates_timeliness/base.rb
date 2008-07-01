@@ -6,7 +6,8 @@ module ValidatesTimeliness
       time_array[0..2].join('-') + ' ' + time_array[3..5].join(':')
     end
   
-    # Overrides AR method to store multiparameter time and dates 
+    # Overrides AR method to store multiparameter time and dates as 
+    # ISO datetime string for later validation
     def execute_callstack_for_multiparameter_attributes(callstack)
       errors = []
       callstack.each do |name, values|
@@ -20,7 +21,7 @@ module ValidatesTimeliness
             else
               klass.new(*values)              
             end
-            send(name + "=", value)
+            send("#{name}=", value)
           rescue => ex
             errors << AttributeAssignmentError.new("error on assignment #{values.inspect} to #{name}", ex, name)
           end
