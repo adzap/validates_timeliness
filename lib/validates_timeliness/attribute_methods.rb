@@ -27,12 +27,11 @@ module ValidatesTimeliness
         base.extend ClassMethodsOld
       end
     end
-    
+
+    # Does strict time type cast checking for Rails 2.1 timezone handling    
     def strict_time_type_cast(time)
       unless time.acts_like?(:time)
-        # check for invalid date
         time.to_date rescue time = nil
-        # convert to time if still valid. Check for pre Rails 2.1
         time = time && defined?(ActiveSupport::TimeWithZone) ? Time.zone.parse(time) : time.to_time rescue nil
       end
       time_in_time_zone(time)
@@ -42,7 +41,10 @@ module ValidatesTimeliness
     def time_in_time_zone(time)
       time.respond_to?(:in_time_zone) ? time.in_time_zone : time
     end
-
+    
+    # Adds check for cached time attributes which have been type cast already
+    # and value can be used from cache. This prevents the raw time value
+    # from being type cast using default Rails type casting.
     def read_attribute(attr_name)
       attr_name = attr_name.to_s
       if !(value = @attributes[attr_name]).nil?
@@ -66,6 +68,9 @@ module ValidatesTimeliness
       
       # Define time attribute write method to store time value as is without
       # conversion and then convert time with strict conversion and cache it.
+      #
+      # If Rails 2.1 dirty attributes is enabled then the value is added to 
+      # changed attributes if changed.
       def define_write_method_for_time_zone_conversion(attr_name)
         method_body = <<-EOV
           def #{attr_name}=(time)
@@ -75,7 +80,7 @@ module ValidatesTimeliness
               time = strict_time_type_cast(time)
             end
             time = time_in_time_zone(time)
-            if defined?(Dirty) && old != time
+            if defined?(Dirty) && !changed_attributes.include?('#{attr_name}') && old != time
               changed_attributes['#{attr_name}'] = (old.duplicable? ? old.clone : old)
             end
             @attributes_cache['#{attr_name}'] = time
@@ -84,7 +89,7 @@ module ValidatesTimeliness
         evaluate_attribute_method attr_name, method_body, "#{attr_name}="
       end        
       
-      # Define time attribute reader and do strict conversion. If reload then
+      # Define time attribute reader for time attribute. If reload then
       # then check if cached, which means its in local time. If local, do
       # strict type cast as local timezone, otherwise use read_attribute method 
       # for quick default type cast of values from database using default timezone. 
@@ -108,11 +113,12 @@ module ValidatesTimeliness
       
     end
     
-    # Rails < 2.1
+    # Only for Rails 2.0.x. Checks for time attributes to define special reader
+    # and writer methods.
     module ClassMethodsOld
+   
       # Modified from AR to define Time attribute reader and writer methods with 
       # strict time type casting. Timezone conversion is ignored for pre Rails 2.1
-      
       def define_attribute_methods
         return if generated_methods?
         columns_hash.each do |name, column|
