@@ -27,7 +27,7 @@ module ValidatesTimeliness
         begin
           time_array = ParseDate.parsedate(raw_value)            
 
-          # checks if date is valid which enforces number of days in a month unlike Time
+          # checks if date part is valid, enforcing days in a month unlike Time
           Date.new(*time_array[0..2])
           
           # checks if time part is valid and returns object
@@ -36,22 +36,13 @@ module ValidatesTimeliness
           nil
         end
       end
-      
-      def timeliness_default_error_messages
-        defaults = ActiveRecord::Errors.default_error_messages.slice(:blank, :invalid_date, :before, :on_or_before, :after, :on_or_after)
-        returning({}) do |messages|
-          defaults.each {|k, v| messages["#{k}_message".to_sym] = v }
-        end
-      end      
             
       def validates_timeliness_of(*attr_names)
-        configuration = { :on => :save, :allow_nil => false, :allow_blank => false }
+        configuration = { :on => :save, :type => :time, :allow_nil => false, :allow_blank => false }
         configuration.update(timeliness_default_error_messages)
         configuration.update(attr_names.extract_options!)
         
-        restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
-        
-        # we need to check raw value for blank or nil to catch when invalid value returns nil
+        # we need to check raw value for blank or nil in cases when an invalid value returns nil
         allow_nil   = configuration.delete(:allow_nil)
         allow_blank = configuration.delete(:allow_blank)
         
@@ -69,52 +60,84 @@ module ValidatesTimeliness
             else
               unless time = timeliness_date_time_parse(raw_value)
                 record.send("#{attr_name}=", nil)
-                record.errors.add(attr_name, configuration[:invalid_date_message] % column.type)
+                record.errors.add(attr_name, configuration[:invalid_date_message] % configuration[:type])
                 next
               end
             end
             
-            conversion_method = column.type == :date ? :to_date : :to_time
-            time = time.send(conversion_method)
-            
-            restriction_methods.each do |option, method|
-              if restriction = configuration[option]
-                begin
-                  compare = case restriction
-                    when Date
-                      restriction
-                    when Time, DateTime
-                      restriction.respond_to?(:in_time_zone) ? restriction.in_time_zone : restriction
-                    when Symbol
-                      record.send(restriction)
-                    when Proc
-                      restriction.call(record)
-                    else
-                      timeliness_date_time_parse(restriction)
-                  end            
-                  
-                  next if compare.nil?
-                  compare = compare.send(conversion_method) if compare
-                  
-                  record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare) unless time.send(method, compare)
-                rescue
-                  record.errors.add(attr_name, "restriction '#{option}' value was invalid")
-                end
-              end
-            end
+            validate_timeliness_restrictions(record, attr_name, time, configuration)
           rescue
             record.send("#{attr_name}=", nil)
-            record.errors.add(attr_name, configuration[:invalid_date_message] % column.type)
+            record.errors.add(attr_name, configuration[:invalid_date_message] % configuration[:type])
             next
           end      
           
         end
       end   
       
-      alias validates_times     validates_timeliness_of 
-      alias validates_dates     validates_timeliness_of
-      alias validates_datetimes validates_timeliness_of 
+      # Use this validation to force validation of values as Time
+      def validates_time(*attr_names)
+        configuration = attr_names.extract_options!
+        configuration[:type] = :time
+        validates_timeliness_of(attr_names, configuration)
+      end
+      
+      # Use this validation to force validation of values as Date
+      def validates_date(*attr_names)
+        configuration = attr_names.extract_options!
+        configuration[:type] = :date
+        validates_timeliness_of(attr_names, configuration)
+      end
+      
+      # Use this validation to force validation of values as DateTime
+      def validates_datetime(*attr_names)
+        configuration = attr_names.extract_options!
+        configuration[:type] = :datetime
+        validates_timeliness_of(attr_names, configuration)
+      end
+      
+      private
+      
+      def validate_timeliness_restrictions(record, attr_name, value, configuration)
+        restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
+        
+        conversion_method = "to_#{configuration[:type]}".to_sym
+        time = value.send(conversion_method)
+        
+        restriction_methods.each do |option, method|
+          if restriction = configuration[option]
+            begin
+              compare = case restriction
+                when Date
+                  restriction
+                when Time, DateTime
+                  restriction.respond_to?(:in_time_zone) ? restriction.in_time_zone : restriction
+                when Symbol
+                  record.send(restriction)
+                when Proc
+                  restriction.call(record)
+                else
+                  timeliness_date_time_parse(restriction)
+              end            
+              
+              next if compare.nil?
+              compare = compare.send(conversion_method) if compare
+              
+              record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare) unless time.send(method, compare)
+            rescue
+              record.errors.add(attr_name, "restriction '#{option}' value was invalid")
+            end
+          end
+        end
+      end
+      
+      def timeliness_default_error_messages
+        defaults = ActiveRecord::Errors.default_error_messages.slice(:blank, :invalid_date, :before, :on_or_before, :after, :on_or_after)
+        returning({}) do |messages|
+          defaults.each {|k, v| messages["#{k}_message".to_sym] = v }
+        end
+      end
+                  
     end
-    
   end
 end

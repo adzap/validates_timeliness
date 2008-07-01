@@ -4,8 +4,8 @@ describe ValidatesTimeliness::Validations do
   describe "with no restrictions" do
     before :all do
       class BasicValidation < Person
-        validates_timeliness_of :birth_date_and_time, :allow_blank => true
-        validates_timeliness_of :birth_date, :allow_blank => true
+        validates_timeliness_of :birth_date_and_time, :allow_blank => true, :type => :datetime
+        validates_timeliness_of :birth_date, :allow_blank => true, :type => :date
       end
     end
 
@@ -140,7 +140,7 @@ describe ValidatesTimeliness::Validations do
     describe "with on_or_before and on_or_after restrictions" do
       before :all do
         class DateOnOrBeforeAndAfter < Person
-          validates_timeliness_of :birth_date, :on_or_before => 1.day.from_now.to_date, :on_or_after => 1.day.ago.to_date
+          validates_timeliness_of :birth_date, :on_or_before => 1.day.from_now.to_date, :on_or_after => 1.day.ago.to_date, :type => :date
         end
       end
       
