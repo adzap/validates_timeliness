@@ -11,7 +11,7 @@ module ValidatesTimeliness
       base.alias_method_chain :value, :timeliness      
     end
     
-    TimelinessDateTime = Struct.new(:year, :day, :month, :hour, :min, :sec)      
+    TimelinessDateTime = Struct.new(:year, :month, :day, :hour, :min, :sec)      
       
     def date_or_time_select_with_timeliness(*args)
       @timeliness_date_or_time_tag = true
@@ -23,13 +23,13 @@ module ValidatesTimeliness
       
       raw_value = value_before_type_cast(object)
       
-      if raw_value.acts_as?(:time) || raw_value.is_a?(Date)
+      if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         return value_without_timeliness(object)
       end
       
       time_array = ParseDate.parsedate(raw_value)
       
-      TimelinessDateTime.new(time_array)        
+      TimelinessDateTime.new(*time_array[0..5])
     end      
      
   end
