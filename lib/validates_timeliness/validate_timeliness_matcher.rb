@@ -4,37 +4,46 @@ module Spec
       class ValidateTimeliness
         def initialize(attribute, options)
           @expected, @options = attribute, options
+          messages = ActiveRecord::Base.send(:timeliness_default_error_messages)
+          messages 
+          @options.reverse_merge!(messages)
         end
 
+        def error_messages
+          messages = ActiveRecord::Base.send(:timeliness_default_error_messages)
+          messages = messages.inject({}) {|h , (k, v)| h[k] = v.sub('%s', '') } 
+          @options.reverse_merge!(messages)
+        end        
+        
         def matches?(record)
-          @record = record    
+          @record = record
 
-          valid = error_matching('2008-02-30', /valid/) &&
-              error_matching('2008-01-01 25:00:00', /valid/) &&
-              no_error_matching('2008-01-01 12:12:12', /valid/)
+          valid = error_matching('2008-02-30', /#{options[:invalid_date_message]}/) &&
+              error_matching('2008-01-01 25:00:00', /#{options[:invalid_date_message]}/) &&
+              no_error_matching('2008-01-01 12:12:12', /#{options[:invalid_date_message]}/)
           return false unless valid
           
           if after = options[:after]
-            valid = error_matching(after, /after/) &&
-              no_error_matching(after + 1, /after/)
+            valid = error_matching(after, /#{options[:after_message]}/) &&
+              no_error_matching(after + 1, /#{options[:after_message]}/)
           end
           return false unless valid
           
           if before = options[:before]
-            valid = error_matching(before, /before/) &&
-              no_error_matching(before - 1, /before/)              
+            valid = error_matching(before, /#{options[:after_message]}/) &&
+              no_error_matching(before - 1, /#{options[:after_message]}/)
           end
           return false unless valid
         
           if on_or_after = options[:on_or_after]
-            valid = error_matching(on_or_after -1, /after/) &&
-              no_error_matching(on_or_after, /after/)              
+            valid = error_matching(on_or_after -1, /#{options[:on_or_after_message]}/) &&
+              no_error_matching(on_or_after, /#{options[:on_or_after_message]}/)
           end
           return false unless valid
           
           if on_or_before = options[:on_or_before]
-            valid = error_matching(on_or_before + 1, /before/) &&
-              no_error_matching(on_or_before, /before/)              
+            valid = error_matching(on_or_before + 1, /#{options[:on_or_before_message]}/) &&
+              no_error_matching(on_or_before, /#{options[:on_or_before_message]}/)
           end
           return false unless valid
           
@@ -81,7 +90,11 @@ module Spec
       
       def validate_timeliness_of(attribute, options={})
         ValidateTimeliness.new(attribute, options)
-      end   
+      end
+      
+      alias validate_date validate_timeliness_of
+      alias validate_time validate_timeliness_of
+      alias validate_datetime validate_timeliness_of
     end
   end  
 end
