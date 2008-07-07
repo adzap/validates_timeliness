@@ -25,15 +25,17 @@ module ValidatesTimeliness
       # valid parsed value. 
       # 
       # Remember, if the date portion is pre the Unix epoch the return object 
-      # will need to be a datatime. But luckily Rails, since version 2, will
+      # will need to be a datetime. But luckily Rails, since version 2, will
       # automatically handle the fall back to a DateTime when you create a time
-      # with Time.new or #to_time.
+      # which is out of range.
       def timeliness_date_time_parse(raw_value)
+        return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
+        
         time_array = ParseDate.parsedate(raw_value, true)            
 
         # checks if date part is valid, enforcing days in a month unlike Time
         Date.new(*time_array[0..2])
-          
+                  
         # checks if time part is valid and returns object
         Time.mktime(*time_array)
       rescue
@@ -41,7 +43,7 @@ module ValidatesTimeliness
       end
             
       def validates_timeliness_of(*attr_names)
-        configuration = { :on => :save, :type => :time, :allow_nil => false, :allow_blank => false }
+        configuration = { :on => :save, :type => :datetime, :allow_nil => false, :allow_blank => false }
         configuration.update(timeliness_default_error_messages)
         configuration.update(attr_names.extract_options!)
         
@@ -58,16 +60,12 @@ module ValidatesTimeliness
           
           column = record.column_for_attribute(attr_name)
           begin
-            if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
-              time = raw_value
-            else
-              unless time = timeliness_date_time_parse(raw_value)
-                record.send("#{attr_name}=", nil)
-                record.errors.add(attr_name, configuration[:invalid_date_message] % configuration[:type])
-                next
-              end
+            unless time = timeliness_date_time_parse(raw_value)
+              record.send("#{attr_name}=", nil)
+              record.errors.add(attr_name, configuration[:invalid_date_message] % configuration[:type])
+              next
             end
-            
+           
             validate_timeliness_restrictions(record, attr_name, time, configuration)
           rescue
             record.send("#{attr_name}=", nil)
@@ -78,7 +76,7 @@ module ValidatesTimeliness
         end
       end   
       
-      # Use this validation to force validation of values as Time
+      # Use this validation to force validation of values as dummy time
       def validates_time(*attr_names)
         configuration = attr_names.extract_options!
         configuration[:type] = :time
@@ -92,19 +90,24 @@ module ValidatesTimeliness
         validates_timeliness_of(attr_names, configuration)
       end
       
-      # Use this validation to force validation of values as DateTime
+      # Use this validation to force validation of values as Time/DateTime
       def validates_datetime(*attr_names)
         configuration = attr_names.extract_options!
         configuration[:type] = :datetime
         validates_timeliness_of(attr_names, configuration)
       end
       
-      private
+     private
       
       def validate_timeliness_restrictions(record, attr_name, value, configuration)
         restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
         
-        conversion_method = "to_#{configuration[:type]}".to_sym
+        conversion_method = case configuration[:type]
+          when :time     then :to_dummy_time
+          when :date     then :to_date
+          when :datetime then :to_time
+        end
+                
         time = value.send(conversion_method)
         
         restriction_methods.each do |option, method|
