@@ -1,6 +1,14 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe ValidatesTimeliness::Validations do
+  before :all do
+    Time.now = Time.utc(2008, 1, 1, 12, 0, 0)
+  end
+  
+  after :all do
+    Time.now = nil
+  end
+  
   describe "with no restrictions" do
     before :all do
       class BasicValidation < Person
@@ -56,7 +64,7 @@ describe ValidatesTimeliness::Validations do
       before :all do
         class TimeBeforeAfter < Person
           validates_timeliness_of :birth_date_and_time, :before => Time.now, :after => 1.day.ago
-        end        
+        end
       end
 
       before :each do
@@ -74,6 +82,18 @@ describe ValidatesTimeliness::Validations do
         @person.should_not be_valid
         @person.errors.on(:birth_date_and_time).should match(/must be after/)
       end
+      
+      it "should have error when on boundary of :before restriction" do
+        @person.birth_date_and_time = Time.now
+        @person.should_not be_valid
+        @person.errors.on(:birth_date_and_time).should match(/must be before/)
+      end
+
+      it "should have error when on boundary of :after restriction" do
+        @person.birth_date_and_time = 1.day.ago
+        @person.should_not be_valid
+        @person.errors.on(:birth_date_and_time).should match(/must be after/)
+      end
     end
 
     describe "with on_or_before and on_or_after restrictions" do
@@ -83,18 +103,18 @@ describe ValidatesTimeliness::Validations do
         end
       end
       
-      before :each do
+      before do  
         @person = TimeOnOrBeforeAndAfter.new
       end
         
       it "should have error when past :on_or_before restriction" do
-        @person.birth_date_and_time = 1.minute.from_now
+        @person.birth_date_and_time = Time.now.at_midnight + 1
         @person.should_not be_valid
         @person.errors.on(:birth_date_and_time).should match(/must be on or before/)
       end
 
       it "should have error when before :on_or_after restriction" do
-        @person.birth_date_and_time = 2.days.ago
+        @person.birth_date_and_time = 1.days.ago - 1
         @person.should_not be_valid
         @person.errors.on(:birth_date_and_time).should match(/must be on or after/)
       end
@@ -107,7 +127,7 @@ describe ValidatesTimeliness::Validations do
       it "should be valid when value equal to :on_or_after restriction" do
         @person.birth_date_and_time = 1.day.ago
         @person.should be_valid        
-      end      
+      end 
     end
 
   end
