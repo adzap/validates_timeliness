@@ -19,7 +19,7 @@ require 'action_controller'
 require 'action_controller/test_process'
 require 'action_view'
 
-require 'rspec-rails'
+require 'rspec-rails/rspec-rails'
 require 'time_travel/time_travel'
 require 'validates_timeliness'
 
