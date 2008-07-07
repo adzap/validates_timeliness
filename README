@@ -1,0 +1,59 @@
+= validates_timeliness
+
+  * Source:  http://github.com/adzap/validates_timeliness
+  * Tickets:
+
+
+== DESCRIPTION
+
+The time and date validation has always been a problem in Rails. To do it 
+properly you need to fiddle with the Rails internals a fair bit. Where once 
+there may have been hope of including more support for this validation in Rails,
+since the release of Rails 2.1 those hopes were dashed as it has become an order
+of magnitude harder due the excellent additions of the improved timezone handling
+and dirty attributes.
+
+This plugin allows the validation of dates and times in Rails 2.0.x and above. 
+
+
+== FEATURES/PROBLEMS
+
+* Adds ActiveRecord validation for dates and times
+
+* Adds better traceability of dates and times entered with the use the 
+  before_type_cast for date and time columns to look at the original value 
+  entered before type casting.
+
+* Allows pluggable date and time parsing with other parsers of your choosing (eg Chronic)
+
+== INSTALLATION
+
+./script/plugin http://github.com/adzap/validates_timeliness
+
+
+== USAGE
+
+To validate a model with a date or datetime attribute you just use the validation
+method
+
+  class Person < ActiveRecord::Base
+    validates_timeliness_of :date_of_birth
+  
+  end
+
+The default valid formats for a date or datetime field are those supported by 
+the Ruby ParseDate library (http://www.ruby-doc.org/docs/ProgrammingRuby/html/lib_standard.html#ParseDate.parsedate).
+
+  
+The validation method has the usual options plus some specific ones to restrict
+the valid range
+
+  Options:
+    - allow_nil
+    - allow_blank    
+    - before
+    - on_or_before
+    - after
+    - on_or_after
+    - type
+
