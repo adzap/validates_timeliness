@@ -10,9 +10,9 @@ module ValidatesTimeliness
   #
   # To do this we must cache the user entered values on write and store the raw 
   # value in the attributes hash for later retrieval and possibly validation. 
-  # Any database originating value will not be in the attribute cache on first
-  # read so will be considered in UTC time and then converted to local time
-  # and then stored back in the attributes hash and cached to avoid the need
+  # Any value from the database will not be in the attribute cache on first
+  # read so will be considered in UTC time and then converted to local time.
+  # It is then stored back in the attributes hash and cached to avoid the need
   # for any subsequent differentiation.
   #
   # The wholesale replacement of the Rails time type casting is not done to 
@@ -22,7 +22,7 @@ module ValidatesTimeliness
     
     def self.included(base)
       base.extend ClassMethods
-      if Rails::VERSION::STRING <= '2.1'
+      if Rails::VERSION::STRING < '2.1'
         base.class_eval do 
           class << self
             alias_method :define_read_method_for_time,  :define_read_method_for_time_zone_conversion 
@@ -35,9 +35,7 @@ module ValidatesTimeliness
 
     # Does strict time type cast checking for Rails 2.1 timezone handling    
     def strict_time_type_cast(time)
-      unless time.acts_like?(:time)
-        time = self.class.timeliness_date_time_parse(time)
-      end
+      time = self.class.timeliness_date_time_parse(time)
       time_in_time_zone(time)
     end
     
@@ -95,7 +93,7 @@ module ValidatesTimeliness
         evaluate_attribute_method attr_name, method_body, "#{attr_name}="
       end        
       
-      # Define time attribute reader. If passed reload then check if cached, 
+      # Define time attribute reader. If reload is true then check if cached, 
       # which means its in local time. If local, do strict type cast as local 
       # timezone, otherwise use read_attribute method for quick default type 
       # cast of values from database using default timezone. 
