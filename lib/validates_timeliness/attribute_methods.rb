@@ -1,18 +1,23 @@
 module ValidatesTimeliness
 
-  # The crux of the plugin is being able to store user entered values as is, 
-  # but also support Rails 2.1 automatic timezone conversion. This requires us 
-  # to distinguish a user entered value from a raw value from the database 
-  # because both maybe in string form, but only the database value should be 
-  # converted to current local time zone. This is done by caching user entered 
-  # values on write and storing the raw value in the attributes cache for later
-  # retrieval. Any database read value will not be cached on first read so will
-  # be converted to local timezone and then stored and cached to avoid the need
+  # The crux of the plugin is being able to store raw user entered values, 
+  # while not interferring with the Rails 2.1 automatic timezone handling. This
+  # requires us to distinguish a user entered value from a value read from the 
+  # database. Both maybe in string form, but only the database value should be 
+  # interpreted as being in the default timezone which is normally UTC. The user
+  # entered value should be interpreted as being in the current zone as indicated
+  # by Time.zone.
+  #
+  # To do this we must cache the user entered values on write and store the raw 
+  # value in the attributes hash for later retrieval and possibly validation. 
+  # Any database originating value will not be in the attribute cache on first
+  # read so will be considered in UTC time and then converted to local time
+  # and then stored back in the attributes hash and cached to avoid the need
   # for any subsequent differentiation.
   #
-  # The wholesale replacement of the Rails time type casting is not done to preserve
-  # the quick conversion for timestamp columns and also any value which is never 
-  # touched during the life of the record object.
+  # The wholesale replacement of the Rails time type casting is not done to 
+  # preserve the quick conversion for timestamp columns and also any value which
+  # is never touched during the life of the record object.
   module AttributeMethods
     
     def self.included(base)
@@ -69,17 +74,19 @@ module ValidatesTimeliness
       # conversion and then convert time with strict conversion and cache it.
       #
       # If Rails 2.1 dirty attributes is enabled then the value is added to 
-      # changed attributes if changed.
+      # changed attributes if changed. Can't use the default dirty checking
+      # implementation as it chains the write_attribute method which deletes
+      # the attribute from the cache.
       def define_write_method_for_time_zone_conversion(attr_name)
         method_body = <<-EOV
           def #{attr_name}=(time)
-            old = read_attribute('#{attr_name}') if defined?(Dirty)
+            old = read_attribute('#{attr_name}') if defined?(ActiveRecord::Dirty)
             @attributes['#{attr_name}'] = time
             unless time.acts_like?(:time)
               time = strict_time_type_cast(time)
             end
             time = time_in_time_zone(time)
-            if defined?(Dirty) && !changed_attributes.include?('#{attr_name}') && old != time
+            if defined?(ActiveRecord::Dirty) && !changed_attributes.include?('#{attr_name}') && old != time
               changed_attributes['#{attr_name}'] = (old.duplicable? ? old.clone : old)
             end
             @attributes_cache['#{attr_name}'] = time
@@ -88,10 +95,10 @@ module ValidatesTimeliness
         evaluate_attribute_method attr_name, method_body, "#{attr_name}="
       end        
       
-      # Define time attribute reader for time attribute. If reload then
-      # then check if cached, which means its in local time. If local, do
-      # strict type cast as local timezone, otherwise use read_attribute method 
-      # for quick default type cast of values from database using default timezone. 
+      # Define time attribute reader. If passed reload then check if cached, 
+      # which means its in local time. If local, do strict type cast as local 
+      # timezone, otherwise use read_attribute method for quick default type 
+      # cast of values from database using default timezone. 
       def define_read_method_for_time_zone_conversion(attr_name)
         method_body = <<-EOV          
         def #{attr_name}(reload = false)
@@ -117,7 +124,7 @@ module ValidatesTimeliness
     module ClassMethodsOld
    
       # Modified from AR to define Time attribute reader and writer methods with 
-      # strict time type casting. Timezone conversion is ignored for pre Rails 2.1
+      # strict time type casting.
       def define_attribute_methods
         return if generated_methods?
         columns_hash.each do |name, column|
