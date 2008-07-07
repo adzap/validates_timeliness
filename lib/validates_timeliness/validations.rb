@@ -22,19 +22,22 @@ module ValidatesTimeliness
       
       # Override this method to use any date parsing algorithm you like such as 
       # Chronic. Just return nil for an invalid value and a Time object for a 
-      # valid parsed value.
+      # valid parsed value. 
+      # 
+      # Remember, if the date portion is pre the Unix epoch the return object 
+      # will need to be a datatime. But luckily Rails, since version 2, will
+      # automatically handle the fall back to a DateTime when you create a time
+      # with Time.new or #to_time.
       def timeliness_date_time_parse(raw_value)
-        begin
-          time_array = ParseDate.parsedate(raw_value)            
+        time_array = ParseDate.parsedate(raw_value, true)            
 
-          # checks if date part is valid, enforcing days in a month unlike Time
-          Date.new(*time_array[0..2])
+        # checks if date part is valid, enforcing days in a month unlike Time
+        Date.new(*time_array[0..2])
           
-          # checks if time part is valid and returns object
-          Time.mktime(*time_array)
-        rescue
-          nil
-        end
+        # checks if time part is valid and returns object
+        Time.mktime(*time_array)
+      rescue
+        nil
       end
             
       def validates_timeliness_of(*attr_names)
@@ -105,28 +108,25 @@ module ValidatesTimeliness
         time = value.send(conversion_method)
         
         restriction_methods.each do |option, method|
-          if restriction = configuration[option]
-            begin
-              compare = case restriction
-                when Date
-                  restriction
-                when Time, DateTime
-                  restriction.respond_to?(:in_time_zone) ? restriction.in_time_zone : restriction
-                when Symbol
-                  record.send(restriction)
-                when Proc
-                  restriction.call(record)
-                else
-                  timeliness_date_time_parse(restriction)
-              end            
-              
-              next if compare.nil?
-              compare = compare.send(conversion_method) if compare
-              
-              record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare) unless time.send(method, compare)
-            rescue
-              record.errors.add(attr_name, "restriction '#{option}' value was invalid")
-            end
+          next unless restriction = configuration[option]
+          begin
+            compare = case restriction
+              when Time, Date, DateTime
+                restriction
+              when Symbol
+                record.send(restriction)
+              when Proc
+                restriction.call(record)
+              else
+                timeliness_date_time_parse(restriction)
+            end            
+            
+            next if compare.nil?
+            
+            compare = compare.send(conversion_method)
+            record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare) unless time.send(method, compare)
+          rescue
+            record.errors.add(attr_name, "restriction '#{option}' value was invalid")
           end
         end
       end
