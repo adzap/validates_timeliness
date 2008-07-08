@@ -4,7 +4,15 @@ require 'validates_timeliness/validations'
 require 'validates_timeliness/instance_tag'
 require 'validates_timeliness/validate_timeliness_matcher' if ENV['RAILS_ENV'] == 'test'
 
+require 'validates_timeliness/core_ext/time'
+require 'validates_timeliness/core_ext/date'
+require 'validates_timeliness/core_ext/date_time'
+
 ActiveRecord::Base.send(:include, ValidatesTimeliness::Base)
 ActiveRecord::Base.send(:include, ValidatesTimeliness::AttributeMethods)
 ActiveRecord::Base.send(:include, ValidatesTimeliness::Validations)
 ActionView::Helpers::InstanceTag.send(:include, ValidatesTimeliness::InstanceTag)
+
+Time.send(:include, ValidatesTimeliness::CoreExtensions::Time)
+Date.send(:include, ValidatesTimeliness::CoreExtensions::Date)
+DateTime.send(:include, ValidatesTimeliness::CoreExtensions::DateTime)
