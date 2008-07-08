@@ -35,7 +35,7 @@ module ValidatesTimeliness
 
     # Does strict time type cast checking for Rails 2.1 timezone handling    
     def strict_time_type_cast(time)
-      time = self.class.timeliness_date_time_parse(time)
+      time = self.class.timeliness_date_time_parse(time, :datetime)
       time_in_time_zone(time)
     end
     

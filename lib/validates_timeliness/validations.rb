@@ -28,15 +28,18 @@ module ValidatesTimeliness
       # will need to be a datetime. But luckily Rails, since version 2, will
       # automatically handle the fall back to a DateTime when you create a time
       # which is out of range.
-      def timeliness_date_time_parse(raw_value)
+      def timeliness_date_time_parse(raw_value, type)
         return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
         time_array = ParseDate.parsedate(raw_value, true)            
 
-        # checks if date part is valid, enforcing days in a month unlike Time
-        Date.new(*time_array[0..2])
-                  
-        # checks if time part is valid and returns object
+        if type == :time
+          # Rails dummy time date part is 2000-01-01
+          time_array[0..2] = 2000, 1, 1
+        else
+          # Date.new enforces days per month, unlike Time
+          Date.new(*time_array[0..2])
+        end
         Time.mktime(*time_array)
       rescue
         nil
@@ -47,7 +50,7 @@ module ValidatesTimeliness
         configuration.update(timeliness_default_error_messages)
         configuration.update(attr_names.extract_options!)
         
-        # we need to check raw value for blank or nil in cases when an invalid value returns nil
+        # we need to check raw value for blank or nil
         allow_nil   = configuration.delete(:allow_nil)
         allow_blank = configuration.delete(:allow_blank)
         
@@ -60,14 +63,14 @@ module ValidatesTimeliness
           
           column = record.column_for_attribute(attr_name)
           begin
-            unless time = timeliness_date_time_parse(raw_value)
+            unless time = timeliness_date_time_parse(raw_value, configuration[:type])
               record.send("#{attr_name}=", nil)
               record.errors.add(attr_name, configuration[:invalid_date_message] % configuration[:type])
               next
             end
            
             validate_timeliness_restrictions(record, attr_name, time, configuration)
-          rescue
+          rescue Exception => e          
             record.send("#{attr_name}=", nil)
             record.errors.add(attr_name, configuration[:invalid_date_message] % configuration[:type])
             next
@@ -108,7 +111,7 @@ module ValidatesTimeliness
           when :datetime then :to_time
         end
                 
-        time = value.send(conversion_method)
+        value = value.send(conversion_method)
         
         restriction_methods.each do |option, method|
           next unless restriction = configuration[option]
@@ -121,13 +124,13 @@ module ValidatesTimeliness
               when Proc
                 restriction.call(record)
               else
-                timeliness_date_time_parse(restriction)
+                timeliness_date_time_parse(restriction, configuration[:type])
             end            
             
             next if compare.nil?
             
             compare = compare.send(conversion_method)
-            record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare) unless time.send(method, compare)
+            record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare) unless value.send(method, compare)
           rescue
             record.errors.add(attr_name, "restriction '#{option}' value was invalid")
           end
