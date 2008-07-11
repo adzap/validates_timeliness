@@ -146,6 +146,12 @@ describe ValidatesTimeliness::Validations do
   end
   
   describe "for date type" do
+    it "should validate with invalid time part" do
+      person = BasicValidation.new
+      person.birth_date = "1980-01-01 25:61:61"
+      person.should be_valid
+    end
+    
     describe "with before and after restrictions" do
       before :all do
         class DateBeforeAfter < Person
@@ -210,6 +216,12 @@ describe ValidatesTimeliness::Validations do
   end
   
   describe "for time type" do
+    it "should validate with invalid date part" do
+      person = BasicValidation.new
+      person.birth_time = "1980-02-30 23:59:59"
+      person.should be_valid
+    end
+  
     describe "with before and after restrictions" do
       before :all do
         class TimeBeforeAfter < Person
