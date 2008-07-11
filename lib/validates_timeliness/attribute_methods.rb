@@ -93,7 +93,7 @@ module ValidatesTimeliness
         evaluate_attribute_method attr_name, method_body, "#{attr_name}="
       end        
       
-      # Define time attribute reader. If reload is true then check if cached, 
+      # Define time attribute reader. If reloading then check if cached, 
       # which means its in local time. If local, do strict type cast as local 
       # timezone, otherwise use read_attribute method for quick default type 
       # cast of values from database using default timezone. 
