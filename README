@@ -1,50 +1,63 @@
 = validates_timeliness
 
   * Source:  http://github.com/adzap/validates_timeliness
-  * Tickets:
+  * Tickets: http://adzap.lighthouseapp.com/projects/14111-validates_timeliness
 
 
 == DESCRIPTION
 
-The time and date validation has always been a problem in Rails. To do it 
-properly you need to fiddle with the Rails internals a fair bit. Where once 
-there may have been hope of including more support for this validation in Rails,
-since the release of Rails 2.1 those hopes were dashed as it has become an order
-of magnitude harder due the excellent additions of the improved timezone handling
-and dirty attributes.
-
-This plugin allows the validation of dates and times in Rails 2.0.x and above. 
+Validate dates, times and datetimes for Rails 2.x. Plays nicely with new 
+features such as automatic timezone handling and dirty attributes. Allows 
+date/time atttributes to behave like other attribute types by allowing you to
+review the raw entered value before it is converted.
 
 
 == FEATURES/PROBLEMS
 
-* Adds ActiveRecord validation for dates and times
+* Adds ActiveRecord validation for dates, times and datetimes
 
-* Adds better traceability of dates and times entered with the use the 
-  before_type_cast for date and time columns to look at the original value 
-  entered before type casting.
+* Adds better transparency of date/time attributes restoring ability to view 
+  raw value before type casting, which was lost in Rails 2.1 to get the better 
+  timezone features.
 
 * Allows pluggable date and time parsing with other parsers of your choosing (eg Chronic)
 
+* Respects timezone features of both Rails 2.0 and 2.1.
+
 == INSTALLATION
 
-./script/plugin http://github.com/adzap/validates_timeliness
+Rails 2.1
+  ./script/plugin git://github.com/adzap/validates_timeliness
 
+Rails 2.0
+  
 
 == USAGE
 
-To validate a model with a date or datetime attribute you just use the validation
-method
+To validate a model with a date, time or datetime attribute you just use the 
+validation method
 
   class Person < ActiveRecord::Base
     validates_timeliness_of :date_of_birth
-  
+
   end
+  
+But for a more semantic validation method you can use the specific validation 
+for the attribute type. The type based validation methods are 
+
+  * validates_date
+  
+  * validates_time
+  
+  * validates_datetime
+  
+If the value for a date attribute contains a time, it will be ignored when
+validating. The same is true to time attributes which ignore the date.
 
 The default valid formats for a date or datetime field are those supported by 
-the Ruby ParseDate library (http://www.ruby-doc.org/docs/ProgrammingRuby/html/lib_standard.html#ParseDate.parsedate).
+the Ruby ParseDate library 
+(http://www.ruby-doc.org/docs/ProgrammingRuby/html/lib_standard.html#ParseDate.parsedate).
 
-  
 The validation method has the usual options plus some specific ones to restrict
 the valid range
 
@@ -57,3 +70,5 @@ the valid range
     - on_or_after
     - type
 
+
+MUCH MORE DOCS TO COME
