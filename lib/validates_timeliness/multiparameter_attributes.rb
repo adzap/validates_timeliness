@@ -1,9 +1,8 @@
 module ValidatesTimeliness
-  module Base
+  module MultiparameterAttributes
     
     def time_array_to_string(time_array)
-      time_array.collect! {|i| i.to_s.rjust(2, '0') }
-      time_array[0..2].join('-') + ' ' + time_array[3..5].join(':')
+      "%04d-%02d-%02d %02d:%02d:%02d" % time_array
     end
   
     # Overrides AR method to store multiparameter time and dates as 
