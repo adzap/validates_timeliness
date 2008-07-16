@@ -1,9 +1,11 @@
 module ValidatesTimeliness
 
-  class DateTimeInvalid < StandardError; end
-
+  # Adds ActiveRecord validation methods for date, time and datetime validation.
+  # The validity of values can be restricted to be before and/or certain dates
+  # or times.
   module Validations    
         
+    # Error messages added to AR defaults to allow global override if you need.  
     def self.included(base)
       base.extend ClassMethods
       
@@ -37,16 +39,20 @@ module ValidatesTimeliness
         elsif type == :date
           # throw away time part and check date
           time_array[3..5] = 0, 0, 0
-          Date.new(*time_array[0..2])
-        else
-          # Date.new enforces days per month, unlike Time
-          Date.new(*time_array[0..2])
         end
-        Time.mktime(*time_array)
+
+        # Date.new enforces days per month, unlike Time
+        Date.new(*time_array[0..2]) unless type == :time
+        
+        # Check time part, and return time object
+        Time.local(*time_array)
       rescue
         nil
       end
-            
+      
+      
+      # The main validation method which can be used directly or called through
+      # the other specific type validation methods.      
       def validates_timeliness_of(*attr_names)
         configuration = { :on => :save, :type => :datetime, :allow_nil => false, :allow_blank => false }
         configuration.update(timeliness_default_error_messages)
@@ -74,28 +80,29 @@ module ValidatesTimeliness
             validate_timeliness_restrictions(record, attr_name, time, configuration)
           rescue Exception => e          
             record.send("#{attr_name}=", nil)
-            record.errors.add(attr_name, configuration[:invalid_datetime_message] % configuration[:type])
-            next
-          end      
-          
+            record.errors.add(attr_name, configuration[:invalid_datetime_message] % configuration[:type])            
+          end          
         end
       end   
       
-      # Use this validation to force validation of values as dummy time
+      # Use this validation to force validation of values and restrictions 
+      # as dummy time
       def validates_time(*attr_names)
         configuration = attr_names.extract_options!
         configuration[:type] = :time
         validates_timeliness_of(attr_names, configuration)
       end
       
-      # Use this validation to force validation of values as Date
+      # Use this validation to force validation of values and restrictions 
+      # as Date
       def validates_date(*attr_names)
         configuration = attr_names.extract_options!
         configuration[:type] = :date
         validates_timeliness_of(attr_names, configuration)
       end
       
-      # Use this validation to force validation of values as Time/DateTime
+      # Use this validation to force validation of values and restrictions
+      # as Time/DateTime
       def validates_datetime(*attr_names)
         configuration = attr_names.extract_options!
         configuration[:type] = :datetime
@@ -105,7 +112,8 @@ module ValidatesTimeliness
      private
       
       # Validate value against the restrictions. Restriction values maybe of 
-      # mixed type so convert them all to common type as defined by type param.
+      # mixed type so evaluate them and convert them all to common type as
+      # defined by type param.
       def validate_timeliness_restrictions(record, attr_name, value, configuration)
         restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
         
@@ -141,6 +149,7 @@ module ValidatesTimeliness
         end
       end
       
+      # Map error message keys to *_message to merge with validation options
       def timeliness_default_error_messages
         defaults = ActiveRecord::Errors.default_error_messages.slice(:blank, :invalid_datetime, :before, :on_or_before, :after, :on_or_after)
         returning({}) do |messages|
