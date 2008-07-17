@@ -1,5 +1,6 @@
 require 'validates_timeliness/attribute_methods'
 require 'validates_timeliness/validations'
+require 'validates_timeliness/formats'
 require 'validates_timeliness/multiparameter_attributes'
 require 'validates_timeliness/instance_tag'
 require 'validates_timeliness/validate_timeliness_matcher' if ENV['RAILS_ENV'] == 'test'

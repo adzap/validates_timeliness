@@ -12,6 +12,12 @@ require 'lib/validates_timeliness'
 
 n = 10000
 Benchmark.bm do |x|
+  x.report('timeliness') { 
+    n.times do
+      ActiveRecord::Base.timeliness_date_time_parse("2000-01-04 12:12:12", :datetime)
+    end 
+  }
+  
   x.report('time') { 
     n.times do
       "2000-01-04 12:12:12" =~ /\A(\d{4})-(\d{2})-(\d{2}) (\d{2})[\. :](\d{2})([\. :](\d{2}))?\Z/
@@ -26,14 +32,8 @@ Benchmark.bm do |x|
       Time.mktime(*arr)
     end 
   }
-
-  x.report('timeliness') { 
-    n.times do
-      ActiveRecord::Base.timeliness_date_time_parse("2000-01-04 12:12:12", :datetime)
-    end 
-  }
   
-  x.report('datetime') { 
+  x.report('strptime') { 
     n.times do
       DateTime.strptime("2000-01-04 12:12:12", '%Y-%m-%d %H:%M:%s')
     end 
