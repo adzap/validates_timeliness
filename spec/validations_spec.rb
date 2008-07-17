@@ -1,3 +1,5 @@
+# TODO spec removing and adding formats
+# TODO spec all formats
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe ValidatesTimeliness::Validations do
@@ -146,11 +148,11 @@ describe ValidatesTimeliness::Validations do
   end
   
   describe "for date type" do
-    it "should validate with invalid time part" do
-      person = BasicValidation.new
-      person.birth_date = "1980-01-01 25:61:61"
-      person.should be_valid
-    end
+#    it "should validate with invalid time part" do
+#      person = BasicValidation.new
+#      person.birth_date = "1980-01-01 25:61:61"
+#      person.should be_valid
+#    end
     
     describe "with before and after restrictions" do
       before :all do
@@ -216,11 +218,11 @@ describe ValidatesTimeliness::Validations do
   end
   
   describe "for time type" do
-    it "should validate with invalid date part" do
-      person = BasicValidation.new
-      person.birth_time = "1980-02-30 23:59:59"
-      person.should be_valid
-    end
+#    it "should validate with invalid date part" do
+#      person = BasicValidation.new
+#      person.birth_time = "1980-02-30 23:59:59"
+#      person.should be_valid
+#    end
   
     describe "with before and after restrictions" do
       before :all do
@@ -242,7 +244,7 @@ describe ValidatesTimeliness::Validations do
       end
 
       it "should have error when on boundary of :after restriction" do
-        @person.birth_time = "6:00"
+        @person.birth_time = "06:00"
         @person.should_not be_valid
         @person.errors.on(:birth_time).should match(/must be after/)
       end
@@ -254,7 +256,7 @@ describe ValidatesTimeliness::Validations do
       end
 
       it "should have error when before :after restriction" do
-        @person.birth_time = "5:59"
+        @person.birth_time = "05:59"
         @person.should_not be_valid
         @person.errors.on(:birth_time).should match(/must be after/)
       end
@@ -265,7 +267,7 @@ describe ValidatesTimeliness::Validations do
       end
 
       it "should have error when before :after restriction" do
-        @person.birth_time = "6:01"
+        @person.birth_time = "06:01"
         @person.should be_valid
       end
     end
@@ -290,7 +292,7 @@ describe ValidatesTimeliness::Validations do
       end
 
       it "should have error when before :on_or_after restriction" do
-        @person.birth_time = "5:59"
+        @person.birth_time = "05:59"
         @person.should_not be_valid
         @person.errors.on(:birth_time).should match(/must be on or after/)
       end
@@ -301,7 +303,7 @@ describe ValidatesTimeliness::Validations do
       end
 
       it "should be valid when on boundary of :on_or_after restriction" do
-        @person.birth_time = "6:00"
+        @person.birth_time = "06:00"
         @person.should be_valid        
       end      
     end 
@@ -312,7 +314,7 @@ describe ValidatesTimeliness::Validations do
     before :all do
       class MixedBeforeAndAfter < Person
         validates_timeliness_of :birth_date_and_time, :before => Date.new(2008,1,2), :after => lambda { Time.mktime(2008, 1, 1) }
-        validates_timeliness_of :birth_date, :on_or_before => Time.mktime(2008, 1, 2), :on_or_after => :birth_date_and_time
+        validates_timeliness_of :birth_date, :type => :date, :on_or_before => Time.mktime(2008, 1, 2), :on_or_after => :birth_date_and_time
       end
     end
     
@@ -321,13 +323,13 @@ describe ValidatesTimeliness::Validations do
     end
     
     it "should correctly validate time attribute with Date restriction" do
-      @person.birth_date_and_time = "2008-01-03"
+      @person.birth_date_and_time = "2008-01-03 00:00:00"
       @person.should_not be_valid
       @person.errors.on(:birth_date_and_time).should match(/must be before/)
     end
     
     it "should correctly validate with proc restriction" do
-      @person.birth_date_and_time = "2008-01-01"
+      @person.birth_date_and_time = "2008-01-01 00:00:00"
       @person.should_not be_valid
       @person.errors.on(:birth_date_and_time).should match(/must be after/)
     end
