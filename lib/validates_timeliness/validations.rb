@@ -16,21 +16,23 @@ module ValidatesTimeliness
         :on_or_after      => "must be on or after %s"
       }      
       ActiveRecord::Errors.default_error_messages.update(error_messages)
+      ValidatesTimeliness::Formats.compile_format_expressions
     end
     
     module ClassMethods
       # loop through format regexps and call proc on matches if available. Allow
       # pre or post match strings if bounded is false. Lastly fills out 
       # time_array to full 6 part datetime array.
-      def extract_date_time_values(time_string, formats, bounded=true)
+      def extract_date_time_values(time_string, type, bounded=true)
+        expressions = ValidatesTimeliness::Formats.send("valid_#{type}_expressions")
         time_array = nil
-        formats.each do |name, (regexp, processor)|
+        expressions.each do |(regexp, processor)|
           matches = regexp.match(time_string.strip)
           if !matches.nil? && (!bounded || (matches.pre_match == "" && matches.post_match == ""))
-            time_array = matches[1..6] if processor.nil?
-            time_array = processor.call(*matches[1..6]) unless processor.nil?
+            time_array = matches[1..7] if processor.nil?
+            time_array = processor.call(*matches[1..7]) unless processor.nil?
             time_array = time_array.map {|i| i.to_i }
-            time_array += [nil] * (6 - time_array.length)
+            time_array += [nil] * (7 - time_array.length)
             break
           end
         end
@@ -46,11 +48,10 @@ module ValidatesTimeliness
       def timeliness_date_time_parse(raw_value, type, strict=true)
         return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
-        time_array = extract_date_time_values(raw_value, ValidatesTimeliness::Formats.send("valid_#{type}_formats".to_sym), strict)
+        time_array = extract_date_time_values(raw_value, type, strict)
         raise if time_array.nil?
         
         if type == :time
-          time_array[3..5] = time_array[0..2]
           # Rails dummy time date part is defined as 2000-01-01
           time_array[0..2] = 2000, 1, 1
         elsif type == :date
