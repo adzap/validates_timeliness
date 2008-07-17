@@ -244,7 +244,7 @@ describe ValidatesTimeliness::Validations do
       end
 
       it "should have error when on boundary of :after restriction" do
-        @person.birth_time = "06:00"
+        @person.birth_time = "06:00am"
         @person.should_not be_valid
         @person.errors.on(:birth_time).should match(/must be after/)
       end

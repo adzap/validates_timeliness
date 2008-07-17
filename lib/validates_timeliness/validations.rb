@@ -19,21 +19,6 @@ module ValidatesTimeliness
     end
     
     module ClassMethods
-      
-      def full_hour(hour, meridian)
-        hour = hour.to_i
-        if meridian.delete('.').downcase == 'am'
-          hour == 12 ? 0 : hour
-        else
-          hour == 12 ? hour : hour + 12
-        end
-      end
-      
-      def unambiguous_year(year, threshold=30)
-        year = "#{year.to_i < threshold ? '20' : '19'}#{year}" if year.length == 2
-        year.to_i
-      end
-      
       # loop through format regexps and call proc on matches if available. Allow
       # pre or post match strings if bounded is false. Lastly fills out 
       # time_array to full 6 part datetime array.
@@ -43,7 +28,7 @@ module ValidatesTimeliness
           matches = regexp.match(time_string.strip)
           if !matches.nil? && (!bounded || (matches.pre_match == "" && matches.post_match == ""))
             time_array = matches[1..6] if processor.nil?
-            time_array = processor.call(matches[1..6]) unless processor.nil?
+            time_array = processor.call(*matches[1..6]) unless processor.nil?
             time_array = time_array.map {|i| i.to_i }
             time_array += [nil] * (6 - time_array.length)
             break

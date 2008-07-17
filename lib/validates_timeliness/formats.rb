@@ -52,5 +52,19 @@ module ValidatesTimeliness
       :iso8601 => /#{valid_date_formats[:yyyymmdd_dashes]}T#{valid_time_formats[:hhnnss_colons]}(?:Z|[-+](\d{2}):(\d{2}))?/
     }
     
+    def self.full_hour(hour, meridian)
+      hour = hour.to_i
+      if meridian.delete('.').downcase == 'am'
+        hour == 12 ? 0 : hour
+      else
+        hour == 12 ? hour : hour + 12
+      end
+    end
+    
+    def self.unambiguous_year(year, threshold=30)
+      year = "#{year.to_i < threshold ? '20' : '19'}#{year}" if year.length == 2
+      year.to_i
+    end
+    
   end
 end
