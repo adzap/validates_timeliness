@@ -1,5 +1,3 @@
-# TODO spec removing and adding formats
-# TODO spec all formats
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe ValidatesTimeliness::Validations do

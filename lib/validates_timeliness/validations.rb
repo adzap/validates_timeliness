@@ -22,17 +22,14 @@ module ValidatesTimeliness
     module ClassMethods
       # loop through format regexps and call proc on matches if available. Allow
       # pre or post match strings if bounded is false. Lastly fills out 
-      # time_array to full 6 part datetime array.
+      # time_array to full 7 part datetime array.
       def extract_date_time_values(time_string, type, bounded=true)
-        expressions = ValidatesTimeliness::Formats.send("valid_#{type}_expressions")
+        expressions = ValidatesTimeliness::Formats.send("#{type}_expressions")
         time_array = nil
         expressions.each do |(regexp, processor)|
           matches = regexp.match(time_string.strip)
           if !matches.nil? && (!bounded || (matches.pre_match == "" && matches.post_match == ""))
-            time_array = matches[1..7] if processor.nil?
-            time_array = processor.call(*matches[1..7]) unless processor.nil?
-            time_array = time_array.map {|i| i.to_i }
-            time_array += [nil] * (7 - time_array.length)
+            time_array = processor.call(*matches[1..7])
             break
           end
         end
