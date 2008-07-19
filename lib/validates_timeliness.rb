@@ -17,3 +17,5 @@ ActionView::Helpers::InstanceTag.send(:include, ValidatesTimeliness::InstanceTag
 Time.send(:include, ValidatesTimeliness::CoreExtensions::Time)
 Date.send(:include, ValidatesTimeliness::CoreExtensions::Date)
 DateTime.send(:include, ValidatesTimeliness::CoreExtensions::DateTime)
+
+ValidatesTimeliness::Formats.compile_format_expressions

@@ -3,72 +3,231 @@
   * Source:  http://github.com/adzap/validates_timeliness
   * Tickets: http://adzap.lighthouseapp.com/projects/14111-validates_timeliness
 
-
-== DESCRIPTION
+== DESCRIPTION:
 
 Validate dates, times and datetimes for Rails 2.x. Plays nicely with new 
 features such as automatic timezone handling and dirty attributes. Allows 
 date/time atttributes to behave like other attribute types by allowing you to
 review the raw entered value before it is converted.
 
+Allows you add custom formats or remove defaults easily. You can also just 
+another date parser altogther in conjuction with the plugin.
 
-== FEATURES/PROBLEMS
+
+== FEATURES:
 
 * Adds ActiveRecord validation for dates, times and datetimes
 
-* Adds better transparency of date/time attributes restoring ability to view 
-  raw value before type casting, which was lost in Rails 2.1 to get the better 
-  timezone features.
+* Add or remove date/time formats to customize validation
 
+* Create new formats using very simple date/time format patterns
+
+* Adds better transparency of date/time attributes restoring ability to view 
+  raw value before type casting, which was lost in Rails 2.1.
+  
 * Allows pluggable date and time parsing with other parsers of your choosing (eg Chronic)
 
-* Respects timezone features of both Rails 2.0 and 2.1.
+* Respects new timezone features of Rails 2.1.
 
-== INSTALLATION
+
+== INSTALLATION:
 
 Rails 2.1
   ./script/plugin git://github.com/adzap/validates_timeliness
 
 Rails 2.0
-  
+  # TODO: best practice for git with Rails 2.0? 
 
-== USAGE
+  
+== USAGE:
 
 To validate a model with a date, time or datetime attribute you just use the 
 validation method
 
   class Person < ActiveRecord::Base
-    validates_timeliness_of :date_of_birth
+    validates_date :date_of_birth
 
   end
   
-But for a more semantic validation method you can use the specific validation 
-for the attribute type. The type based validation methods are 
+The list of validation methods available are as follows:
 
-  * validates_date
+  * validates_date     - validate value as date
   
-  * validates_time
+  * validates_time     - validate value as time only i.e. '12:20pm'
   
-  * validates_datetime
+  * validates_datetime - validate value as a full date and time
   
-If the value for a date attribute contains a time, it will be ignored when
-validating. The same is true to time attributes which ignore the date.
+The validation method take the usual options plus some specific ones to restrict
+the valid range of dates or times allowed
 
-The default valid formats for a date or datetime field are those supported by 
-the Ruby ParseDate library 
-(http://www.ruby-doc.org/docs/ProgrammingRuby/html/lib_standard.html#ParseDate.parsedate).
+  Temporal options:
+  
+    :before       - Attribute must be before this value to be valid
+    :on_or_before - Attribute must be equal to or before this value to be valid
+    :after        - Attribute must be after this value to be valid
+    :on_or_after  - Attribute must be equal to or after this value to be valid
+  
+  Regular validation options
+    :allow_nil    - Allow a nil value to be valid
+    :allow_blank  - Allows a nil or empty string value to be valid
 
-The validation method has the usual options plus some specific ones to restrict
-the valid range
+The temporal options can 4 different value types:
 
-  Options:
-    - allow_nil
-    - allow_blank    
-    - before
-    - on_or_before
-    - after
-    - on_or_after
-    - type
+  * String date or time value
+  * Date, Time, or DateTime object value
+  * Proc or lambda object
+  * A symbol matching the method name in the model  
+
+If a Time object value is compared to a date attribute using a temporal option,
+both values are compared as dates. The rule is that the values are compared as
+the same type as the validation method type. So validates_date means all values 
+are compared as dates.
+
+== EXAMPLES:
+
+  validates_date :date_of_birth, :after => '1900-01-01'
+  
+  validates_date :date_of_birth, :on_or_after => '1900-01-01'
+  
+  validates_date :date_of_birth, :before => Proc.new { Time.now } # only part is used
+  
+  validates_time :breakfast_time, :before => '12:00pm'
+  
+  validates_time :breakfast_time, :on_or_after => '6:00am'
+  
+  validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
+  
+  validates_datetime :appointment_date, :after => :last_appointment_date
 
 
-MUCH MORE DOCS TO COME
+== DATE/TIME FORMATS:
+
+So what formats does the plugin allow. Well there are default formats which can 
+be added to easily using the plugins format rules. Also formats can be easily 
+removed without hacking the plugin at all. 
+
+Below are the default formats. If you think they are easy to read then you will 
+be happy to know that is exactly the format you can use to define your own if 
+you want. No regular expressions or hacking plugin methods.
+
+  Time formats:  
+    hh:nn:ss  => 01:23:59
+    hh-nn-ss  => 01:23:59
+    h:nn      => 1:23 or 01:23
+    h.nn      => 1.23 or 01.23
+    h nn      => 1 23 or 01 23
+    h-nn      => 1-23 or 01-23
+    h:nn_ampm => 1:23am or 1:23 am or 01:23am
+    h.nn_ampm 
+    h nn_ampm
+    h-nn_ampm
+    h_ampm
+  
+  NOTE: Any time format without a ampm token or meridian is considered in 24 hour time.
+  
+  Date formats:
+    yyyy/mm/dd
+    yyyy-mm-dd
+    yyyy.mm.dd
+    m/d/yy
+    d/m/yy
+    m\d\yy
+    d\m\yy
+    d-m-yy
+    d.m.yy
+    d mmm yy
+  
+  Datetime formats:
+    m/d/yy h:nn:ss
+    m/d/yy h:nn
+    m/d/yy h:nn_ampm
+    d/m/yy hh:nn:ss
+    d/m/yy h:nn
+    d/m/yy h:nn_ampm
+    yyyy-mm-dd hh:nn:ss
+    yyyy-mm-dd h:nn
+    ddd mmm d hh:nn:ss zo yyyy # Ruby time string
+    yyyy-mm-ddThh:nn:ss(?:Z|zo) # ISO 8601
+
+Here is what each format token means:
+
+  Format tokens:   
+       y = year
+       m = month
+       d = day
+       h = hour
+       n = minute
+       s = second
+       u = micro-seconds
+    ampm = meridian (am or pm) with or without dots (e.g. am, a.m, or a.m.)
+       _ = optional space
+      tz = Timezone abbreviation (e.g. UTC, GMT, PST, EST)
+      zo = Timezone offset (e.g. +10:00, -08:00, +1000)
+
+All other characters are considered literal. You can embed regular expressions
+in the format but no gurantees that it will remain intact. If you avoid the use
+of any token characters and regexp dots or backslashes as special characters 
+in the regexp, it may well work as expected. For special characters use 
+POSIX character clsses for safety. See the ISO 8601 datetime for en example of 
+of an embedded regular expression.
+
+  Repeating tokens:        
+       x = 1 or 2 digits for unit (e.g. 'h' means an hour can be '9' or '09')
+      xx = 2 digits exactly for unit (e.g. 'hh' means an hour can only be '09')
+      
+  Special Cases:
+      yy = 2 or 4 digit year
+   yyyyy = exactly 4 digit year
+     mmm = month long name (e.g. 'Jul' or 'July')
+     ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
+       u = microseconds matches 1 to 3 digits
+
+For the technically minded (well you are developers), these formats are compiled
+into regular expressions at runtime so don't add any extra overhead than using
+regular expressions directly. So, no, it won't make your app slow!
+
+
+== CUSTOMISING FORMATS:
+
+I hear you say "Thats greats but I don't want X format to be valid". Well to 
+remove a format stick this in an initializer file or environment.rb
+
+  ValidatesTimeliness::Formats.remove_formats(:date, 'm\d\yy')
+
+Done! That format is no longer considered valid. Easy!
+
+Ok, now I hear you say "Well I have format that I want to use but you don't have it".
+Ahh, then add it yourself. Again stick this in an initializer file or environment.rb.
+
+    ValidatesTimeliness::Formats.add_formats(:time, "d o'clock")
+
+Now '10 o'clock' will be a valid format. So easy, no more whingeing!
+
+
+== EXTERNAL PARSER:
+
+I mentioned earlier that you could use a pluggable or alternative parser such
+as Chronic instead the in built one. So you need some super fancy stuff that the
+custom formats can't handle then be my guest and override it. This is an example 
+of using Chronis instead. Put this into a file in the lib directory.
+
+  class ActiveRecord::Base
+  
+    def self.timeliness_date_time_parse(raw_value, type)
+            
+    end
+
+  end
+  
+== CREDITS:
+
+* Adam Meehan (http://duckpunching.com/)
+
+* Jonathan Viney (http://workingwithrails.com/person/4985-jonathan-viney)
+  For his validates_date_time plugin which I have used up till now and which
+  influenced some of the design and I borrowed a small amount of code from it.
+
+
+== LICENSE:
+
+Copyright (c) 2008 Adam Meehan, released under the MIT license

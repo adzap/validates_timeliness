@@ -4,7 +4,7 @@ module ValidatesTimeliness
   # or times.
   module Validations    
         
-    # Error messages added to AR defaults to allow global override if you need.  
+    # Error messages added to AR defaults to allow global override.  
     def self.included(base)
       base.extend ClassMethods
       
@@ -16,25 +16,9 @@ module ValidatesTimeliness
         :on_or_after      => "must be on or after %s"
       }      
       ActiveRecord::Errors.default_error_messages.update(error_messages)
-      ValidatesTimeliness::Formats.compile_format_expressions
     end
     
     module ClassMethods
-      # loop through format regexps and call proc on matches if available. Allow
-      # pre or post match strings if bounded is false. Lastly fills out 
-      # time_array to full 7 part datetime array.
-      def extract_date_time_values(time_string, type, bounded=true)
-        expressions = ValidatesTimeliness::Formats.send("#{type}_expressions")
-        time_array = nil
-        expressions.each do |(regexp, processor)|
-          matches = regexp.match(time_string.strip)
-          if !matches.nil? && (!bounded || (matches.pre_match == "" && matches.post_match == ""))
-            time_array = processor.call(*matches[1..7])
-            break
-          end
-        end
-        return time_array
-      end
 
       # Override this method to use any date parsing algorithm you like such as 
       # Chronic. Just return nil for an invalid value and a Time object for a 
@@ -45,7 +29,7 @@ module ValidatesTimeliness
       def timeliness_date_time_parse(raw_value, type, strict=true)
         return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
-        time_array = extract_date_time_values(raw_value, type, strict)
+        time_array = ValidatesTimeliness::Formats.extract_date_time_values(raw_value, type, strict)
         raise if time_array.nil?
         
         if type == :time

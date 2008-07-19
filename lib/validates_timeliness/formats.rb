@@ -10,17 +10,17 @@ module ValidatesTimeliness
   # Formats can be added or removed to customize the set of valid date or time
   # string values.
   #
-  module Formats
-    mattr_accessor :time_formats
-    mattr_accessor :date_formats
-    mattr_accessor :datetime_formats
+  class Formats
+    cattr_accessor :time_formats
+    cattr_accessor :date_formats
+    cattr_accessor :datetime_formats
     
-    mattr_accessor :time_expressions
-    mattr_accessor :date_expressions
-    mattr_accessor :datetime_expressions
+    cattr_accessor :time_expressions
+    cattr_accessor :date_expressions
+    cattr_accessor :datetime_expressions
     
-    mattr_accessor :format_tokens
-    mattr_accessor :format_proc_args
+    cattr_accessor :format_tokens
+    cattr_accessor :format_proc_args
     
     # Format tokens:   
     #       y = year
@@ -33,7 +33,7 @@ module ValidatesTimeliness
     #    ampm = meridian (am or pm) with or without dots (e.g. am, a.m, or a.m.)
     #       _ = optional space
     #      tz = Timezone abbreviation (e.g. UTC, GMT, PST, EST)
-    #      zo = Timezone offset (e.g. +10:00, -08:00)
+    #      zo = Timezone offset (e.g. +10:00, -08:00, +1000)
     #
     #   All other characters are considered literal. You can embed regexp in the
     #   format but no gurantees that it will remain intact. If you avoid the use
@@ -148,98 +148,118 @@ module ValidatesTimeliness
       :meridian => [nil, 'md', nil]
     }
     
-    # Compile formats into validation regexps and format procs    
-    def self.format_expression_generator(string_format)
-      regexp = string_format.dup      
-      order  = {}
-      regexp.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes ]/
-      
-      format_tokens.each do |token|
-        token_name = token.keys.first
-        token_regexp, regexp_str, arg_key = *token.values.first
+    class << self 
+    
+      # Compile formats into validation regexps and format procs    
+      def format_expression_generator(string_format)
+        regexp = string_format.dup      
+        order  = {}
+        regexp.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes ]/
         
-        # hack for lack of look-behinds. If has a capture group then is 
-        # considered an anchor to put straight back in the regexp string.
-        regexp.gsub!(token_regexp) {|m| "#{$1}" + regexp_str }
-        order[arg_key] = $~.begin(0) if $~ && !arg_key.nil?
-      end
+        format_tokens.each do |token|
+          token_name = token.keys.first
+          token_regexp, regexp_str, arg_key = *token.values.first
+          
+          # hack for lack of look-behinds. If has a capture group then is 
+          # considered an anchor to put straight back in the regexp string.
+          regexp.gsub!(token_regexp) {|m| "#{$1}" + regexp_str }
+          order[arg_key] = $~.begin(0) if $~ && !arg_key.nil?
+        end
 
-      return Regexp.new(regexp), format_proc(order)
-    rescue
-      puts "The following format regular expression failed to compile: #{regexp}\n from format #{string_format}."
-      raise
-    end
-    
-    # Generates a proc which when executed maps the regexp capture groups to a 
-    # proc argument based on order captured. A time array is built using the proc
-    # argument in the position indicated by the first element of the proc arg
-    # array.
-    #
-    # Examples:
-    #
-    #   'yyyy-mm-dd hh:nn'     => lambda {|y,m,d,h,n| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i unless t.nil? } }
-    #   'dd/mm/yyyy h:nn_ampm' => lambda {|d,m,y,h,n,md| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i unless t.nil? } }
-    #
-    def self.format_proc(order)
-      arg_map = format_proc_args
-      args = order.invert.sort.map {|p| arg_map[p[1]][1] }
-      arr = [nil] * 7
-      order.keys.each {|k| i = arg_map[k][0]; arr[i] = arg_map[k][2] unless i.nil? }
-      proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|t| t.to_i unless t.nil? } }"
-      eval proc_string
-    end
-    
-    def self.compile_formats(formats)
-      formats.collect { |format|
-        regexp, format_proc = format_expression_generator(format)
-      }
-    end
-    
-    def self.compile_format_expressions
-      @@time_expressions     = compile_formats(@@time_formats)
-      @@date_expressions     = compile_formats(@@date_formats)
-      @@datetime_expressions = compile_formats(@@datetime_formats)
-    end
-    
-    def self.remove_formats(type, *remove_formats)
-      remove_formats.each do |format|
-        unless self.send("#{type}_formats").delete(format)
-          raise "Format #{format} not found in #{type} formats"
-        end
+        return Regexp.new(regexp), format_proc(order)
+      rescue
+        puts "The following format regular expression failed to compile: #{regexp}\n from format #{string_format}."
+        raise
       end
-      compile_format_expressions
-    end
-    
-    def self.add_formats(type, *add_formats)
-      formats = self.send("#{type}_formats")
       
-      add_formats.each do |format|
-        if formats.include?(format)
-          raise "Format #{format} is already included in #{type} formats"
+      # Generates a proc which when executed maps the regexp capture groups to a 
+      # proc argument based on order captured. A time array is built using the proc
+      # argument in the position indicated by the first element of the proc arg
+      # array.
+      #
+      # Examples:
+      #
+      #   'yyyy-mm-dd hh:nn'     => lambda {|y,m,d,h,n| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i unless t.nil? } }
+      #   'dd/mm/yyyy h:nn_ampm' => lambda {|d,m,y,h,n,md| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i unless t.nil? } }
+      #
+      def format_proc(order)
+        arg_map = format_proc_args
+        args = order.invert.sort.map {|p| arg_map[p[1]][1] }
+        arr = [nil] * 7
+        order.keys.each {|k| i = arg_map[k][0]; arr[i] = arg_map[k][2] unless i.nil? }
+        proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|t| t.to_i unless t.nil? } }"
+        eval proc_string
+      end
+      
+      def compile_formats(formats)
+        formats.collect { |format|
+          regexp, format_proc = format_expression_generator(format)
+        }
+      end
+      
+      def compile_format_expressions
+        @@time_expressions     = compile_formats(@@time_formats)
+        @@date_expressions     = compile_formats(@@date_formats)
+        @@datetime_expressions = compile_formats(@@datetime_formats)
+      end
+      
+      # Loop through format expressions for type and call proc on matches. Allow
+      # pre or post match strings to exist if strict is false. 
+      # Returns 7 part datetime array.
+      def extract_date_time_values(time_string, type, strict=true)
+        expressions = self.send("#{type}_expressions")
+        time_array = nil        
+        expressions.each do |(regexp, processor)|
+          regexp = strict || type == :datetime ? /\A#{regexp}\Z/ : (type == :date ? /\A#{regexp}\s?/ : /\s?#{regexp}\Z/)
+          if matches = regexp.match(time_string.strip)
+            time_array = processor.call(*matches[1..7])
+            break
+          end
         end
-        formats << format
+        return time_array
       end
-      compile_format_expressions
-    end
-    
-    def self.full_hour(hour, meridian)
-      hour = hour.to_i
-      return hour if meridian.nil?
-      if meridian.delete('.').downcase == 'am'
-        hour == 12 ? 0 : hour
-      else
-        hour == 12 ? hour : hour + 12
+      
+      def remove_formats(type, *remove_formats)
+        remove_formats.each do |format|
+          unless self.send("#{type}_formats").delete(format)
+            raise "Format #{format} not found in #{type} formats"
+          end
+        end
+        compile_format_expressions
       end
-    end
+      
+      def add_formats(type, *add_formats)
+        formats = self.send("#{type}_formats")
+        
+        add_formats.each do |format|
+          if formats.include?(format)
+            raise "Format #{format} is already included in #{type} formats"
+          end
+          formats << format
+        end
+        compile_format_expressions
+      end
+      
+      def full_hour(hour, meridian)
+        hour = hour.to_i
+        return hour if meridian.nil?
+        if meridian.delete('.').downcase == 'am'
+          hour == 12 ? 0 : hour
+        else
+          hour == 12 ? hour : hour + 12
+        end
+      end
+      
+      def unambiguous_year(year, threshold=30)
+        year = "#{year.to_i < threshold ? '20' : '19'}#{year}" if year.length == 2
+        year.to_i
+      end
+      
+      def month_index(month)
+        return month.to_i if month.to_i.nonzero?
+        Date::ABBR_MONTHNAMES.index(month.capitalize) || Date::MONTHNAMES.index(month.capitalize)
+      end
     
-    def self.unambiguous_year(year, threshold=30)
-      year = "#{year.to_i < threshold ? '20' : '19'}#{year}" if year.length == 2
-      year.to_i
-    end
-    
-    def self.month_index(month)
-      return month.to_i if month.to_i.nonzero?
-      Date::ABBR_MONTHNAMES.index(month.capitalize) || Date::MONTHNAMES.index(month.capitalize)
     end
   end
 end

@@ -136,6 +136,34 @@ describe ValidatesTimeliness::Formats do
     end
   end
   
+  describe "extracting values" do
+    
+    it "should return time array from date string" do
+      time_array = formats.extract_date_time_values('12:13:14', :time, true)
+      time_array.should == [nil,nil,nil,12,13,14,nil]
+    end
+    
+    it "should return date array from time string" do
+      time_array = formats.extract_date_time_values('2000-02-01', :date, true)
+      time_array.should == [2000,2,1,nil,nil,nil,nil]
+    end
+    
+    it "should return datetime array from string value" do
+      time_array = formats.extract_date_time_values('2000-02-01 12:13:14', :datetime, true)
+      time_array.should == [2000,2,1,12,13,14,nil]
+    end
+    
+    it "should ignore time when extracting date and strict is false" do
+      time_array = formats.extract_date_time_values('2000-02-01 12:12', :date, false)
+      time_array.should == [2000,2,1,nil,nil,nil,nil]
+    end
+    
+    it "should ignore date when extracting time and strict is false" do
+      time_array = formats.extract_date_time_values('2000-02-01 12:12', :time, false)
+      time_array.should == [nil,nil,nil,12,12,nil,nil]
+    end
+  end
+  
   describe "removing formats" do
     before do
       formats.compile_format_expressions
