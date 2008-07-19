@@ -24,8 +24,9 @@ module ValidatesTimeliness
       # Chronic. Just return nil for an invalid value and a Time object for a 
       # valid parsed value. 
       # 
-      # Remember Rails, since version 2, will automatically handle the fallback
-      # to a DateTime when you create a time which is out of range.      
+      # Remember to attempt fallback to back to a DateTime if the Time object is
+      # out of range. Range for Ruby Time class on 32-bit *nix is down to about
+      # 1902-01-01 and 1970-01-01 for Windows.
       def timeliness_date_time_parse(raw_value, type, strict=true)
         return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
@@ -44,11 +45,11 @@ module ValidatesTimeliness
         Date.new(*time_array[0..2]) unless type == :time
         
         # Check time part, and return time object
-        Time.local(*time_array)
+        Time.local(*time_array) rescue DateTime.new(*time_array[0..5])
       rescue
         nil
       end
-      
+      alias_method :parse_date_time, :timeliness_date_time_parse
       
       # The main validation method which can be used directly or called through
       # the other specific type validation methods.      

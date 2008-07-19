@@ -231,15 +231,15 @@ an example of using Chronis instead. Put this into a file in the lib directory.
 
   class ActiveRecord::Base
   
-    def self.timeliness_date_time_parse(raw_value, type)
-            
+    def self.parse_date_time(raw_value, type)
+      
     end
 
   end
   
 == CREDITS:
 
-* Adam Meehan (http://duckpunching.com/)
+* Adam Meehan (adam.meehan@gmail.com, http://duckpunching.com/)
 
 * Jonathan Viney (http://workingwithrails.com/person/4985-jonathan-viney)
   For his validates_date_time plugin which I have used before this plugin and

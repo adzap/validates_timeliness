@@ -53,12 +53,10 @@ describe ValidatesTimeliness::Validations do
       @person.should be_valid
     end
     
-    # What is going on? No fall back.
     it "should be valid with values before out of Time range" do
       @person.birth_date_and_time = "1890-01-31 12:12:12"
       @person.birth_date = "1890-01-31"
       @person.birth_time = "23:59:59"
-      puts @person.errors.inspect
       @person.should be_valid
     end
     

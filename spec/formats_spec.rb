@@ -186,6 +186,7 @@ describe ValidatesTimeliness::Formats do
     
     after do
       formats.time_formats << 'h.nn_ampm'
+      # reload class instead
     end
   end
  
@@ -223,6 +224,7 @@ describe ValidatesTimeliness::Formats do
     after do
       formats.time_formats.delete("h o'clock")
       formats.time_formats.delete("ss:hh:nn")
+      # reload class instead
     end
   end
   
@@ -231,13 +233,12 @@ describe ValidatesTimeliness::Formats do
       time_array = formats.extract_date_time_values('01/02/2000', :date)
       time_array.should == [2000, 1, 2,nil,nil,nil,nil]
       formats.remove_us_formats
-      puts formats.datetime_formats.inspect
       time_array = formats.extract_date_time_values('01/02/2000', :date)
       time_array.should == [2000, 2, 1,nil,nil,nil,nil]
     end
     
     after do
-      
+      # reload class      
     end
   end
  
