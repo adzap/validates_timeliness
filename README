@@ -60,17 +60,22 @@ The list of validation methods available are as follows:
 The validation methods take the usual options plus some specific ones to restrict
 the valid range of dates or times allowed
 
-  Temporal options:
-  
+  Temporal options:  
     :before       - Attribute must be before this value to be valid
     :on_or_before - Attribute must be equal to or before this value to be valid
     :after        - Attribute must be after this value to be valid
     :on_or_after  - Attribute must be equal to or after this value to be valid
-  
-  Regular validation options:
-  
+
+  Regular validation options:  
     :allow_nil    - Allow a nil value to be valid
     :allow_blank  - Allows a nil or empty string value to be valid
+
+  Message options: - Use these to override the default error messages
+    :invalid_datetime_message
+    :before_message
+    :on_or_before_message
+    :after_message
+    :on_or_after_message
 
 The temporal options can take 4 different value types:
 
@@ -85,14 +90,16 @@ as dates.
 
 == EXAMPLES:
 
-  validates_date :date_of_birth, :on_or_after => '1900-01-01', 
-                                 :before => Date.new(1980, 1, 1)
+  validates_date :date_of_birth :before => Proc.new { 18.years.ago },
+                                :before_message => "must be at least 18 years old"
   
   validates_time :breakfast_time, :on_or_after => '6:00am',
-                                  :before => :second_breakfast_time
+                                  :before => :second_breakfast_time,
+                                  :on_or_after_message => 'must after opening time',
+                                  :allow_nil => true
 
   validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
-  
+ 
 
 === DATE/TIME FORMATS:
 
@@ -231,9 +238,15 @@ an example of using Chronis instead. Put this into a file in the lib directory.
 
   class ActiveRecord::Base
   
-    def self.parse_date_time(raw_value, type)
+    def self.parse_date_time_with_chronic(raw_value, type, strict=true)
+      # You can ignore type and strict with Chronic
+      Chronic.parse(raw_value)
       
+    # You could also fallback to normal plugin with
+    #rescue
+    #  parse_date_time_without_chronic
     end
+    alias_method_chain :parse_date_time, :chronic
 
   end
   
