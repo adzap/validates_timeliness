@@ -10,7 +10,7 @@ features such as automatic timezone handling and dirty attributes. Allows
 date/time atttributes to behave like other attribute types by allowing you to
 review the raw entered value before it is converted.
 
-Allows you add custom formats or remove defaults easily. You can also just 
+Allows you add custom formats or remove defaults easily. You can also just use
 another date parser altogther in conjuction with the plugin.
 
 
@@ -57,7 +57,7 @@ The list of validation methods available are as follows:
   
   * validates_datetime - validate value as a full date and time
   
-The validation method take the usual options plus some specific ones to restrict
+The validation methods take the usual options plus some specific ones to restrict
 the valid range of dates or times allowed
 
   Temporal options:
@@ -67,38 +67,32 @@ the valid range of dates or times allowed
     :after        - Attribute must be after this value to be valid
     :on_or_after  - Attribute must be equal to or after this value to be valid
   
-  Regular validation options
+  Regular validation options:
+  
     :allow_nil    - Allow a nil value to be valid
     :allow_blank  - Allows a nil or empty string value to be valid
 
-The temporal options can 4 different value types:
+The temporal options can take 4 different value types:
 
   * String date or time value
   * Date, Time, or DateTime object value
   * Proc or lambda object
   * A symbol matching the method name in the model  
 
-If a Time object value is compared to a date attribute using a temporal option,
-both values are compared as dates. The rule is that the values are compared as
-the same type as the validation method type. So validates_date means all values 
-are compared as dates.
+When values are compared for temporal options, they are compared as the same type
+as the validation method type. So validates_date means all values are compared 
+as dates.
 
 == EXAMPLES:
 
-  validates_date :date_of_birth, :after => '1900-01-01'
+  validates_date :date_of_birth, :on_or_after => '1900-01-01', 
+                                 :before => Date.new(1980, 1, 1)
   
-  validates_date :date_of_birth, :on_or_after => '1900-01-01'
-  
-  validates_date :date_of_birth, :before => Proc.new { Time.now } # only part is used
-  
-  validates_time :breakfast_time, :before => '12:00pm'
-  
-  validates_time :breakfast_time, :on_or_after => '6:00am'
-  
+  validates_time :breakfast_time, :on_or_after => '6:00am',
+                                  :before => :second_breakfast_time
+
   validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
   
-  validates_datetime :appointment_date, :after => :last_appointment_date
-
 
 == DATE/TIME FORMATS:
 
@@ -108,7 +102,7 @@ removed without hacking the plugin at all.
 
 Below are the default formats. If you think they are easy to read then you will 
 be happy to know that is exactly the format you can use to define your own if 
-you want. No regular expressions or hacking plugin methods.
+you want. No regular expressions or duck punching (monkey patching) the plugin.
 
   Time formats:  
     hh:nn:ss  => 01:23:59
@@ -125,25 +119,20 @@ you want. No regular expressions or hacking plugin methods.
   
   NOTE: Any time format without a ampm token or meridian is considered in 24 hour time.
   
-  Date formats:
+  Date formats:  
     yyyy/mm/dd
     yyyy-mm-dd
     yyyy.mm.dd
-    m/d/yy
-    d/m/yy
-    m\d\yy
-    d\m\yy
+    m/d/yy  OR  d/m/yy
+    m\d\yy  OR  d\m\yy
     d-m-yy
     d.m.yy
     d mmm yy
   
-  Datetime formats:
-    m/d/yy h:nn:ss
-    m/d/yy h:nn
-    m/d/yy h:nn_ampm
-    d/m/yy hh:nn:ss
-    d/m/yy h:nn
-    d/m/yy h:nn_ampm
+  Datetime formats:  
+    m/d/yy h:nn:ss   OR  d/m/yy hh:nn:ss
+    m/d/yy h:nn      OR  d/m/yy h:nn
+    m/d/yy h:nn_ampm OR  d/m/yy h:nn_ampm
     yyyy-mm-dd hh:nn:ss
     yyyy-mm-dd h:nn
     ddd mmm d hh:nn:ss zo yyyy # Ruby time string
@@ -201,15 +190,15 @@ Ahh, then add it yourself. Again stick this in an initializer file or environmen
 
     ValidatesTimeliness::Formats.add_formats(:time, "d o'clock")
 
-Now '10 o'clock' will be a valid format. So easy, no more whingeing!
+Now '10 o'clock' will be a valid value. So easy, no more whingeing!
 
 
 == EXTERNAL PARSER:
 
 I mentioned earlier that you could use a pluggable or alternative parser such
-as Chronic instead the in built one. So you need some super fancy stuff that the
-custom formats can't handle then be my guest and override it. This is an example 
-of using Chronis instead. Put this into a file in the lib directory.
+as Chronic instead of the in built one. So if you need some super fancy stuff that 
+the plugin custom formats can't handle, then be my guest and override it. This is
+an example of using Chronis instead. Put this into a file in the lib directory.
 
   class ActiveRecord::Base
   
@@ -224,8 +213,8 @@ of using Chronis instead. Put this into a file in the lib directory.
 * Adam Meehan (http://duckpunching.com/)
 
 * Jonathan Viney (http://workingwithrails.com/person/4985-jonathan-viney)
-  For his validates_date_time plugin which I have used up till now and which
-  influenced some of the design and I borrowed a small amount of code from it.
+  For his validates_date_time plugin which I have used before this plugin and
+  which influenced some of the design and I borrowed a little of code from it.
 
 
 == LICENSE:
