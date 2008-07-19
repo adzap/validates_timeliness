@@ -1,5 +1,15 @@
 # TODO add support switching US to euro date formats
 module ValidatesTimeliness
+  
+  # A date and time format regular expression generator. Allows you to 
+  # construct a date, time or datetime format using predefined tokens in 
+  # a string. This makes it much easier to catalogue and customize the formats
+  # rather than dealing directly with regular expressions. The formats are then
+  # compile into a regular expression for use invalidating date or time strings. 
+  #
+  # Formats can be added or removed to customize the set of valid date or time
+  # string values.
+  #
   module Formats
     mattr_accessor :time_formats
     mattr_accessor :date_formats
@@ -13,31 +23,34 @@ module ValidatesTimeliness
     mattr_accessor :format_proc_args
     
     # Format tokens:   
-    #      y = year
-    #      m = month
-    #      d = day
-    #      h = hour
-    #      n = minute
-    #      s = second
-    #      u = micro-seconds
-    #   ampm = meridian (am or pm) with or without dots (e.g. am, a.m, or a.m.)
-    #      _ = optional space
-    #     tz = Timezone abbreviation (e.g. UTC, GMT, PST, EST)
-    #     zo = Timezone offset (e.g. +10:00, -08:00)
+    #       y = year
+    #       m = month
+    #       d = day
+    #       h = hour
+    #       n = minute
+    #       s = second
+    #       u = micro-seconds
+    #    ampm = meridian (am or pm) with or without dots (e.g. am, a.m, or a.m.)
+    #       _ = optional space
+    #      tz = Timezone abbreviation (e.g. UTC, GMT, PST, EST)
+    #      zo = Timezone offset (e.g. +10:00, -08:00)
     #
     #   All other characters are considered literal. You can embed regexp in the
     #   format but no gurantees that it will remain intact. If you avoid the use
-    #   of any token characters in the regexp it may well work as expected.
+    #   of any token characters and regexp dots or backslashes as special characters 
+    #   in the regexp, it may well work as expected. For special characters use 
+    #   POSIX character clsses for safety.
     #
     # Repeating tokens:        
-    #   x     = 1 or 2 digits for unit (e.g. 'h' means an hour can be '9' or '09')
-    #   xx    = 2 digits exactly for unit (e.g. 'hh' means an hour can only be '09')
+    #       x = 1 or 2 digits for unit (e.g. 'h' means an hour can be '9' or '09')
+    #      xx = 2 digits exactly for unit (e.g. 'hh' means an hour can only be '09')
     #      
     # Special Cases:
+    #      yy = 2 or 4 digit year
     #   yyyyy = exactly 4 digit year
-    #   mmm   = month long name (e.g. 'Jul' or 'July')
-    #   ddd   = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
-    #   u     = microseconds matches 1 to 3 digits
+    #     mmm = month long name (e.g. 'Jul' or 'July')
+    #     ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
+    #       u = microseconds matches 1 to 3 digits
     #
     #   Any other invalid combination of repeating tokens will be swallowed up 
     #   by the next lowest length valid repeating token (e.g. yyy will be
@@ -46,7 +59,7 @@ module ValidatesTimeliness
     @@time_formats = [
       'hh:nn:ss',
       'hh-nn-ss',
-      'hh:nn',
+      'h:nn',
       'h.nn',
       'h nn',
       'h-nn',
@@ -61,23 +74,24 @@ module ValidatesTimeliness
       'yyyy/mm/dd',
       'yyyy-mm-dd',
       'yyyy.mm.dd',
-      'm/d/yyyy',
-      'd/m/yyyy',
-      'd-m-yyyy',
-      'd.m.yyyy',
       'm/d/yy',
       'd/m/yy',
+      'm\d\yy',
+      'd\m\yy',
       'd-m-yy',
       'd.m.yy',
-      'd mmm yyyy',
       'd mmm yy'
     ]
     
     @@datetime_formats = [
-      'dd/mm/yyyy hh:nn:ss',
-      'dd/mm/yyyy hh:nn',
+      'm/d/yy h:nn:ss',
+      'm/d/yy h:nn',
+      'm/d/yy h:nn_ampm',
+      'd/m/yy hh:nn:ss',
+      'd/m/yy h:nn',
+      'd/m/yy h:nn_ampm',
       'yyyy-mm-dd hh:nn:ss',
-      'yyyy-mm-dd hh:nn',
+      'yyyy-mm-dd h:nn',
       'ddd mmm d hh:nn:ss zo yyyy', # Ruby time string
       'yyyy-mm-ddThh:nn:ss(?:Z|zo)' # iso 8601
     ]
@@ -88,12 +102,19 @@ module ValidatesTimeliness
     # If the token needs no format proc arg then the validation regexp should
     # not have a capturing group, as all captured groups are passed to the 
     # format proc.
+    #
+    # The token regexp should only use a capture group if 'look-behind' anchor
+    # is required. The first capture group will be considered a literal and put
+    # into the validation regexp string as-is. This is a hack.
     @@format_tokens = [
+      { 'd'    => [ /(\A|[^d])d{1}(?=[^d])/, '(\d{1,2})', :day ] }, #/
+      { 'ddd'  => [ /d{3,}/, '(\w{3,9})' ] },
+      { 'dd'   => [ /d{2,}/, '(\d{2})',   :day ] },
       { 'mmm'  => [ /m{3,}/, '(\w{3,9})', :month ] },
       { 'mm'   => [ /m{2}/,  '(\d{2})',   :month ] },
-      { 'm'    => [ /(?:\A|[^ap])m{1}/, '(\d{1,2})', :month ] },
+      { 'm'    => [ /(\A|[^ap])m{1}/, '(\d{1,2})', :month ] },
       { 'yyyy' => [ /y{4,}/, '(\d{4})',   :year ] },
-      { 'yy'   => [ /y{2,}/, '(\d{2})',   :year ] },
+      { 'yy'   => [ /y{2,}/, '(\d{2}|\d{4})', :year ] },
       { 'hh'   => [ /h{2,}/, '(\d{2})',   :hour ] },
       { 'h'    => [ /h{1}/,  '(\d{1,2})', :hour ] },
       { 'nn'   => [ /n{2,}/, '(\d{2})',   :min ]  },
@@ -101,9 +122,6 @@ module ValidatesTimeliness
       { 'ss'   => [ /s{2,}/, '(\d{2})',   :sec ] },
       { 's'    => [ /s{1}/,  '(\d{1,2})', :sec ] },
       { 'u'    => [ /u{1,}/, '(\d{1,3})', :usec ] },
-      { 'ddd'  => [ /d{3,}/, '(\w{3,9})' ] },
-      { 'dd'   => [ /d{2,}/, '(\d{2})',   :day ] },
-      { 'd'    => [ /(?:[^\\]|\A)d{1}/, '(\d{1,2})', :day ] }, #/
       { 'ampm' => [ /ampm/,  '((?:a|p)\.?m\.?)', :meridian ] },
       { 'zo'   => [ /zo/,    '(?:[+-]\d{2}:?\d{2})'] },
       { 'tz'   => [ /tz/,    '(?:\[A-Z]{1,4})' ] }, 
@@ -134,18 +152,21 @@ module ValidatesTimeliness
     def self.format_expression_generator(string_format)
       regexp = string_format.dup      
       order  = {}
-      ord = lambda {|k| order[k] = $~.begin(0) }
-      #regexp = Regexp.escape(regexp)
-      format_tokens.each do |token|
-        token_regexp, regexp_str, arg_key = *token.values.first
-        regexp.gsub!(token_regexp, regexp_str) && !arg_key.nil?  && ord.call(arg_key)
-      end
+      regexp.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes ]/
       
-      format_regexp = Regexp.new(regexp)
-      format_proc = format_proc(order)
-      return format_regexp, format_proc
+      format_tokens.each do |token|
+        token_name = token.keys.first
+        token_regexp, regexp_str, arg_key = *token.values.first
+        
+        # hack for lack of look-behinds. If has a capture group then is 
+        # considered an anchor to put straight back in the regexp string.
+        regexp.gsub!(token_regexp) {|m| "#{$1}" + regexp_str }
+        order[arg_key] = $~.begin(0) if $~ && !arg_key.nil?
+      end
+
+      return Regexp.new(regexp), format_proc(order)
     rescue
-      puts "The following format regular expression failed to compile: #{regexp}\n from format #{string_format}"
+      puts "The following format regular expression failed to compile: #{regexp}\n from format #{string_format}."
       raise
     end
     
@@ -178,6 +199,27 @@ module ValidatesTimeliness
       @@time_expressions     = compile_formats(@@time_formats)
       @@date_expressions     = compile_formats(@@date_formats)
       @@datetime_expressions = compile_formats(@@datetime_formats)
+    end
+    
+    def self.remove_formats(type, *remove_formats)
+      remove_formats.each do |format|
+        unless self.send("#{type}_formats").delete(format)
+          raise "Format #{format} not found in #{type} formats"
+        end
+      end
+      compile_format_expressions
+    end
+    
+    def self.add_formats(type, *add_formats)
+      formats = self.send("#{type}_formats")
+      
+      add_formats.each do |format|
+        if formats.include?(format)
+          raise "Format #{format} is already included in #{type} formats"
+        end
+        formats << format
+      end
+      compile_format_expressions
     end
     
     def self.full_hour(hour, meridian)
