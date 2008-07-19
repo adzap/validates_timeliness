@@ -1,4 +1,3 @@
-# TODO add support switching US to euro date formats
 module ValidatesTimeliness
   
   # A date and time format regular expression generator. Allows you to 
@@ -230,8 +229,8 @@ module ValidatesTimeliness
       
       # Adds new formats. Must specify format type and can specify a :before
       # option to nominate which format the new formats should be inserted in 
-      # front on to take higher precedence. Error is raise if format already 
-      # exists or if :before format is not found.
+      # front on to take higher precedence. 
+      # Error is raise if format already exists or if :before format is not found.
       def add_formats(type, *add_formats)
         formats = self.send("#{type}_formats")
         options = {}
@@ -245,6 +244,17 @@ module ValidatesTimeliness
           index = before ? formats.index(before) : -1
           formats.insert(index, format)
         end
+        compile_format_expressions
+      end
+      
+      
+      # Removes formats where the 1 or 2 digit month comes first, to eliminate
+      # formats which are ambiguous with the European style of day then month. 
+      # The mmm token is ignored as its not ambigous.
+      def remove_us_formats
+        us_format_regexp = /\Am{1,2}[^m]/
+        date_formats.reject! { |format| us_format_regexp =~ format }
+        datetime_formats.reject! { |format| us_format_regexp =~ format }
         compile_format_expressions
       end
       

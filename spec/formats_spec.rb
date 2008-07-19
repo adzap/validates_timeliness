@@ -225,6 +225,21 @@ describe ValidatesTimeliness::Formats do
       formats.time_formats.delete("ss:hh:nn")
     end
   end
+  
+  describe "removing US formats" do
+    it "should validate a date as European format when US formats removed" do
+      time_array = formats.extract_date_time_values('01/02/2000', :date)
+      time_array.should == [2000, 1, 2,nil,nil,nil,nil]
+      formats.remove_us_formats
+      puts formats.datetime_formats.inspect
+      time_array = formats.extract_date_time_values('01/02/2000', :date)
+      time_array.should == [2000, 2, 1,nil,nil,nil,nil]
+    end
+    
+    after do
+      
+    end
+  end
  
   def validate(time_string, type)
     valid = false

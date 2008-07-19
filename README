@@ -129,6 +129,8 @@ you want. No regular expressions or duck punching (monkey patching) the plugin.
     d.m.yy
     d mmm yy
   
+  NOTE: to switch to using non-US date formats see US/EURO FORMATS section
+  
   Datetime formats:  
     m/d/yy h:nn:ss   OR  d/m/yy hh:nn:ss
     m/d/yy h:nn      OR  d/m/yy h:nn
@@ -137,6 +139,8 @@ you want. No regular expressions or duck punching (monkey patching) the plugin.
     yyyy-mm-dd h:nn
     ddd mmm d hh:nn:ss zo yyyy # Ruby time string
     yyyy-mm-ddThh:nn:ss(?:Z|zo) # ISO 8601
+
+  NOTE: to switch to using non-US date formats see US/EURO FORMATS section
 
 Here is what each format token means:
 
@@ -176,6 +180,21 @@ into regular expressions at runtime so don't add any extra overhead than using
 regular expressions directly. So, no, it won't make your app slow!
 
 To see all defined formats look in the lib/validates_timeliness/formats.rb.
+
+=== US/EURO FORMATS
+
+The perenial problem for non-US develops or applications not primarily for the
+US, is the US date format of m/d/yy. This is ambiguous with the European format
+of d/my/yy. By default the plugin uses the US formats as this is the Ruby default
+when it does date interpretation, and is in keeping PoLS (principle of least
+surprise). 
+
+To switch to using the European (or Rest of The World) formats put this in an
+initializer or environment.rb
+
+  ValidatesTimeliness::Formats.remove_us_formats  
+
+Now '01/02/2000' will be parsed as 1st February 2000, instead of 2nd January 2000.
 
 === CUSTOMISING FORMATS:
 
