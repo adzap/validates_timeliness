@@ -94,7 +94,7 @@ as dates.
   validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
   
 
-== DATE/TIME FORMATS:
+=== DATE/TIME FORMATS:
 
 So what formats does the plugin allow. Well there are default formats which can 
 be added to easily using the plugins format rules. Also formats can be easily 
@@ -175,8 +175,9 @@ For the technically minded (well you are developers), these formats are compiled
 into regular expressions at runtime so don't add any extra overhead than using
 regular expressions directly. So, no, it won't make your app slow!
 
+To see all defined formats look in the lib/validates_timeliness/formats.rb.
 
-== CUSTOMISING FORMATS:
+=== CUSTOMISING FORMATS:
 
 I hear you say "Thats greats but I don't want X format to be valid". Well to 
 remove a format stick this in an initializer file or environment.rb
@@ -192,8 +193,17 @@ Ahh, then add it yourself. Again stick this in an initializer file or environmen
 
 Now '10 o'clock' will be a valid value. So easy, no more whingeing!
 
+Because formats are evaluated in order, adding a format which may be ambiguous 
+with an existing format, will mean your format is ignored. If you need to make
+your new format higher precedence than an existing format, you can include the 
+before option like so
 
-== EXTERNAL PARSER:
+    ValidatesTimeliness::Formats.add_formats(:time, 'ss:nn:hh', :before => 'hh:nn:ss')
+
+Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves
+you adding a new one and deleting an old one to get it to work.
+
+=== EXTERNAL PARSER:
 
 I mentioned earlier that you could use a pluggable or alternative parser such
 as Chronic instead of the in built one. So if you need some super fancy stuff that 

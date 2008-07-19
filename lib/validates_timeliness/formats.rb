@@ -179,15 +179,15 @@ module ValidatesTimeliness
       #
       # Examples:
       #
-      #   'yyyy-mm-dd hh:nn'     => lambda {|y,m,d,h,n| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i unless t.nil? } }
-      #   'dd/mm/yyyy h:nn_ampm' => lambda {|d,m,y,h,n,md| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i unless t.nil? } }
+      #   'yyyy-mm-dd hh:nn'     => lambda {|y,m,d,h,n| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i if t } }
+      #   'dd/mm/yyyy h:nn_ampm' => lambda {|d,m,y,h,n,md| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i if t } }
       #
       def format_proc(order)
         arg_map = format_proc_args
         args = order.invert.sort.map {|p| arg_map[p[1]][1] }
         arr = [nil] * 7
         order.keys.each {|k| i = arg_map[k][0]; arr[i] = arg_map[k][2] unless i.nil? }
-        proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|t| t.to_i unless t.nil? } }"
+        proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|t| t.to_i if t } }"
         eval proc_string
       end
       
@@ -202,7 +202,8 @@ module ValidatesTimeliness
       end
       
       # Loop through format expressions for type and call proc on matches. Allow
-      # pre or post match strings to exist if strict is false. 
+      # pre or post match strings to exist if strict is false. Otherwise wrap
+      # regexp in start and end anchors.
       # Returns 7 part datetime array.
       def extract_date_time_values(time_string, type, strict=true)
         expressions = self.send("#{type}_expressions")
@@ -217,6 +218,7 @@ module ValidatesTimeliness
         return time_array
       end
       
+      # Delete formats of specified type. Error raised if format not found.
       def remove_formats(type, *remove_formats)
         remove_formats.each do |format|
           unless self.send("#{type}_formats").delete(format)
@@ -226,14 +228,22 @@ module ValidatesTimeliness
         compile_format_expressions
       end
       
+      # Adds new formats. Must specify format type and can specify a :before
+      # option to nominate which format the new formats should be inserted in 
+      # front on to take higher precedence. Error is raise if format already 
+      # exists or if :before format is not found.
       def add_formats(type, *add_formats)
         formats = self.send("#{type}_formats")
+        options = {}
+        options = add_formats.pop if add_formats.last.is_a?(Hash)
+        before = options[:before]
+        raise "Format for :before option #{format} was not found." if before && !formats.include?(before)
         
         add_formats.each do |format|
-          if formats.include?(format)
-            raise "Format #{format} is already included in #{type} formats"
-          end
-          formats << format
+          raise "Format #{format} is already included in #{type} formats" if formats.include?(format)
+
+          index = before ? formats.index(before) : -1
+          formats.insert(index, format)
         end
         compile_format_expressions
       end

@@ -180,6 +180,10 @@ describe ValidatesTimeliness::Formats do
       validate('2.12am', :time).should be_false
     end
     
+    it "should raise error if format does not exist" do
+      lambda { formats.remove_formats(:time, "ss:hh:nn") }.should raise_error()
+    end
+    
     after do
       formats.time_formats << 'h.nn_ampm'
     end
@@ -190,7 +194,7 @@ describe ValidatesTimeliness::Formats do
       formats.compile_format_expressions
     end
     
-    it "should add format to format array" do      
+    it "should add format to format array" do
       formats.add_formats(:time, "h o'clock")
       formats.time_formats.should include("h o'clock")
     end
@@ -201,8 +205,24 @@ describe ValidatesTimeliness::Formats do
       validate("12 o'clock", :time).should be_true
     end
     
+    it "should add format before specified format and be higher precedence" do      
+      formats.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
+      validate("59:23:58", :time).should be_true
+      time_array = formats.extract_date_time_values('59:23:58', :time)
+      time_array.should == [nil,nil,nil,23,58,59,nil]
+    end
+
+    it "should raise error if format exists" do
+      lambda { formats.add_formats(:time, "hh:nn:ss") }.should raise_error()
+    end
+    
+    it "should raise error if format exists" do
+      lambda { formats.add_formats(:time, "ss:hh:nn", :before => 'nn:hh:ss') }.should raise_error()
+    end
+    
     after do
       formats.time_formats.delete("h o'clock")
+      formats.time_formats.delete("ss:hh:nn")
     end
   end
  

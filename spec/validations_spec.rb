@@ -53,10 +53,12 @@ describe ValidatesTimeliness::Validations do
       @person.should be_valid
     end
     
-    it "should be valid with values before epoch" do
-      @person.birth_date_and_time = "1960-01-31 12:12:12"
-      @person.birth_date = "1960-01-31"
-      @person.birth_time = "23:59"
+    # What is going on? No fall back.
+    it "should be valid with values before out of Time range" do
+      @person.birth_date_and_time = "1890-01-31 12:12:12"
+      @person.birth_date = "1890-01-31"
+      @person.birth_time = "23:59:59"
+      puts @person.errors.inspect
       @person.should be_valid
     end
     
@@ -74,7 +76,7 @@ describe ValidatesTimeliness::Validations do
       before :all do
         class DateTimeBeforeAfter < Person
           validates_timeliness_of :birth_date_and_time, :type => :datetime,
-            :before => Time.now, :after => 1.day.ago
+            :before => lambda { Time.now }, :after => lambda { 1.day.ago}
         end
       end
 
@@ -111,8 +113,8 @@ describe ValidatesTimeliness::Validations do
       before :all do
         class DateTimeOnOrBeforeAndAfter < Person
           validates_timeliness_of :birth_date_and_time, :type => :datetime,
-            :on_or_before => Time.now.at_midnight, 
-            :on_or_after => 1.day.ago
+            :on_or_before => lambda { Time.now.at_midnight },
+            :on_or_after => lambda { 1.day.ago }
         end
       end
       
@@ -311,8 +313,12 @@ describe ValidatesTimeliness::Validations do
   describe "with mixed value and restriction types" do
     before :all do
       class MixedBeforeAndAfter < Person
-        validates_timeliness_of :birth_date_and_time, :before => Date.new(2008,1,2), :after => lambda { Time.mktime(2008, 1, 1) }
-        validates_timeliness_of :birth_date, :type => :date, :on_or_before => Time.mktime(2008, 1, 2), :on_or_after => :birth_date_and_time
+        validates_timeliness_of :birth_date_and_time, 
+                                  :before => Date.new(2008,1,2), 
+                                  :after => lambda { Time.mktime(2008, 1, 1) }
+        validates_timeliness_of :birth_date, :type => :date, 
+                                  :on_or_before => lambda { Time.mktime(2008, 1, 2) }, 
+                                  :on_or_after => :birth_date_and_time
       end
     end
     
