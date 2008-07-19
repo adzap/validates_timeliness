@@ -192,9 +192,7 @@ module ValidatesTimeliness
       end
       
       def compile_formats(formats)
-        formats.collect { |format|
-          regexp, format_proc = format_expression_generator(format)
-        }
+        formats.collect { |format| regexp, format_proc = format_expression_generator(format) }
       end
       
       def compile_format_expressions
