@@ -120,6 +120,20 @@ describe ValidatesTimeliness::Formats do
         end
       end      
     end
+    
+    describe "for datetime formats" do
+      format_tests = {
+        'ddd mmm d hh:nn:ss zo yyyy'  => {:pass => ['Sat Jul 19 12:00:00 +1000 2008'], :fail => []},
+        'yyyy-mm-ddThh:nn:ss(?:Z|zo)' => {:pass => ['2008-07-19T12:00:00+10:00', '2008-07-19T12:00:00Z'], :fail => ['2008-07-19T12:00:00Z+10:00']},
+      }    
+      format_tests.each do |format, values|      
+        it "should correctly validate datetimes in format '#{format}'" do
+          regexp = generate_regexp(format)
+          values[:pass].each {|value| value.should match(regexp)}
+          values[:fail].each {|value| value.should_not match(regexp)}
+        end
+      end      
+    end
   end
   
   describe "removing formats" do
