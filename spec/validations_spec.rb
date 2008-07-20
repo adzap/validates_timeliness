@@ -336,8 +336,9 @@ describe ValidatesTimeliness::Validations do
       @person.errors.on(:birth_date_and_time).should match(/must be after/)
     end
 
-    it "should correctly validate date attribute with Time restriction" do
-      @person.birth_date = "2008-01-03"      
+    it "should correctly validate date attribute with DateTime restriction" do
+      @person.birth_date = "2008-01-03"
+      @person.birth_date_and_time = "1890-01-01 00:00:00"
       @person.should_not be_valid
       @person.errors.on(:birth_date).should match(/must be on or before/)
     end

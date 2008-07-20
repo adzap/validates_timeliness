@@ -24,9 +24,6 @@ module ValidatesTimeliness
       # Chronic. Just return nil for an invalid value and a Time object for a 
       # valid parsed value. 
       # 
-      # Remember to attempt fallback to back to a DateTime if the Time object is
-      # out of range. Range for Ruby Time class on 32-bit *nix is down to about
-      # 1902-01-01 and 1970-01-01 for Windows.
       def timeliness_date_time_parse(raw_value, type, strict=true)
         return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
