@@ -69,7 +69,7 @@ describe ValidatesTimeliness::Formats do
     end
     
     it "should generate proc which outputs time array with microseconds" do
-      generate_proc('hh:nn:ss.u').call('01', '02', '03', '99').should == [0,0,0,1,2,3,99]
+      generate_proc('hh:nn:ss.u').call('01', '02', '03', '99').should == [0,0,0,1,2,3,990000]
     end
   end
   
