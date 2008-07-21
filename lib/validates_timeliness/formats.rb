@@ -70,8 +70,8 @@ module ValidatesTimeliness
     ]
     
     @@date_formats = [
-      'yyyy/mm/dd',
       'yyyy-mm-dd',
+      'yyyy/mm/dd',
       'yyyy.mm.dd',
       'm/d/yy',
       'd/m/yy',
@@ -205,8 +205,8 @@ module ValidatesTimeliness
       # Loop through format expressions for type and call proc on matches. Allow
       # pre or post match strings to exist if strict is false. Otherwise wrap
       # regexp in start and end anchors.
-      # Returns 7 part datetime array.
-      def extract_date_time_values(time_string, type, strict=true)
+      # Returns 7 part time array.
+      def parse(time_string, type, strict=true)
         expressions = self.send("#{type}_expressions")
         time_array = nil        
         expressions.each do |(regexp, processor)|
