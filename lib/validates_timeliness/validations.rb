@@ -132,7 +132,7 @@ module ValidatesTimeliness
               when Proc
                 restriction.call(record)
               else
-                timeliness_date_time_parse(restriction, configuration[:type], false)
+                parse_date_time(restriction, configuration[:type], false)
             end            
             
             next if compare.nil?

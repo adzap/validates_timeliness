@@ -21,7 +21,7 @@ describe ValidatesTimeliness::AttributeMethods do
       strict_time_type_cast("2000-02-01 25:13:14").should be_nil      
     end
     
-    it "should return time object for time object" do
+    it "should return Time object when passed a Time object" do
       strict_time_type_cast(Time.now).should be_kind_of(Time)
     end
     
