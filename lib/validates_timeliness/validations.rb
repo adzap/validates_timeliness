@@ -29,7 +29,7 @@ module ValidatesTimeliness
       def timeliness_date_time_parse(raw_value, type, strict=true)
         return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
-        time_array = ValidatesTimeliness::Formats.extract_date_time_values(raw_value, type, strict)
+        time_array = ValidatesTimeliness::Formats.parse(raw_value, type, strict)
         raise if time_array.nil?
         
         if type == :time
