@@ -49,7 +49,7 @@ module ValidatesTimeliness
     #   yyyyy = exactly 4 digit year
     #     mmm = month long name (e.g. 'Jul' or 'July')
     #     ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
-    #       u = microseconds matches 1 to 3 digits
+    #       u = microseconds matches 1 to 6 digits
     #
     #   Any other invalid combination of repeating tokens will be swallowed up 
     #   by the next lowest length valid repeating token (e.g. yyy will be
@@ -83,14 +83,16 @@ module ValidatesTimeliness
     ]
     
     @@datetime_formats = [
+      'yyyy-mm-dd hh:nn:ss.u',
+      'yyyy-mm-dd hh:nn:ss',
+      'yyyy-mm-dd h:nn',
       'm/d/yy h:nn:ss',
       'm/d/yy h:nn',
       'm/d/yy h:nn_ampm',
       'd/m/yy hh:nn:ss',
       'd/m/yy h:nn',
       'd/m/yy h:nn_ampm',
-      'yyyy-mm-dd hh:nn:ss',
-      'yyyy-mm-dd h:nn',
+      'ddd, dd mmm yyyy hh:nn:ss (zo|tz)', # RFC 822
       'ddd mmm d hh:nn:ss zo yyyy', # Ruby time string
       'yyyy-mm-ddThh:nn:ss(?:Z|zo)' # iso 8601
     ]
@@ -120,10 +122,10 @@ module ValidatesTimeliness
       { 'n'    => [ /n{1}/,  '(\d{1,2})', :min ] },
       { 'ss'   => [ /s{2,}/, '(\d{2})',   :sec ] },
       { 's'    => [ /s{1}/,  '(\d{1,2})', :sec ] },
-      { 'u'    => [ /u{1,}/, '(\d{1,3})', :usec ] },
+      { 'u'    => [ /u{1,}/, '(\d{1,6})', :usec ] },
       { 'ampm' => [ /ampm/,  '((?:a|p)\.?m\.?)', :meridian ] },
       { 'zo'   => [ /zo/,    '(?:[+-]\d{2}:?\d{2})'] },
-      { 'tz'   => [ /tz/,    '(?:\[A-Z]{1,4})' ] }, 
+      { 'tz'   => [ /tz/,    '(?:[A-Z]{1,4})' ] }, 
       { '_'    => [ /_/,     '\s?' ] }
     ]
     
@@ -143,7 +145,7 @@ module ValidatesTimeliness
       :hour     => [3, 'h', 'full_hour(h,md)'],
       :min      => [4, 'n', 'n'],
       :sec      => [5, 's', 's'],
-      :usec     => [6, 'u', 'u'],
+      :usec     => [6, 'u', 'microseconds(u)'],
       :meridian => [nil, 'md', nil]
     }
     
@@ -278,6 +280,9 @@ module ValidatesTimeliness
         Date::ABBR_MONTHNAMES.index(month.capitalize) || Date::MONTHNAMES.index(month.capitalize)
       end
     
+      def microseconds(usec)
+        (".#{usec}".to_f * 1_000_000).to_i
+      end
     end
   end
 end
