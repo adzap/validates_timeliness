@@ -49,27 +49,27 @@ describe ValidatesTimeliness::Formats do
  
   describe "format proc generator" do
     it "should generate proc which outputs date array" do
-      generate_proc('yyyy-mm-dd').call('2000', '1', '2').should == [2000,1,2,nil,nil,nil,nil]
+      generate_proc('yyyy-mm-dd').call('2000', '1', '2').should == [2000,1,2,0,0,0,0]
     end
     
     it "should generate proc which outputs date array from format in non time array order" do
-      generate_proc('dd/mm/yyyy').call('2', '1', '2000').should == [2000,1,2,nil,nil,nil,nil]
+      generate_proc('dd/mm/yyyy').call('2', '1', '2000').should == [2000,1,2,0,0,0,0]
     end
     
     it "should generate proc which outputs time array" do
-      generate_proc('hh:nn:ss').call('01', '02', '03').should == [nil,nil,nil,1,2,3,nil]
+      generate_proc('hh:nn:ss').call('01', '02', '03').should == [0,0,0,1,2,3,0]
     end
     
     it "should generate proc which outputs time array with meridian 'pm' adjusted hour" do
-      generate_proc('hh:nn:ss ampm').call('01', '02', '03', 'pm').should == [nil,nil,nil,13,2,3,nil]
+      generate_proc('hh:nn:ss ampm').call('01', '02', '03', 'pm').should == [0,0,0,13,2,3,0]
     end
     
     it "should generate proc which outputs time array with meridian 'am' unadjusted hour" do
-      generate_proc('hh:nn:ss ampm').call('01', '02', '03', 'am').should == [nil,nil,nil,1,2,3,nil]
+      generate_proc('hh:nn:ss ampm').call('01', '02', '03', 'am').should == [0,0,0,1,2,3,0]
     end
     
     it "should generate proc which outputs time array with microseconds" do
-      generate_proc('hh:nn:ss.u').call('01', '02', '03', '99').should == [nil,nil,nil,1,2,3,99]
+      generate_proc('hh:nn:ss.u').call('01', '02', '03', '99').should == [0,0,0,1,2,3,99]
     end
   end
   
@@ -140,27 +140,27 @@ describe ValidatesTimeliness::Formats do
     
     it "should return time array from date string" do
       time_array = formats.extract_date_time_values('12:13:14', :time, true)
-      time_array.should == [nil,nil,nil,12,13,14,nil]
+      time_array.should == [0,0,0,12,13,14,0]
     end
     
     it "should return date array from time string" do
       time_array = formats.extract_date_time_values('2000-02-01', :date, true)
-      time_array.should == [2000,2,1,nil,nil,nil,nil]
+      time_array.should == [2000,2,1,0,0,0,0]
     end
     
     it "should return datetime array from string value" do
       time_array = formats.extract_date_time_values('2000-02-01 12:13:14', :datetime, true)
-      time_array.should == [2000,2,1,12,13,14,nil]
+      time_array.should == [2000,2,1,12,13,14,0]
     end
     
     it "should ignore time when extracting date and strict is false" do
       time_array = formats.extract_date_time_values('2000-02-01 12:12', :date, false)
-      time_array.should == [2000,2,1,nil,nil,nil,nil]
+      time_array.should == [2000,2,1,0,0,0,0]
     end
     
     it "should ignore date when extracting time and strict is false" do
       time_array = formats.extract_date_time_values('2000-02-01 12:12', :time, false)
-      time_array.should == [nil,nil,nil,12,12,nil,nil]
+      time_array.should == [0,0,0,12,12,0,0]
     end
   end
   
@@ -210,7 +210,7 @@ describe ValidatesTimeliness::Formats do
       formats.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
       validate("59:23:58", :time).should be_true
       time_array = formats.extract_date_time_values('59:23:58', :time)
-      time_array.should == [nil,nil,nil,23,58,59,nil]
+      time_array.should == [0,0,0,23,58,59,0]
     end
 
     it "should raise error if format exists" do
@@ -231,10 +231,10 @@ describe ValidatesTimeliness::Formats do
   describe "removing US formats" do
     it "should validate a date as European format when US formats removed" do
       time_array = formats.extract_date_time_values('01/02/2000', :date)
-      time_array.should == [2000, 1, 2,nil,nil,nil,nil]
+      time_array.should == [2000, 1, 2,0,0,0,0]
       formats.remove_us_formats
       time_array = formats.extract_date_time_values('01/02/2000', :date)
-      time_array.should == [2000, 2, 1,nil,nil,nil,nil]
+      time_array.should == [2000, 2, 1,0,0,0,0]
     end
     
     after do

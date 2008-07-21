@@ -178,15 +178,15 @@ module ValidatesTimeliness
       #
       # Examples:
       #
-      #   'yyyy-mm-dd hh:nn'     => lambda {|y,m,d,h,n| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i if t } }
-      #   'dd/mm/yyyy h:nn_ampm' => lambda {|d,m,y,h,n,md| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|t| t.to_i if t } }
+      #   'yyyy-mm-dd hh:nn'     => lambda {|y,m,d,h,n| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|i| i.to_i } }
+      #   'dd/mm/yyyy h:nn_ampm' => lambda {|d,m,y,h,n,md| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|i| i.to_i } }
       #
       def format_proc(order)
         arg_map = format_proc_args
         args = order.invert.sort.map {|p| arg_map[p[1]][1] }
         arr = [nil] * 7
         order.keys.each {|k| i = arg_map[k][0]; arr[i] = arg_map[k][2] unless i.nil? }
-        proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|t| t.to_i if t } }"
+        proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|i| i.to_i } }"
         eval proc_string
       end
       

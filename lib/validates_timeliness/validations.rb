@@ -33,9 +33,6 @@ module ValidatesTimeliness
         if type == :time
           # Rails dummy time date part is defined as 2000-01-01
           time_array[0..2] = 2000, 1, 1
-        elsif type == :date
-          # throw away time part and check date
-          time_array[3..5] = 0, 0, 0
         end
 
         # Date.new enforces days per month, unlike Time
