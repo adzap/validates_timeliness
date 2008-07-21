@@ -208,7 +208,7 @@ module ValidatesTimeliness
         expressions = self.send("#{type}_expressions")
         time_array = nil        
         expressions.each do |(regexp, processor)|
-          regexp = strict || type == :datetime ? /\A#{regexp}\Z/ : (type == :date ? /\A#{regexp}\s?/ : /\s?#{regexp}\Z/)
+          regexp = strict || type == :datetime ? /\A#{regexp}\Z/ : (type == :date ? /\A#{regexp}/ : /#{regexp}\Z/)
           if matches = regexp.match(time_string.strip)
             time_array = processor.call(*matches[1..7])
             break
