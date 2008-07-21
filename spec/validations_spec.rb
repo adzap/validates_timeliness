@@ -297,7 +297,6 @@ describe ValidatesTimeliness::Validations do
     end 
   end
   
-  
   describe "with mixed value and restriction types" do
     before :all do
       class MixedBeforeAndAfter < Person
@@ -340,5 +339,23 @@ describe ValidatesTimeliness::Validations do
       @person.errors.on(:birth_date).should match(/must be on or after/)
     end
 
-  end  
+  end
+  
+  describe "ignoring rstriction errors" do
+    before :all do
+      class BadRestriction < Person        
+        validates_date :birth_date, :before => Proc.new { raise }
+        self.ignore_datetime_restriction_errors = true
+      end
+    end
+    
+    before :each do
+      @person = BadRestriction.new
+    end
+    
+    it "should have no errors when restriction is invalid" do
+      @person.birth_date = '1950-01-01'
+      @person.should be_valid
+    end
+  end
 end

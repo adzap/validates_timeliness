@@ -240,17 +240,39 @@ an example of using Chronis instead. Put this into a file in the lib directory.
   class ActiveRecord::Base
   
     def self.parse_date_time_with_chronic(raw_value, type, strict=true)
-      # You can ignore type and strict with Chronic
-      Chronic.parse(raw_value)
+      # you can ignore strict with Chronic
       
-    # You could also fallback to normal plugin with
-    #rescue
-    #  parse_date_time_without_chronic
+      # Times without meridian are assumed to be in 24 hour format
+      options = { :ambiguous_time_range => :none }
+      
+      # Attribute of type :time will have a dummy date of 2000-01-01 which is
+      # per Rails convention
+      options[:now] = Time.local(2000, 1, 1) if type == :time
+      Chronic.parse(raw_value)
     end
-    alias_method_chain :parse_date_time, :chronic
 
   end
-  
+
+=== TEMPORAL RESTRICTION ERRORS
+
+When using the validation temporal options there are times when the restriction
+value itself may be invalid. Normally this will add an error to the model such as
+'restriction :before value was invalid'. These can be annoying if you are using 
+other attributes in the model as restrictions, since hopefully those attributes
+used are also validated and will have errors themselves which will stop the 
+record from saving. In these situations you turn them off.
+
+To turn them off globally:
+
+  ActiveRecord::Base.ignore_datetime_restriction_errors = true
+
+To switch them on or off per model:
+
+  class Person < ActiveRecord::Base
+    self.ignore_datetime_restriction_errors = false
+  end
+
+
 == CREDITS:
 
 * Adam Meehan (adam.meehan@gmail.com, http://duckpunching.com/)

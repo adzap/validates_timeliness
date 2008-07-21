@@ -7,6 +7,8 @@ module ValidatesTimeliness
     # Error messages added to AR defaults to allow global override.  
     def self.included(base)
       base.extend ClassMethods
+      base.class_inheritable_accessor :ignore_datetime_restriction_errors
+      base.ignore_datetime_restriction_errors = false
       
       error_messages = {
         :invalid_datetime => "is not a valid %s",
@@ -105,9 +107,9 @@ module ValidatesTimeliness
       
      private
       
-      # Validate value against the restrictions. Restriction values maybe of 
-      # mixed type so evaluate them and convert them all to common type as
-      # defined by type param.
+      # Validate value against the temoSpral restrictions. Restriction values 
+      # maybe of mixed type, so the are evaluated as a common type, which may
+      # require conversion. The type used is defined by validation type.
       def validate_timeliness_restrictions(record, attr_name, value, configuration)
         restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
         
@@ -138,7 +140,7 @@ module ValidatesTimeliness
             compare = compare.send(conversion_method)
             record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare) unless value.send(method, compare)
           rescue
-            record.errors.add(attr_name, "restriction '#{option}' value was invalid")
+            record.errors.add(attr_name, "restriction '#{option}' value was invalid") unless self.ignore_datetime_restriction_errors
           end
         end
       end
