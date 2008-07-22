@@ -25,11 +25,10 @@ module ValidatesTimeliness
       # Override this method to use any date parsing algorithm you like such as 
       # Chronic. Just return nil for an invalid value and a Time object for a 
       # valid parsed value. 
-      # 
       def timeliness_date_time_parse(raw_value, type, strict=true)
         return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
-        time_array = ValidatesTimeliness::Formats.extract_date_time_values(raw_value, type, strict)
+        time_array = ValidatesTimeliness::Formats.parse(raw_value, type, strict)
         raise if time_array.nil?
         
         if type == :time
@@ -38,7 +37,8 @@ module ValidatesTimeliness
         end
 
         # Date.new enforces days per month, unlike Time
-        Date.new(*time_array[0..2]) unless type == :time
+        date = Date.new(*time_array[0..2]) unless type == :time
+        return date if type == :date       
         
         # Check time part, and return time object
         Time.local(*time_array) rescue DateTime.new(*time_array[0..5])
