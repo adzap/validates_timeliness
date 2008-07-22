@@ -2,11 +2,10 @@ require 'date'
 require 'parsedate'
 require 'benchmark'
 require 'rubygems'
-require 'rails/version'
 require 'active_support'
 require 'active_record'
 require 'action_controller'
-require 'action_view'
+
 $: << 'lib'
 require 'lib/validates_timeliness'
 
@@ -18,10 +17,12 @@ Benchmark.bm do |x|
     end 
   }
   
-  x.report('time') { 
+  x.report('date/time') { 
     n.times do
       "2000-01-04 12:12:12" =~ /\A(\d{4})-(\d{2})-(\d{2}) (\d{2})[\. :](\d{2})([\. :](\d{2}))?\Z/
-      Time.mktime($1, $2, $3, $3, $5, $6)      
+      arr = [$1, $2, $3, $3, $5, $6].map {|i| i.to_i }
+      Date.new(*arr[0..2])
+      Time.mktime(*arr)
     end
   }
   
