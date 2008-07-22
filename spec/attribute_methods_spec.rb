@@ -7,33 +7,7 @@ describe ValidatesTimeliness::AttributeMethods do
   before do
     @person = Person.new
   end
-  
-  describe "strict_time_type_cast" do
-    it "should return time object for valid time string" do
-      strict_time_type_cast("2000-01-01 12:13:14").should be_kind_of(Time)
-    end
-    
-    it "should return nil for time string with invalid date part" do
-      strict_time_type_cast("2000-02-30 12:13:14").should be_nil
-    end
-    
-    it "should return nil for time string with invalid time part" do
-      strict_time_type_cast("2000-02-01 25:13:14").should be_nil      
-    end
-    
-    it "should return Time object when passed a Time object" do
-      strict_time_type_cast(Time.now).should be_kind_of(Time)
-    end
-    
-    if RAILS_VER >= '2.1'
-      it "should convert time string into current timezone" do
-        Time.zone = 'Melbourne'
-        time = strict_time_type_cast("2000-01-01 12:13:14")
-        Time.zone.utc_offset.should == 10.hours
-      end
-    end
-  end
-  
+
   it "should return string value for attribute_before_type_cast when written as string" do
     time_string = "2000-06-01 01:02:03"
     @person.birth_date_and_time = time_string
