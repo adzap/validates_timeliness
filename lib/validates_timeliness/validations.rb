@@ -21,7 +21,7 @@ module ValidatesTimeliness
     end
     
     module ClassMethods
-
+      
       # Override this method to use any date parsing algorithm you like such as 
       # Chronic. Just return nil for an invalid value and a Time object for a 
       # valid parsed value. 
@@ -31,17 +31,14 @@ module ValidatesTimeliness
         time_array = ValidatesTimeliness::Formats.parse(raw_value, type, strict)
         raise if time_array.nil?
         
-        if type == :time
-          # Rails dummy time date part is defined as 2000-01-01
-          time_array[0..2] = 2000, 1, 1
-        end
-
+        # Rails dummy time date part is defined as 2000-01-01
+        time_array[0..2] = 2000, 1, 1 if type == :time
+  
         # Date.new enforces days per month, unlike Time
-        date = Date.new(*time_array[0..2]) unless type == :time
-        return date if type == :date       
+        Date.new(*time_array[0..2]) unless type == :time
         
-        # Check time part, and return time object
-        Time.local(*time_array) rescue DateTime.new(*time_array[0..5])
+        # Create time object which checks time part, and return time object
+        make_time(time_array)
       rescue
         nil
       end
@@ -107,7 +104,7 @@ module ValidatesTimeliness
       
      private
       
-      # Validate value against the temoSpral restrictions. Restriction values 
+      # Validate value against the temopral restrictions. Restriction values 
       # maybe of mixed type, so the are evaluated as a common type, which may
       # require conversion. The type used is defined by validation type.
       def validate_timeliness_restrictions(record, attr_name, value, configuration)
@@ -152,7 +149,23 @@ module ValidatesTimeliness
           defaults.each {|k, v| messages["#{k}_message".to_sym] = v }
         end
       end
-                  
+      
+      # Create time in correct timezone. For Rails 2.1 that is value in 
+      # Time.zone. Rails 2.0 should be default_timezone.
+      def make_time(time_array)
+        if Time.respond_to?(:zone)
+          Time.zone.local(*time_array)
+        else
+          begin
+            Time.send(ActiveRecord::Base.default_timezone, *time_array)
+          rescue ArgumentError, TypeError
+            zone_offset = ActiveRecord::Base.default_timezone == :local ? DateTime.local_offset : 0
+            time_array.pop # remove microseconds
+            DateTime.civil(*(time_array << zone_offset))
+          end
+        end
+      end
+                        
     end
   end
 end
