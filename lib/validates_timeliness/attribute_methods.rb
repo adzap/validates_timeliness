@@ -26,6 +26,16 @@ module ValidatesTimeliness
     
     def self.included(base)
       base.extend ClassMethods
+      
+      if Rails::VERSION::STRING < '2.1'
+        base.class_eval do
+          class << self
+            def create_time_zone_conversion_attribute?(name, column)
+              column.klass == Time
+            end
+          end
+        end
+      end
     end
     
     # Handles timezone shift if Rails 2.1
@@ -66,7 +76,7 @@ module ValidatesTimeliness
           unless instance_method_already_implemented?(name)
             if self.serialized_attributes[name]
               define_read_method_for_serialized_attribute(name)
-            elsif column.klass == Time
+            elsif create_time_zone_conversion_attribute?(name, column)
               define_read_method_for_time_zone_conversion(name.to_sym)
             else
               define_read_method(name.to_sym, name, column)
@@ -74,7 +84,7 @@ module ValidatesTimeliness
           end
 
           unless instance_method_already_implemented?("#{name}=")
-            if column.klass == Time
+            if create_time_zone_conversion_attribute?(name, column)
               define_write_method_for_time_zone_conversion(name.to_sym)
             elsif column.klass == Date
               define_write_method_for_date(name.to_sym)
