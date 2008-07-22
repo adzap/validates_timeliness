@@ -3,13 +3,47 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe ValidatesTimeliness::Validations do
   before :all do
     # freezes time using time_travel plugin
-    Time.now = Time.utc(2008, 1, 1, 12, 0, 0)
+    Time.now = Time.utc(2000, 1, 1, 0, 0, 0)
   end
   
   after :all do
     Time.now = nil
   end
   
+  describe "timeliness_date_time_parse" do
+    it "should return time object for valid time string" do
+      parse_method("2000-01-01 12:13:14", :datetime).should be_kind_of(Time)
+    end
+    
+    it "should return nil for time string with invalid date part" do
+      parse_method("2000-02-30 12:13:14", :datetime).should be_nil
+    end
+    
+    it "should return nil for time string with invalid time part" do
+      parse_method("2000-02-01 25:13:14", :datetime).should be_nil      
+    end
+    
+    it "should return Time object when passed a Time object" do
+      parse_method(Time.now, :datetime).should be_kind_of(Time)
+    end
+        
+    if RAILS_VER >= '2.1'
+      it "should convert time string into current timezone" do
+        Time.zone = 'Melbourne'
+        time = parse_method("2000-01-01 12:13:14", :datetime)
+        Time.zone.utc_offset.should == 10.hours
+      end
+    end
+
+    it "should return nil for invalid date string" do
+      parse_method("2000-02-30", :date).should be_nil      
+    end
+        
+    def parse_method(*args)
+      ActiveRecord::Base.timeliness_date_time_parse(*args)
+    end
+  end
+   
   describe "with no restrictions" do
     before :all do
       class BasicValidation < Person
@@ -24,19 +58,19 @@ describe ValidatesTimeliness::Validations do
     end
 
     it "should have error for invalid date component for datetime column" do
-      @person.birth_date_and_time = "1980-02-30 01:02:03"
+      @person.birth_date_and_time = "2000-02-30 01:02:03"
       @person.should_not be_valid
       @person.errors.on(:birth_date_and_time).should == "is not a valid datetime"
     end
 
     it "should have error for invalid time component for datetime column" do
-      @person.birth_date_and_time = "1980-02-30 25:02:03"
+      @person.birth_date_and_time = "2000-02-30 25:02:03"
       @person.should_not be_valid 
       @person.errors.on(:birth_date_and_time).should == "is not a valid datetime"
     end
 
     it "should have error for invalid date value for date column" do
-      @person.birth_date = "1980-02-30"
+      @person.birth_date = "2000-02-30"
       @person.should_not be_valid
       @person.errors.on(:birth_date).should == "is not a valid date"
     end
@@ -48,8 +82,8 @@ describe ValidatesTimeliness::Validations do
     end
 
     it "should be valid with valid values" do
-      @person.birth_date_and_time = "1980-01-31 12:12:12"
-      @person.birth_date = "1980-01-31"
+      @person.birth_date_and_time = "2000-01-31 12:12:12"
+      @person.birth_date = "2000-01-31"
       @person.should be_valid
     end
     
@@ -299,12 +333,13 @@ describe ValidatesTimeliness::Validations do
   
   describe "with mixed value and restriction types" do
     before :all do
+      
       class MixedBeforeAndAfter < Person
         validates_timeliness_of :birth_date_and_time, 
                                   :before => Date.new(2008,1,2), 
-                                  :after => lambda { Time.mktime(2008, 1, 1) }
+                                  :after => lambda { "2008-01-01" }
         validates_timeliness_of :birth_date, :type => :date, 
-                                  :on_or_before => lambda { Time.mktime(2008, 1, 2) }, 
+                                  :on_or_before => lambda { "2008-01-01" }, 
                                   :on_or_after => :birth_date_and_time
       end
     end
@@ -341,7 +376,7 @@ describe ValidatesTimeliness::Validations do
 
   end
   
-  describe "ignoring rstriction errors" do
+  describe "ignoring restriction errors" do
     before :all do
       class BadRestriction < Person        
         validates_date :birth_date, :before => Proc.new { raise }
