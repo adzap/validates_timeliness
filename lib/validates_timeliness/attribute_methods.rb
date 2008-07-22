@@ -16,8 +16,8 @@ module ValidatesTimeliness
   # for any subsequent differentiation.
   #
   # The wholesale replacement of the Rails time type casting is not done to 
-  # preserve the quick conversion for timestamp columns and also any value which
-  # is never changed during the life of the record object.
+  # preserve the quickest conversion for timestamp columns and also any value
+  # which is never changed during the life of the record object.
   #
   # Dates are also handled but only write to cache value converted by plugin 
   # parser. Default read method will retrieve from cache or do default
@@ -35,7 +35,8 @@ module ValidatesTimeliness
     
     # Adds check for cached time attributes which have been type cast already
     # and value can be used from cache. This prevents the raw time value
-    # from being type cast using default Rails type casting.
+    # from being type cast using default Rails type casting when writing values
+    # to the database.
     def read_attribute(attr_name)
       attr_name = attr_name.to_s
       if !(value = @attributes[attr_name]).nil?
