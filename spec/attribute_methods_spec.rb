@@ -8,7 +8,7 @@ describe ValidatesTimeliness::AttributeMethods do
     @person = Person.new
   end
 
-  it "should call parser on write for time attribute" do
+  it "should call parser on write for datetime attribute" do
     @person.class.should_receive(:parse_date_time).once
     @person.birth_date_and_time = "2000-06-01 02:03:04"
   end
@@ -16,6 +16,11 @@ describe ValidatesTimeliness::AttributeMethods do
   it "should call parser on write for date attribute" do
     @person.class.should_receive(:parse_date_time).once
     @person.birth_date = "2000-06-01"
+  end
+
+  it "should call parser on write for time attribute" do
+    @person.class.should_receive(:parse_date_time).once
+    @person.birth_time = "12:00"
   end
 
   it "should return raw string value for attribute_before_type_cast when written as string" do

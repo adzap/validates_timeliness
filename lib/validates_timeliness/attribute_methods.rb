@@ -31,21 +31,16 @@ module ValidatesTimeliness
         base.class_eval do
           class << self
             def create_time_zone_conversion_attribute?(name, column)
-              column.klass == Time
+              false
             end
           end
         end
       end
     end
     
-    # Handles timezone shift if Rails 2.1
-    def time_in_time_zone(time)
-      time.respond_to?(:in_time_zone) ? time.in_time_zone : time
-    end
-    
     # Adds check for cached time attributes which have been type cast already
-    # and value can be used from cache. This prevents the raw time value
-    # from being type cast using default Rails type casting when writing values
+    # and value can be used from cache. This prevents the raw time value from 
+    # being type cast using default Rails type casting when writing values
     # to the database.
     def read_attribute(attr_name)
       attr_name = attr_name.to_s
@@ -53,7 +48,7 @@ module ValidatesTimeliness
         if column = column_for_attribute(attr_name)
           if unserializable_attribute?(attr_name, column)
             unserialize_attribute(attr_name)
-          elsif column.klass == Time && @attributes_cache.has_key?(attr_name)
+          elsif [:date, :time, :datetime].include?(column.type) && @attributes_cache.has_key?(attr_name)
             @attributes_cache[attr_name]
           else
             column.type_cast(value)
@@ -86,8 +81,8 @@ module ValidatesTimeliness
           unless instance_method_already_implemented?("#{name}=")
             if create_time_zone_conversion_attribute?(name, column)
               define_write_method_for_time_zone_conversion(name.to_sym)
-            elsif column.klass == Date
-              define_write_method_for_date(name.to_sym)
+            elsif [:date, :time, :datetime].include?(column.type)
+              define_write_method_for_dates_and_times(name.to_sym, column.type)
             else
               define_write_method(name.to_sym)
             end
@@ -114,8 +109,8 @@ module ValidatesTimeliness
             unless time.acts_like?(:time)
               time = self.class.parse_date_time(time, :datetime)
             end
-            time = time_in_time_zone(time)
-            if defined?(ActiveRecord::Dirty) && !changed_attributes.include?('#{attr_name}') && old != time
+            time = time.in_time_zone rescue nil
+            if !changed_attributes.include?('#{attr_name}') && old != time
               changed_attributes['#{attr_name}'] = (old.duplicable? ? old.clone : old)
             end
             @attributes_cache['#{attr_name}'] = time
@@ -138,19 +133,21 @@ module ValidatesTimeliness
               time = self.class.parse_date_time(date, :datetime)
             else
               time = read_attribute('#{attr_name}')
-              @attributes['#{attr_name}'] = time_in_time_zone(time)
+              @attributes['#{attr_name}'] = time.in_time_zone rescue nil
             end
-            @attributes_cache['#{attr_name}'] = time_in_time_zone(time)
+            @attributes_cache['#{attr_name}'] = time.in_time_zone rescue nil
           end
         EOV
         evaluate_attribute_method attr_name, method_body
       end
       
-      def define_write_method_for_date(attr_name)
+      # Define write for date and time columns or when time zone conversion is 
+      # off. This is the default for Rails 2.0
+      def define_write_method_for_dates_and_times(attr_name, type)
         method_body = <<-EOV
-          def #{attr_name}=(date)
-            @attributes_cache['#{attr_name}'] ||= self.class.parse_date_time(date, :date)
-            @attributes['#{attr_name}'] = date
+          def #{attr_name}=(value)
+            @attributes_cache['#{attr_name}'] ||= self.class.parse_date_time(value, :#{type})
+            @attributes['#{attr_name}'] = value
           end
         EOV
         evaluate_attribute_method attr_name, method_body
