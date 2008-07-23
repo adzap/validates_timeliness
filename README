@@ -10,8 +10,8 @@ features such as automatic timezone handling and dirty attributes. Allows
 date/time atttributes to behave like other attribute types by allowing you to
 review the raw entered value before it is converted.
 
-Allows you add custom formats or remove defaults easily. You can also just use
-another date parser altogther in conjuction with the plugin.
+Allows you add custom formats or remove defaults easily. This you can control
+what you think should be a valid date or time string.
 
 
 == FEATURES:
@@ -24,8 +24,6 @@ another date parser altogther in conjuction with the plugin.
 
 * Adds better transparency of date/time attributes restoring ability to view 
   raw value before type casting, which was lost in Rails 2.1.
-  
-* Allows pluggable date and time parsing with other parsers of your choosing (eg Chronic)
 
 * Respects new timezone features of Rails 2.1.
 
@@ -177,9 +175,9 @@ Here is what each format token means:
        u = microseconds matches 1 to 3 digits
 
 All other characters are considered literal. For the technically minded 
-(well you are developers), these formats are compiled
-into regular expressions at runtime so don't add any extra overhead than using
-regular expressions directly. So, no, it won't make your app slow!
+(well you are developers), these formats are compiled into regular expressions 
+at runtime so don't add any extra overhead than using regular expressions 
+directly. So, no, it won't make your app slow!
 
 To see all defined formats look in the lib/validates_timeliness/formats.rb.
 
@@ -230,37 +228,14 @@ before option like so
 Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves
 you adding a new one and deleting an old one to get it to work.
 
-=== EXTERNAL PARSER:
-
-I mentioned earlier that you could use a pluggable or alternative parser such
-as Chronic instead of the in built one. So if you need some super fancy stuff that 
-the plugin custom formats can't handle, then be my guest and override it. This is
-an example of using Chronis instead. Put this into a file in the lib directory.
-
-  class ActiveRecord::Base
-  
-    def self.parse_date_time_with_chronic(raw_value, type, strict=true)
-      # you can ignore strict with Chronic
-      
-      # Times without meridian are assumed to be in 24 hour format
-      options = { :ambiguous_time_range => :none }
-      
-      # Attribute of type :time will have a dummy date of 2000-01-01 which is
-      # per Rails convention
-      options[:now] = Time.local(2000, 1, 1) if type == :time
-      Chronic.parse(raw_value)
-    end
-
-  end
 
 === TEMPORAL RESTRICTION ERRORS
 
 When using the validation temporal options there are times when the restriction
 value itself may be invalid. Normally this will add an error to the model such as
 'restriction :before value was invalid'. These can be annoying if you are using 
-other attributes in the model as restrictions, since hopefully those attributes
-used are also validated and will have errors themselves which will stop the 
-record from saving. In these situations you turn them off.
+procs or methods as restrictions and don't care if they don't evaluate properly
+and you want the validation to complete. In these situations you turn them off.
 
 To turn them off globally:
 
@@ -272,13 +247,17 @@ To switch them on or off per model:
     self.ignore_datetime_restriction_errors = false
   end
 
+A word of warning though, as this may hide issues with the model and make those
+corner cases a little harder to test. In general if you are using procs or 
+model methods and you only care when they return  a value, then they should 
+return nil in all other situations. Restrictions are skipped if they are nil.
 
 == CREDITS:
 
 * Adam Meehan (adam.meehan@gmail.com, http://duckpunching.com/)
 
 * Jonathan Viney (http://workingwithrails.com/person/4985-jonathan-viney)
-  For his validates_date_time plugin which I have used before this plugin and
+  For his validates_date_time plugin which I have upi until this plugin and
   which influenced some of the design and I borrowed a little of code from it.
 
 
