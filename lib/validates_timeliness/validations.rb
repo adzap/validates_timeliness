@@ -26,6 +26,7 @@ module ValidatesTimeliness
       # Chronic. Just return nil for an invalid value and a Time object for a 
       # valid parsed value. 
       def timeliness_date_time_parse(raw_value, type, strict=true)
+        return nil if raw_value.blank?
         return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
         time_array = ValidatesTimeliness::Formats.parse(raw_value, type, strict)
@@ -153,7 +154,7 @@ module ValidatesTimeliness
       # Create time in correct timezone. For Rails 2.1 that is value in 
       # Time.zone. Rails 2.0 should be default_timezone.
       def make_time(time_array)
-        if Time.respond_to?(:zone)
+        if Time.respond_to?(:zone) && time_zone_aware_attributes
           Time.zone.local(*time_array)
         else
           begin
