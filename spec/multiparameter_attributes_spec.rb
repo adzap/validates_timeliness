@@ -11,7 +11,7 @@ describe ValidatesTimeliness::MultiparameterAttributes do
   end
   
   it "should convert array for date type into date string" do
-    time_string = obj.time_array_to_string([2000,2,1,0,0,0], :date)
+    time_string = obj.time_array_to_string([2000,2,1], :date)
     time_string.should == "2000-02-01"
   end
   
