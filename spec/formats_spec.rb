@@ -153,6 +153,11 @@ describe ValidatesTimeliness::Formats do
       time_array.should == [2000,2,1,12,13,14,0]
     end
     
+    it "should parse date string when type is datetime" do
+      time_array = formats.parse('2000-02-01', :datetime, false)
+      time_array.should == [2000,2,1,0,0,0,0]
+    end
+    
     it "should ignore time when extracting date and strict is false" do
       time_array = formats.parse('2000-02-01 12:12', :date, false)
       time_array.should == [2000,2,1,0,0,0,0]
@@ -252,15 +257,15 @@ describe ValidatesTimeliness::Formats do
  
   def generate_regexp(format)
     # wrap in line start and end anchors to emulate extract values method
-    /\A#{formats.format_expression_generator(format)[0]}\Z/
+    /\A#{formats.send(:format_expression_generator, format)[0]}\Z/
   end
   
   def generate_regexp_str(format)
-    formats.format_expression_generator(format)[0].inspect
+    formats.send(:format_expression_generator, format)[0].inspect
   end
   
   def generate_proc(format)
-    formats.format_expression_generator(format)[1]
+    formats.send(:format_expression_generator, format)[1]
   end
   
   def delete_format(type, format)

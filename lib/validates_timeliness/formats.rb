@@ -83,15 +83,15 @@ module ValidatesTimeliness
     ]
     
     @@datetime_formats = [
-      'yyyy-mm-dd hh:nn:ss.u',
       'yyyy-mm-dd hh:nn:ss',
       'yyyy-mm-dd h:nn',
+      'yyyy-mm-dd hh:nn:ss.u',
       'm/d/yy h:nn:ss',
-      'm/d/yy h:nn',
       'm/d/yy h:nn_ampm',
+      'm/d/yy h:nn',
       'd/m/yy hh:nn:ss',
-      'd/m/yy h:nn',
       'd/m/yy h:nn_ampm',
+      'd/m/yy h:nn',
       'ddd, dd mmm yyyy hh:nn:ss (zo|tz)', # RFC 822
       'ddd mmm d hh:nn:ss zo yyyy', # Ruby time string
       'yyyy-mm-ddThh:nn:ss(?:Z|zo)' # iso 8601
@@ -149,8 +149,76 @@ module ValidatesTimeliness
       :meridian => [nil, 'md', nil]
     }
     
-    class << self 
+    class << self
     
+      def compile_format_expressions
+        @@time_expressions     = compile_formats(@@time_formats)
+        @@date_expressions     = compile_formats(@@date_formats)
+        @@datetime_expressions = compile_formats(@@datetime_formats)
+      end
+      
+      # Loop through format expressions for type and call proc on matches. Allow
+      # pre or post match strings to exist if strict is false. Otherwise wrap
+      # regexp in start and end anchors.
+      # Returns 7 part time array.
+      def parse(string, type, strict=true)
+        return string unless string.is_a?(String)
+        
+        expressions = expression_set(type, string)
+        time_array = nil
+        expressions.each do |(regexp, processor)|
+          regexp = strict || type == :datetime ? /\A#{regexp}\Z/ : (type == :date ? /\A#{regexp}/ : /#{regexp}\Z/)
+          if matches = regexp.match(string.strip)
+            time_array = processor.call(*matches[1..7])
+            break
+          end
+        end
+        return time_array
+      end   
+      
+      # Delete formats of specified type. Error raised if format not found.
+      def remove_formats(type, *remove_formats)
+        remove_formats.each do |format|
+          unless self.send("#{type}_formats").delete(format)
+            raise "Format #{format} not found in #{type} formats"
+          end
+        end
+        compile_format_expressions
+      end
+      
+      # Adds new formats. Must specify format type and can specify a :before
+      # option to nominate which format the new formats should be inserted in 
+      # front on to take higher precedence. 
+      # Error is raise if format already exists or if :before format is not found.
+      def add_formats(type, *add_formats)
+        formats = self.send("#{type}_formats")
+        options = {}
+        options = add_formats.pop if add_formats.last.is_a?(Hash)
+        before = options[:before]
+        raise "Format for :before option #{format} was not found." if before && !formats.include?(before)
+        
+        add_formats.each do |format|
+          raise "Format #{format} is already included in #{type} formats" if formats.include?(format)
+
+          index = before ? formats.index(before) : -1
+          formats.insert(index, format)
+        end
+        compile_format_expressions
+      end
+      
+      
+      # Removes formats where the 1 or 2 digit month comes first, to eliminate
+      # formats which are ambiguous with the European style of day then month. 
+      # The mmm token is ignored as its not ambigous.
+      def remove_us_formats
+        us_format_regexp = /\Am{1,2}[^m]/
+        date_formats.reject! { |format| us_format_regexp =~ format }
+        datetime_formats.reject! { |format| us_format_regexp =~ format }
+        compile_format_expressions
+      end
+    
+    private
+      
       # Compile formats into validation regexps and format procs    
       def format_expression_generator(string_format)
         regexp = string_format.dup      
@@ -195,71 +263,25 @@ module ValidatesTimeliness
       def compile_formats(formats)
         formats.collect { |format| regexp, format_proc = format_expression_generator(format) }
       end
-      
-      def compile_format_expressions
-        @@time_expressions     = compile_formats(@@time_formats)
-        @@date_expressions     = compile_formats(@@date_formats)
-        @@datetime_expressions = compile_formats(@@datetime_formats)
-      end
-      
-      # Loop through format expressions for type and call proc on matches. Allow
-      # pre or post match strings to exist if strict is false. Otherwise wrap
-      # regexp in start and end anchors.
-      # Returns 7 part time array.
-      def parse(time_string, type, strict=true)
-        expressions = self.send("#{type}_expressions")
-        time_array = nil        
-        expressions.each do |(regexp, processor)|
-          regexp = strict || type == :datetime ? /\A#{regexp}\Z/ : (type == :date ? /\A#{regexp}/ : /#{regexp}\Z/)
-          if matches = regexp.match(time_string.strip)
-            time_array = processor.call(*matches[1..7])
-            break
-          end
+  
+      # Pick expression set and combine date and datetimes for 
+      # datetime attributes to allow date string as datetime
+      def expression_set(type, string)
+        case type
+          when :date
+            date_expressions
+          when :time
+            time_expressions
+          when :datetime
+            # gives a speed-up for date string as datetime attributes
+            if string.length < 11
+              date_expressions + datetime_expressions
+            else
+              datetime_expressions + date_expressions
+            end
         end
-        return time_array
       end
-      
-      # Delete formats of specified type. Error raised if format not found.
-      def remove_formats(type, *remove_formats)
-        remove_formats.each do |format|
-          unless self.send("#{type}_formats").delete(format)
-            raise "Format #{format} not found in #{type} formats"
-          end
-        end
-        compile_format_expressions
-      end
-      
-      # Adds new formats. Must specify format type and can specify a :before
-      # option to nominate which format the new formats should be inserted in 
-      # front on to take higher precedence. 
-      # Error is raise if format already exists or if :before format is not found.
-      def add_formats(type, *add_formats)
-        formats = self.send("#{type}_formats")
-        options = {}
-        options = add_formats.pop if add_formats.last.is_a?(Hash)
-        before = options[:before]
-        raise "Format for :before option #{format} was not found." if before && !formats.include?(before)
-        
-        add_formats.each do |format|
-          raise "Format #{format} is already included in #{type} formats" if formats.include?(format)
-
-          index = before ? formats.index(before) : -1
-          formats.insert(index, format)
-        end
-        compile_format_expressions
-      end
-      
-      
-      # Removes formats where the 1 or 2 digit month comes first, to eliminate
-      # formats which are ambiguous with the European style of day then month. 
-      # The mmm token is ignored as its not ambigous.
-      def remove_us_formats
-        us_format_regexp = /\Am{1,2}[^m]/
-        date_formats.reject! { |format| us_format_regexp =~ format }
-        datetime_formats.reject! { |format| us_format_regexp =~ format }
-        compile_format_expressions
-      end
-      
+ 
       def full_hour(hour, meridian)
         hour = hour.to_i
         return hour if meridian.nil?
