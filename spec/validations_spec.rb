@@ -40,7 +40,7 @@ describe ValidatesTimeliness::Validations do
     end
         
     def parse_method(*args)
-      ActiveRecord::Base.timeliness_date_time_parse(*args)
+      ActiveRecord::Base.parse_date_time(*args)
     end
   end
    
@@ -58,19 +58,19 @@ describe ValidatesTimeliness::Validations do
     end
 
     it "should have error for invalid date component for datetime column" do
-      @person.birth_date_and_time = "2000-02-30 01:02:03"
+      @person.birth_date_and_time = "2000-01-32 01:02:03"
       @person.should_not be_valid
       @person.errors.on(:birth_date_and_time).should == "is not a valid datetime"
     end
 
     it "should have error for invalid time component for datetime column" do
-      @person.birth_date_and_time = "2000-02-30 25:02:03"
+      @person.birth_date_and_time = "2000-01-01 25:02:03"
       @person.should_not be_valid 
       @person.errors.on(:birth_date_and_time).should == "is not a valid datetime"
     end
 
     it "should have error for invalid date value for date column" do
-      @person.birth_date = "2000-02-30"
+      @person.birth_date = "2000-01-32"
       @person.should_not be_valid
       @person.errors.on(:birth_date).should == "is not a valid date"
     end
@@ -82,13 +82,13 @@ describe ValidatesTimeliness::Validations do
     end
 
     it "should be valid with valid values" do
-      @person.birth_date_and_time = "2000-01-31 12:12:12"
+      @person.birth_date_and_time = "2000-01-01 12:12:12"
       @person.birth_date = "2000-01-31"
       @person.should be_valid
     end
     
     it "should be valid with values before out of Time range" do
-      @person.birth_date_and_time = "1890-01-31 12:12:12"
+      @person.birth_date_and_time = "1890-01-01 12:12:12"
       @person.birth_date = "1890-01-31"
       @person.birth_time = "23:59:59"
       @person.should be_valid
@@ -336,10 +336,10 @@ describe ValidatesTimeliness::Validations do
       
       class MixedBeforeAndAfter < Person
         validates_timeliness_of :birth_date_and_time, 
-                                  :before => Date.new(2008,1,2), 
-                                  :after => lambda { "2008-01-01" }
+                                  :before => Date.new(2000,1,2), 
+                                  :after => lambda { "2000-01-01" }
         validates_timeliness_of :birth_date, :type => :date, 
-                                  :on_or_before => lambda { "2008-01-01" }, 
+                                  :on_or_before => lambda { "2000-01-01" }, 
                                   :on_or_after => :birth_date_and_time
       end
     end
@@ -349,27 +349,27 @@ describe ValidatesTimeliness::Validations do
     end
     
     it "should correctly validate time attribute with Date restriction" do
-      @person.birth_date_and_time = "2008-01-03 00:00:00"
+      @person.birth_date_and_time = "2000-01-03 00:00:00"
       @person.should_not be_valid
       @person.errors.on(:birth_date_and_time).should match(/must be before/)
     end
     
     it "should correctly validate with proc restriction" do
-      @person.birth_date_and_time = "2008-01-01 00:00:00"
+      @person.birth_date_and_time = "2000-01-01 00:00:00"
       @person.should_not be_valid
       @person.errors.on(:birth_date_and_time).should match(/must be after/)
     end
 
     it "should correctly validate date attribute with DateTime restriction" do
-      @person.birth_date = "2008-01-03"
+      @person.birth_date = "2000-01-03"
       @person.birth_date_and_time = "1890-01-01 00:00:00"
       @person.should_not be_valid
       @person.errors.on(:birth_date).should match(/must be on or before/)
     end
 
     it "should correctly validate date attribute with symbol restriction" do
-      @person.birth_date = "2008-01-01"
-      @person.birth_date_and_time = "2008-01-02 12:00:00"
+      @person.birth_date = "2000-01-01"
+      @person.birth_date_and_time = "2000-01-02 12:00:00"
       @person.should_not be_valid
       @person.errors.on(:birth_date).should match(/must be on or after/)
     end
@@ -389,7 +389,7 @@ describe ValidatesTimeliness::Validations do
     end
     
     it "should have no errors when restriction is invalid" do
-      @person.birth_date = '1950-01-01'
+      @person.birth_date = '2000-01-01'
       @person.should be_valid
     end
   end
