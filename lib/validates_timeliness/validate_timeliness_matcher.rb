@@ -16,9 +16,9 @@ module Spec
         def matches?(record)
           @record = record
 
-          valid = error_matching('2000-01-32', /#{options[:invalid_date_message]}/) &&
-              error_matching('2000-01-01 25:00:00', /#{options[:invalid_date_message]}/) &&
-              no_error_matching('2000-01-01 12:12:12', /#{options[:invalid_date_message]}/)
+          valid = error_matching('2000-01-32 00:00:00', /#{options[:invalid_datetime_message]}/) &&
+              error_matching('2000-01-01 25:00:00', /#{options[:invalid_datetime_message]}/) &&
+              no_error_matching('2000-01-01 00:00:00', /#{options[:invalid_datetime_message]}/)
                     
           if valid && after = options[:after]
             valid = error_matching(after, /#{options[:after_message]}/) &&
