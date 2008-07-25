@@ -20,7 +20,7 @@ what you think should be a valid date or time string.
 
 * Add or remove date/time formats to customize validation
 
-* Create new formats using very simple date/time format patterns
+* Create new formats using very simple date/time format tokens
 
 * Adds better transparency of date/time attributes restoring ability to view 
   raw value before type casting, which was lost in Rails 2.1.
@@ -229,7 +229,7 @@ Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves
 you adding a new one and deleting an old one to get it to work.
 
 
-=== TEMPORAL RESTRICTION ERRORS
+=== TEMPORAL OPTION ERRORS:
 
 When using the validation temporal options there are times when the restriction
 value itself may be invalid. Normally this will add an error to the model such as
