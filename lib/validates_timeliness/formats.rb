@@ -4,7 +4,7 @@ module ValidatesTimeliness
   # construct a date, time or datetime format using predefined tokens in 
   # a string. This makes it much easier to catalogue and customize the formats
   # rather than dealing directly with regular expressions. The formats are then
-  # compile into a regular expression for use invalidating date or time strings. 
+  # compiled into regular expressions for use validating date or time strings. 
   #
   # Formats can be added or removed to customize the set of valid date or time
   # string values.
