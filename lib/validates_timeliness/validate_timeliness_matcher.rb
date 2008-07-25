@@ -13,41 +13,37 @@ module Spec
           @record = record
           type = options[:type]
           
-          conversion_method = case type
-            when :time     then :to_dummy_time
-            when :date     then :to_date
-            when :datetime then :to_time
-          end
-          
           test_values = {
             :date     => {:pass => '2000-01-01', :fail => '2000-01-32'},
             :time     => {:pass => '12:00',      :fail => '25:00'},
             :datetime => {:pass => '2000-01-01 00:00:00', :fail => '2000-01-32 00:00:00'}
           }
-
-          valid = error_matching(test_values[type][:fail], /#{options["invalid_#{type}_message".to_sym]}/) &&
-              no_error_matching(test_values[type][:pass], /#{options["invalid_#{type}_message".to_sym]}/)
+          
+          invalid_value = test_values[type][:fail]
+          valid_value   = parse_and_cast(test_values[type][:pass])
+          valid = error_matching(invalid_value, /#{options["invalid_#{type}_message".to_sym]}/) &&
+              no_error_matching(valid_value, /#{options["invalid_#{type}_message".to_sym]}/)
                     
           if valid && options[:after]
-            after = parse(options[:after], type).send(conversion_method)
+            after = parse_and_cast(options[:after])
             valid = error_matching(after, /#{options[:after_message]}/) &&
               no_error_matching(after + 1, /#{options[:after_message]}/)
           end
           
           if valid && options[:before]
-            before = parse(options[:before], type).send(conversion_method)
+            before = parse_and_cast(options[:before])
             valid = error_matching(before, /#{options[:before_message]}/) &&
               no_error_matching(before - 1, /#{options[:before_message]}/)
           end
         
           if valid && options[:on_or_after]
-            on_or_after = parse(options[:on_or_after], type).send(conversion_method)
+            on_or_after = parse_and_cast(options[:on_or_after])
             valid = error_matching(on_or_after -1, /#{options[:on_or_after_message]}/) &&
               no_error_matching(on_or_after, /#{options[:on_or_after_message]}/)
           end
           
           if valid && options[:on_or_before]
-            on_or_before = parse(options[:on_or_before], type).send(conversion_method)
+            on_or_before = parse_and_cast(options[:on_or_before])
             valid = error_matching(on_or_before + 1, /#{options[:on_or_before_message]}/) &&
               no_error_matching(on_or_before, /#{options[:on_or_before_message]}/)
           end
@@ -56,26 +52,32 @@ module Spec
         end
       
         def failure_message
-          "expected model to validate timeliness of #{expected.inspect} with #{last_failure}"
+          "expected model to validate #{options[:type]} attribute #{expected.inspect} with #{last_failure}"
         end
         
         def negative_failure_message
-          "expected not to validate timeliness of #{expected.inspect}"
+          "expected not to validate #{options[:type]} attribute #{expected.inspect}"
         end
         
         def description
-          "have validated timeliness of #{expected.inspect}"
+          "have validated #{options[:type]} attribute #{expected.inspect}"
         end
         
        private
        
-        def parse(value, type)
-          ActiveRecord::Base.parse_date_time(value, type)
+        def parse_and_cast(value)
+          @conversion_method ||= case options[:type]
+            when :time     then :to_dummy_time
+            when :date     then :to_date
+            when :datetime then :to_time
+          end
+          value = ActiveRecord::Base.parse_date_time(value, options[:type])
+          value.send(@conversion_method)
         end
         
         def error_messages
           messages = ActiveRecord::Base.send(:timeliness_default_error_messages)
-          messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub('%s', ''); h } 
+          messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(' %s', ''); h } 
           @options.reverse_merge!(messages)
         end
         
@@ -91,17 +93,18 @@ module Spec
             else
               false
           end
-          @last_failure = "value #{value} to have error matching #{match.inspect}" unless pass
+          @last_failure = "error matching #{match.inspect} when value is #{format_value(value)}" unless pass
           pass
         end
         
         def no_error_matching(value, match)        
           pass = !error_matching(value, match)
-          @last_failure = "value #{value} to not have error matching #{match.inspect}" unless pass
+          @last_failure = "error matching #{match.inspect} when value is #{format_value(value)}" unless pass
           pass
         end
         
         def format_value(value)
+          return value if value.is_a?(String)
           value.strftime(ActiveRecord::Errors.date_time_error_value_formats[options[:type]])
         end
       end
