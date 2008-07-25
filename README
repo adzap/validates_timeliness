@@ -77,7 +77,7 @@ the valid range of dates or times allowed
 
 The temporal options can take 4 different value types:
 
-  * String date or time value
+  * String value
   * Date, Time, or DateTime object value
   * Proc or lambda object
   * A symbol matching the method name in the model  
