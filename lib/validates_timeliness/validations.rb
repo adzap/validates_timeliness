@@ -112,7 +112,7 @@ module ValidatesTimeliness
      private
       
       # Validate value against the temporal restrictions. Restriction values 
-      # maybe of mixed type, so the are evaluated as a common type, which may
+      # maybe of mixed type, so they are evaluated as a common type, which may
       # require conversion. The type used is defined by validation type.
       def validate_timeliness_restrictions(record, attr_name, value, configuration)
         restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
