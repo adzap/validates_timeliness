@@ -1,31 +1,38 @@
 module ValidatesTimeliness
   # Adds ActiveRecord validation methods for date, time and datetime validation.
-  # The validity of values can be restricted to be before and/or certain dates
+  # The validity of values can be restricted to be before or after certain dates
   # or times.
   module Validations    
         
-    # Error messages added to AR defaults to allow global override.  
+    # Error messages and error value formats added to AR defaults to allow 
+    # global override.  
     def self.included(base)
       base.extend ClassMethods
+      
       base.class_inheritable_accessor :ignore_datetime_restriction_errors
       base.ignore_datetime_restriction_errors = false
       
-      error_messages = {
-        :invalid_datetime => "is not a valid %s",
+      ActiveRecord::Errors.class_inheritable_accessor :date_time_error_value_formats
+      ActiveRecord::Errors.date_time_error_value_formats = {
+        :time     => '%H:%M:%S',
+        :date     => '%Y-%m-%d',
+        :datetime => '%Y-%m-%d %H:%M:%S'
+      }      
+      
+      ActiveRecord::Errors.default_error_messages.update(
+        :invalid_date     => "is not a valid date",
+        :invalid_time     => "is not a valid time",
+        :invalid_datetime => "is not a valid datetime",
         :before           => "must be before %s",
         :on_or_before     => "must be on or before %s",
         :after            => "must be after %s",
         :on_or_after      => "must be on or after %s"
-      }      
-      ActiveRecord::Errors.default_error_messages.update(error_messages)
+      )
     end
     
     module ClassMethods
       
-      # Override this method to use any date parsing algorithm you like such as 
-      # Chronic. Just return nil for an invalid value and a Time object for a 
-      # valid parsed value. 
-      def timeliness_date_time_parse(raw_value, type, strict=true)
+      def parse_date_time(raw_value, type, strict=true)
         return nil if raw_value.blank?
         return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
@@ -43,7 +50,6 @@ module ValidatesTimeliness
       rescue
         nil
       end
-      alias_method :parse_date_time, :timeliness_date_time_parse
       
       # The main validation method which can be used directly or called through
       # the other specific type validation methods.      
@@ -65,16 +71,16 @@ module ValidatesTimeliness
           
           column = record.column_for_attribute(attr_name)
           begin
-            unless time = timeliness_date_time_parse(raw_value, configuration[:type])
+            unless time = parse_date_time(raw_value, configuration[:type])
               record.send("#{attr_name}=", nil)
-              record.errors.add(attr_name, configuration[:invalid_datetime_message] % configuration[:type])
+              record.errors.add(attr_name, configuration["invalid_#{configuration[:type]}_message".to_sym])
               next
             end
            
             validate_timeliness_restrictions(record, attr_name, time, configuration)
           rescue Exception => e          
             record.send("#{attr_name}=", nil)
-            record.errors.add(attr_name, configuration[:invalid_datetime_message] % configuration[:type])            
+            record.errors.add(attr_name, configuration["invalid_#{configuration[:type]}_message".to_sym])
           end          
         end
       end   
@@ -105,7 +111,7 @@ module ValidatesTimeliness
       
      private
       
-      # Validate value against the temopral restrictions. Restriction values 
+      # Validate value against the temporal restrictions. Restriction values 
       # maybe of mixed type, so the are evaluated as a common type, which may
       # require conversion. The type used is defined by validation type.
       def validate_timeliness_restrictions(record, attr_name, value, configuration)
@@ -116,7 +122,9 @@ module ValidatesTimeliness
           when :date     then :to_date
           when :datetime then :to_time
         end
-                
+        
+        display = ActiveRecord::Errors.date_time_error_value_formats[configuration[:type]]
+        
         value = value.send(conversion_method)
         
         restriction_methods.each do |option, method|
@@ -136,7 +144,7 @@ module ValidatesTimeliness
             next if compare.nil?
             
             compare = compare.send(conversion_method)
-            record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare) unless value.send(method, compare)
+            record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare.strftime(display)) unless value.send(method, compare)
           rescue
             record.errors.add(attr_name, "restriction '#{option}' value was invalid") unless self.ignore_datetime_restriction_errors
           end
@@ -145,7 +153,8 @@ module ValidatesTimeliness
       
       # Map error message keys to *_message to merge with validation options
       def timeliness_default_error_messages
-        defaults = ActiveRecord::Errors.default_error_messages.slice(:blank, :invalid_datetime, :before, :on_or_before, :after, :on_or_after)
+        defaults = ActiveRecord::Errors.default_error_messages.slice(
+          :blank, :invalid_date, :invalid_time, :invalid_datetime, :before, :on_or_before, :after, :on_or_after)
         returning({}) do |messages|
           defaults.each {|k, v| messages["#{k}_message".to_sym] = v }
         end
