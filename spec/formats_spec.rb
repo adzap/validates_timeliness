@@ -48,11 +48,11 @@ describe ValidatesTimeliness::Formats do
   end
  
   describe "format proc generator" do
-    it "should generate proc which outputs date array" do
+    it "should generate proc which outputs date array with values in correct order" do
       generate_proc('yyyy-mm-dd').call('2000', '1', '2').should == [2000,1,2,0,0,0,0]
     end
     
-    it "should generate proc which outputs date array from format in non time array order" do
+    it "should generate proc which outputs date array from format with different order" do
       generate_proc('dd/mm/yyyy').call('2', '1', '2000').should == [2000,1,2,0,0,0,0]
     end
     
