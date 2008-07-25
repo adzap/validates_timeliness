@@ -1,6 +1,8 @@
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 $:.unshift(File.dirname(__FILE__))
 
+ENV['RAILS_ENV'] = 'test'
+
 require 'rubygems'
 require 'spec'
 require 'spec/interop/test'
