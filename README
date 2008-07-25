@@ -298,7 +298,7 @@ The matcher names are just the singular of the validation methods.
 * Adam Meehan (adam.meehan@gmail.com, http://duckpunching.com/)
 
 * Jonathan Viney (http://workingwithrails.com/person/4985-jonathan-viney)
-  For his validates_date_time plugin which I have upi until this plugin and
+  For his validates_date_time plugin which I have used up until this plugin and
   which influenced some of the design and I borrowed a little of code from it.
 
 
