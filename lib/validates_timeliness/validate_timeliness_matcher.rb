@@ -23,31 +23,13 @@ module Spec
           valid_value   = parse_and_cast(test_values[type][:pass])
           valid = error_matching(invalid_value, /#{options["invalid_#{type}_message".to_sym]}/) &&
               no_error_matching(valid_value, /#{options["invalid_#{type}_message".to_sym]}/)
-                    
-          if valid && options[:after]
-            after = parse_and_cast(options[:after])
-            valid = error_matching(after, /#{options[:after_message]}/) &&
-              no_error_matching(after + 1, /#{options[:after_message]}/)
-          end
+
+          valid = test_option(:before, :-) if options[:before] && valid
+          valid = test_option(:after, :+) if options[:after] && valid
           
-          if valid && options[:before]
-            before = parse_and_cast(options[:before])
-            valid = error_matching(before, /#{options[:before_message]}/) &&
-              no_error_matching(before - 1, /#{options[:before_message]}/)
-          end
-        
-          if valid && options[:on_or_after]
-            on_or_after = parse_and_cast(options[:on_or_after])
-            valid = error_matching(on_or_after -1, /#{options[:on_or_after_message]}/) &&
-              no_error_matching(on_or_after, /#{options[:on_or_after_message]}/)
-          end
-          
-          if valid && options[:on_or_before]
-            on_or_before = parse_and_cast(options[:on_or_before])
-            valid = error_matching(on_or_before + 1, /#{options[:on_or_before_message]}/) &&
-              no_error_matching(on_or_before, /#{options[:on_or_before_message]}/)
-          end
-          
+          valid = test_option(:on_or_before, :+, :pre) if options[:on_or_before] && valid
+          valid = test_option(:on_or_after, :-, :pre) if options[:on_or_after] && valid
+
           return valid
         end
       
@@ -64,6 +46,17 @@ module Spec
         end
         
        private
+        
+        def test_option(option, modifier, modify_when=:post)
+          boundary = parse_and_cast(options[option])
+          
+          valid_value   = modify_when == :post ? boundary.send(modifier, 1) : boundary
+          invalid_value = modify_when == :post ? boundary : boundary.send(modifier, 1)
+          
+          message = options["#{option}_message".to_sym]
+          error_matching(invalid_value, /#{message}/) && 
+            no_error_matching(valid_value, /#{message}/)
+        end
        
         def parse_and_cast(value)
           @conversion_method ||= case options[:type]
