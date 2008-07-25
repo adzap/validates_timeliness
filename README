@@ -122,7 +122,7 @@ you want. No regular expressions or duck punching (monkey patching) the plugin.
     h-nn_ampm
     h_ampm
   
-  NOTE: Any time format without a meridian value or ampm token is considered 
+  NOTE: Any time format without a meridian token (the 'ampm' token) is considered 
         in 24 hour time.
   
   Date formats:  
@@ -251,6 +251,32 @@ A word of warning though, as this may hide issues with the model and make those
 corner cases a little harder to test. In general if you are using procs or 
 model methods and you only care when they return  a value, then they should 
 return nil in all other situations. Restrictions are skipped if they are nil.
+
+=== OTHER CUSTOMISATION:
+
+The error messages for each temporal option can also be globally overridden by 
+updating the default AR error messages like so
+
+  ActiveRecord::Errors.default_error_messages.update(
+    :invalid_date     => "is not a valid date",
+    :invalid_time     => "is not a valid time",
+    :invalid_datetime => "is not a valid datetime",
+    :before           => "must be before %s",
+    :on_or_before     => "must be on or before %s",
+    :after            => "must be after %s",
+    :on_or_after      => "must be on or after %s"
+  )
+
+Or for something a little more specific you can override the format of the values
+inserted in the error messages for temporal options like so
+
+  ActiveRecord::Errors.date_time_error_value_formats.update(
+    :time     => '%H:%M:%S',
+    :date     => '%Y-%m-%d',
+    :datetime => '%Y-%m-%d %H:%M:%S'
+  )
+
+Those are Ruby strftime formats not the plugin formats.
 
 == CREDITS:
 
