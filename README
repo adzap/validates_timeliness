@@ -183,7 +183,7 @@ To see all defined formats look in the lib/validates_timeliness/formats.rb.
 
 === US/EURO FORMATS
 
-The perenial problem for non-US develops or applications not primarily for the
+The perenial problem for non-US developers or applications not primarily for the
 US, is the US date format of m/d/yy. This is ambiguous with the European format
 of d/my/yy. By default the plugin uses the US formats as this is the Ruby default
 when it does date interpretation, and is in keeping PoLS (principle of least
@@ -277,6 +277,21 @@ inserted in the error messages for temporal options like so
   )
 
 Those are Ruby strftime formats not the plugin formats.
+
+
+=== RSPEC MATCHER:
+
+To sweeten the deal that little bit more, you have an Rspec matcher available for
+you model specs. Now you can easily test the validations you have just written 
+with the plugin or better yet *before* you write them! You just use the 
+validation options you want as you would with the validation method. Those 
+options are then verified and reported if they fail. Use it like so:
+
+
+   @person.should validate_date(:birth_date, :before => Time.now, :before_message => 'should be before today')
+
+
+The matcher names are just the singular of the validation methods.
 
 == CREDITS:
 
