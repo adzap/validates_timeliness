@@ -100,6 +100,10 @@ module Spec
           @last_failure = "value #{value} to not have error matching #{match.inspect}" unless pass
           pass
         end
+        
+        def format_value(value)
+          value.strftime(ActiveRecord::Errors.date_time_error_value_formats[options[:type]])
+        end
       end
 
       def validate_date(attribute, options={})
