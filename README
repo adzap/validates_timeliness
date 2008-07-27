@@ -5,13 +5,10 @@
 
 == DESCRIPTION:
 
-Validate dates, times and datetimes for Rails 2.x. Plays nicely with new 
-features such as automatic timezone handling and dirty attributes. Allows 
-date/time atttributes to behave like other attribute types by allowing you to
-review the raw entered value before it is converted.
-
-Allows you add custom formats or remove defaults easily. This you can control
-what you think should be a valid date or time string.
+Validate dates, times and datetimes for Rails 2.x. Plays nicely with new Rails 2.1
+features such as automatic timezone handling and dirty attributes. Allows you 
+add custom formats or remove defaults easily. This you can control what you 
+think should be a valid date or time string.
 
 
 == FEATURES:
@@ -22,8 +19,8 @@ what you think should be a valid date or time string.
 
 * Create new formats using very simple date/time format tokens
 
-* Adds better transparency of date/time attributes restoring ability to view 
-  raw value before type casting, which was lost in Rails 2.1.
+* Restores ability to see raw value entered for date/time attributes with
+  _before_type_cast modifier, which was lost in Rails 2.1.
 
 * Respects new timezone features of Rails 2.1.
 
@@ -205,18 +202,18 @@ remove a format stick this in an initializer file or environment.rb
 
 Done! That format is no longer considered valid. Easy!
 
-You can embed regular expressions in the format but no gurantees that it will 
-remain intact. If you avoid the use of any token characters and regexp dots or 
-backslashes as special characters in the regexp, it may well work as expected. 
-For special characters use POSIX character clsses for safety. See the ISO 8601 
-datetime for en example of of an embedded regular expression.
-
 Ok, now I hear you say "Well I have format that I want to use but you don't have it".
 Ahh, then add it yourself. Again stick this in an initializer file or environment.rb.
 
     ValidatesTimeliness::Formats.add_formats(:time, "d o'clock")
 
 Now "10 o'clock" will be a valid value. So easy, no more whingeing!
+
+You can embed regular expressions in the format but no gurantees that it will 
+remain intact. If you avoid the use of any token characters and regexp dots or 
+backslashes as special characters in the regexp, it may well work as expected. 
+For special characters use POSIX character classes for safety. See the ISO 8601 
+datetime for an example of of an embedded regular expression.
 
 Because formats are evaluated in order, adding a format which may be ambiguous 
 with an existing format, will mean your format is ignored. If you need to make
