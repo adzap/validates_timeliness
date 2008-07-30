@@ -6,7 +6,7 @@
 == DESCRIPTION:
 
 Validate dates, times and datetimes for Rails 2.x. Plays nicely with new Rails 2.1
-features such as automatic timezone handling and dirty attributes. Allows you 
+features such as automatic timezone handling and dirty attributes. Allows you to
 add custom formats or remove defaults easily. This allows you to control what you 
 think should be a valid date or time string.
 
