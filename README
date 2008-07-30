@@ -7,7 +7,7 @@
 
 Validate dates, times and datetimes for Rails 2.x. Plays nicely with new Rails 2.1
 features such as automatic timezone handling and dirty attributes. Allows you 
-add custom formats or remove defaults easily. This you can control what you 
+add custom formats or remove defaults easily. This allows you to control what you 
 think should be a valid date or time string.
 
 
@@ -64,6 +64,8 @@ the valid range of dates or times allowed
   Regular validation options:  
     :allow_nil    - Allow a nil value to be valid
     :allow_blank  - Allows a nil or empty string value to be valid
+    :if           - Execute validation when :if evaluates true
+    :unless       - Execute validation when :unless evaluates false
 
   Message options: - Use these to override the default error messages
     :invalid_datetime_message
