@@ -83,16 +83,20 @@ describe ValidatesTimeliness::Validations do
       person.errors.on(:birth_time).should == "is not a valid time"
     end
 
+    it "should have same value for before_type_cast after failed validation" do
+      person.birth_date_and_time = "2000-01-01 25:02:03"
+      person.should_not be_valid
+      person.birth_date_and_time_before_type_cast.should == "2000-01-01 25:02:03"
+    end
+    
     it "should be valid with valid values" do
       person.birth_date_and_time = "2000-01-01 12:12:12"
       person.birth_date = "2000-01-31"
       person.should be_valid
     end
     
-    it "should be valid with values before out of Time range" do
+    it "should be valid with value out of range for Time class" do
       person.birth_date_and_time = "1890-01-01 12:12:12"
-      person.birth_date = "1890-01-31"
-      person.birth_time = "23:59:59"
       person.should be_valid
     end
     

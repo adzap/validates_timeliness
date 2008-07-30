@@ -72,14 +72,12 @@ module ValidatesTimeliness
           column = record.column_for_attribute(attr_name)
           begin
             unless time = parse_date_time(raw_value, configuration[:type])
-              record.send("#{attr_name}=", nil)
               record.errors.add(attr_name, configuration["invalid_#{configuration[:type]}_message".to_sym])
               next
             end
            
             validate_timeliness_restrictions(record, attr_name, time, configuration)
-          rescue Exception => e          
-            record.send("#{attr_name}=", nil)
+          rescue Exception => e
             record.errors.add(attr_name, configuration["invalid_#{configuration[:type]}_message".to_sym])
           end          
         end
