@@ -122,21 +122,25 @@ module ValidatesTimeliness
         end
       end
       
+      def restriction_type_cast_method(type)
+        case type
+          when :time     then :to_dummy_time
+          when :date     then :to_date
+          when :datetime then :to_time
+        end
+      end
+      
       # Validate value against the temporal restrictions. Restriction values 
       # maybe of mixed type, so they are evaluated as a common type, which may
       # require conversion. The type used is defined by validation type.
       def validate_timeliness_restrictions(record, attr_name, value, configuration)
         restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
         
-        conversion_method = case configuration[:type]
-          when :time     then :to_dummy_time
-          when :date     then :to_date
-          when :datetime then :to_time
-        end
+        type_cast_method = restriction_type_cast_method(configuration[:type])
         
         display = ActiveRecord::Errors.date_time_error_value_formats[configuration[:type]]
         
-        value = value.send(conversion_method)
+        value = value.send(type_cast_method)
         
         restriction_methods.each do |option, method|
           next unless restriction = configuration[option]
@@ -145,7 +149,7 @@ module ValidatesTimeliness
             
             next if compare.nil?
             
-            compare = compare.send(conversion_method)
+            compare = compare.send(type_cast_method)
             record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare.strftime(display)) unless value.send(method, compare)
           rescue
             record.errors.add(attr_name, "restriction '#{option}' value was invalid") unless self.ignore_datetime_restriction_errors
