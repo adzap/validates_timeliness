@@ -1,8 +1,7 @@
 module Spec
   module Rails
     module Matchers
-      class ValidateTimeliness
-        attr_reader :actual, :expected, :record, :options, :last_failure
+      class ValidateTimeliness        
    
         def initialize(attribute, options)
           @expected, @options = attribute, options
@@ -27,8 +26,8 @@ module Spec
           valid = test_option(:before, :-) if options[:before] && valid
           valid = test_option(:after, :+) if options[:after] && valid
           
-          valid = test_option(:on_or_before, :+, :pre) if options[:on_or_before] && valid
-          valid = test_option(:on_or_after, :-, :pre) if options[:on_or_after] && valid
+          valid = test_option(:on_or_before, :+, :modify_on => :invalid) if options[:on_or_before] && valid
+          valid = test_option(:on_or_after, :-, :modify_on => :invalid) if options[:on_or_after] && valid
 
           return valid
         end
@@ -46,28 +45,29 @@ module Spec
         end
         
        private
+        attr_reader :actual, :expected, :record, :options, :last_failure
         
-        def test_option(option, modifier, modify_when=:post)
+        def test_option(option, modifier, settings={})
+          settings.reverse_merge!(:modify_on => :valid)
           boundary = parse_and_cast(options[option])
           
-          valid_value   = modify_when == :post ? boundary.send(modifier, 1) : boundary
-          invalid_value = modify_when == :post ? boundary : boundary.send(modifier, 1)
+          valid_value, invalid_value = if settings[:modify_on] == :valid
+            [ boundary.send(modifier, 1), boundary ]
+          else
+            [ boundary, boundary.send(modifier, 1) ]
+          end
           
           message = options["#{option}_message".to_sym]
           error_matching(invalid_value, /#{message}/) && 
             no_error_matching(valid_value, /#{message}/)
         end
        
-        def parse_and_cast(value)
-          @conversion_method ||= case options[:type]
-            when :time     then :to_dummy_time
-            when :date     then :to_date
-            when :datetime then :to_time
-          end
+        def parse_and_cast(value)          
           value = ActiveRecord::Base.parse_date_time(value, options[:type])
-          value.send(@conversion_method)
+          cast_method = ActiveRecord::Base.send(:restriction_type_cast_method, options[:type])
+          value.send(cast_method) rescue nil
         end
-        
+
         def error_messages
           messages = ActiveRecord::Base.send(:timeliness_default_error_messages)
           messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(' %s', ''); h } 
@@ -78,14 +78,7 @@ module Spec
           record.send("#{expected}=", value)
           record.valid?
           errors = record.errors.on(expected)
-          pass = case errors
-            when String
-              match === errors
-            when Array
-              errors.any? {|error| match === error }
-            else
-              false
-          end
+          pass = [ errors ].flatten.any? {|error| match === error }
           @last_failure = "error matching #{match.inspect} when value is #{format_value(value)}" unless pass
           pass
         end
