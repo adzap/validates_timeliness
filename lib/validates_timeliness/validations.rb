@@ -108,6 +108,19 @@ module ValidatesTimeliness
       end
       
      private
+     
+      def timeliness_restriction_value(restriction, record, type)
+        case restriction
+          when Time, Date, DateTime
+            restriction
+          when Symbol
+            timeliness_restriction_value(record.send(restriction), record, type)
+          when Proc
+            timeliness_restriction_value(restriction.call(record), record, type)
+          else
+            parse_date_time(restriction, type, false)
+        end
+      end
       
       # Validate value against the temporal restrictions. Restriction values 
       # maybe of mixed type, so they are evaluated as a common type, which may
@@ -128,16 +141,7 @@ module ValidatesTimeliness
         restriction_methods.each do |option, method|
           next unless restriction = configuration[option]
           begin
-            compare = case restriction
-              when Time, Date, DateTime
-                restriction
-              when Symbol
-                record.send(restriction)
-              when Proc
-                restriction.call(record)
-              else
-                parse_date_time(restriction, configuration[:type], false)
-            end            
+            compare = timeliness_restriction_value(restriction, record, configuration[:type])
             
             next if compare.nil?
             
