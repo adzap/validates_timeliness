@@ -1,2 +1,10 @@
+[2008-08-07]
+  - modified matcher option value parsing to allow same value types as validation method
+  - fixed matcher message
+
+[2008-08-02]
+  - refactored validation
+  - refactored matcher
+  
 [2008-07-30]
   - removed setting values to nil when validation fails to preserve before_type_cast value
