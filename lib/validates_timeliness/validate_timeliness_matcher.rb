@@ -63,7 +63,7 @@ module Spec
         end
        
         def parse_and_cast(value)          
-          value = ActiveRecord::Base.parse_date_time(value, options[:type])
+          value = ActiveRecord::Base.send(:timeliness_restriction_value, value, record, options[:type])
           cast_method = ActiveRecord::Base.send(:restriction_type_cast_method, options[:type])
           value.send(cast_method) rescue nil
         end
@@ -85,7 +85,7 @@ module Spec
         
         def no_error_matching(value, match)        
           pass = !error_matching(value, match)
-          @last_failure = "error matching #{match.inspect} when value is #{format_value(value)}" unless pass
+          @last_failure = "no error matching #{match.inspect} when value is #{format_value(value)}" unless pass
           pass
         end
         
