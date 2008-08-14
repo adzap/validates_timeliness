@@ -68,6 +68,8 @@ the valid range of dates or times allowed
     :unless       - Execute validation when :unless evaluates false
 
   Message options: - Use these to override the default error messages
+    :invalid_date_message
+    :invalid_time_message
     :invalid_datetime_message
     :before_message
     :on_or_before_message
@@ -178,7 +180,7 @@ All other characters are considered literal. For the technically minded
 at runtime so don't add any extra overhead than using regular expressions 
 directly. So, no, it won't make your app slow!
 
-To see all defined formats look in the lib/validates_timeliness/formats.rb.
+To see all defined formats look in lib/validates_timeliness/formats.rb.
 
 === US/EURO FORMATS
 
