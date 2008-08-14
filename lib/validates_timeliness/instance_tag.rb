@@ -23,7 +23,7 @@ module ValidatesTimeliness
       
       raw_value = value_before_type_cast(object)
       
-      if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
+      if raw_value.nil? || raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         return value_without_timeliness(object)
       end
       
