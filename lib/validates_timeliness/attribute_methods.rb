@@ -146,7 +146,7 @@ module ValidatesTimeliness
       def define_write_method_for_dates_and_times(attr_name, type)
         method_body = <<-EOV
           def #{attr_name}=(value)
-            @attributes_cache['#{attr_name}'] ||= self.class.parse_date_time(value, :#{type})
+            @attributes_cache['#{attr_name}'] = self.class.parse_date_time(value, :#{type})
             @attributes['#{attr_name}'] = value
           end
         EOV

@@ -108,5 +108,15 @@ describe ValidatesTimeliness::AttributeMethods do
     time = @person.birth_date_and_time
     @person.birth_date_and_time.should == time
   end
+  
+  it "should return correct value after new value assigned" do
+    today = Date.today
+    tomorrow = Date.today + 1.day    
+    @person = Person.new
+    @person.birth_date = today
+    @person.birth_date.should == today
+    @person.birth_date = tomorrow
+    @person.birth_date.should == tomorrow
+  end
  
 end

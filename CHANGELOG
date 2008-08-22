@@ -1,3 +1,6 @@
+[2008-08-22]
+  - fixed bug with attribute cache not clearing on write for date and time columns
+  
 [2008-08-07]
   - modified matcher option value parsing to allow same value types as validation method
   - fixed matcher message
