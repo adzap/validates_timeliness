@@ -37,6 +37,7 @@ if RAILS_VER >= '2.1'
   ActiveRecord::Base.time_zone_aware_attributes = true
 end
 
+ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})
 
 require 'resources/schema'
