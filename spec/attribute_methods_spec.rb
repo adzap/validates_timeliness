@@ -34,10 +34,25 @@ describe ValidatesTimeliness::AttributeMethods do
     @person.birth_date_and_time_before_type_cast.should be_kind_of(Time)
   end
 
-  it "should return Time object using attribute read method when written with string" do
+  it "should return Time object for datetime attribute read method when assigned Time object" do
+    @person.birth_date_and_time = Time.now
+    @person.birth_date_and_time.should be_kind_of(Time)
+  end
+
+  it "should return Time object for datetime attribute read method when assigned string" do
     @person.birth_date_and_time = "2000-01-01 02:03:04"
     @person.birth_date_and_time.should be_kind_of(Time)
   end    
+ 
+  it "should return Date object for date attribute read method when assigned Date object" do
+    @person.birth_date = Date.today
+    @person.birth_date.should be_kind_of(Date)
+  end  
+ 
+  it "should return Date object for date attribute read method when assigned string" do
+    @person.birth_date = '2000-01-01'
+    @person.birth_date.should be_kind_of(Date)
+  end 
  
   it "should return nil when time is invalid" do
     @person.birth_date_and_time = "2000-01-32 02:03:04"

@@ -34,7 +34,7 @@ module ValidatesTimeliness
       
       def parse_date_time(raw_value, type, strict=true)
         return nil if raw_value.blank?
-        return raw_value.to_time if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
+        return raw_value if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
         time_array = ValidatesTimeliness::Formats.parse(raw_value, type, strict)
         raise if time_array.nil?
@@ -43,7 +43,9 @@ module ValidatesTimeliness
         time_array[0..2] = 2000, 1, 1 if type == :time
   
         # Date.new enforces days per month, unlike Time
-        Date.new(*time_array[0..2]) unless type == :time
+        date = Date.new(*time_array[0..2]) unless type == :time
+        
+        return date if type == :date
         
         # Create time object which checks time part, and return time object
         make_time(time_array)

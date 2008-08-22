@@ -1,5 +1,7 @@
 [2008-08-22]
-  - fixed bug with attribute cache not clearing on write for date and time columns
+  - fixed bug with attribute cache not clearing on write for date and time columns [reported by Sylvestre Mergulhão]
+  - return Date object for date column attribute reader when assigned string as per normal Rails behaviour
+  - attribute reader returns same object type when assigned Date or Time object as per normal Rails behaviour
   
 [2008-08-07]
   - modified matcher option value parsing to allow same value types as validation method
