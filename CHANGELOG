@@ -1,3 +1,6 @@
+[2008-08-25]
+  - fixed bug for non-timezone write method not updating changed attributes hash [reported by Sylvestre Mergulhão]
+
 [2008-08-22]
   - fixed bug with attribute cache not clearing on write for date and time columns [reported by Sylvestre Mergulhão]
   - parse method returns Date object for date column assigned string as per normal Rails behaviour
