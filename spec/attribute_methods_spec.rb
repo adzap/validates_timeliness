@@ -113,24 +113,44 @@ describe ValidatesTimeliness::AttributeMethods do
       
   end
   
-  it "should return same time object on repeat reads" do
+  it "should return same time object on repeat reads on existing object" do
     Time.zone = 'Melbourne' unless RAILS_VER < '2.1'
     time_string = "2000-01-01 09:00:00"
     @person = Person.new
     @person.birth_date_and_time = time_string
-    @person.save
+    @person.save!
     @person.reload
     time = @person.birth_date_and_time
     @person.birth_date_and_time.should == time
   end
   
-  it "should return correct value after new value assigned" do
+  it "should return same date object on repeat reads on existing object" do
+    date_string = Date.today
+    @person = Person.new
+    @person.birth_date = date_string
+    @person.save!
+    @person.reload
+    date = @person.birth_date
+    @person.birth_date.should == date
+  end
+  
+  it "should return correct date value after new value assigned" do
     today = Date.today
     tomorrow = Date.today + 1.day    
     @person = Person.new
     @person.birth_date = today
     @person.birth_date.should == today
     @person.birth_date = tomorrow
+    @person.birth_date.should == tomorrow
+  end
+ 
+  it "should update date attribute on existing object" do
+    today = Date.today
+    tomorrow = Date.today + 1.day
+    @person = Person.create(:birth_date => today)
+    @person.birth_date = tomorrow
+    @person.save!
+    @person.reload
     @person.birth_date.should == tomorrow
   end
  

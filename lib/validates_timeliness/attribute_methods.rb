@@ -104,7 +104,7 @@ module ValidatesTimeliness
       def define_write_method_for_time_zone_conversion(attr_name)
         method_body = <<-EOV
           def #{attr_name}=(time)
-            old = read_attribute('#{attr_name}') if defined?(ActiveRecord::Dirty)
+            old = read_attribute('#{attr_name}')
             @attributes['#{attr_name}'] = time
             unless time.acts_like?(:time)
               time = self.class.parse_date_time(time, :datetime)
@@ -146,7 +146,12 @@ module ValidatesTimeliness
       def define_write_method_for_dates_and_times(attr_name, type)
         method_body = <<-EOV
           def #{attr_name}=(value)
-            @attributes_cache['#{attr_name}'] = self.class.parse_date_time(value, :#{type})
+            old = read_attribute('#{attr_name}') if defined?(ActiveRecord::Dirty)
+            new = self.class.parse_date_time(value, :#{type})
+            @attributes_cache['#{attr_name}'] = new
+            if defined?(ActiveRecord::Dirty) && !changed_attributes.include?('#{attr_name}') && old != new
+              changed_attributes['#{attr_name}'] = (old.duplicable? ? old.clone : old)
+            end
             @attributes['#{attr_name}'] = value
           end
         EOV
