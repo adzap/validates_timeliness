@@ -86,13 +86,13 @@ describe ValidatesTimeliness::AttributeMethods do
       @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z %z').should == time_string + ' EST +1000'
     end
     
-    it "should return true for attribute changed?" do
-      time_string = "2000-01-01 02:03:04"
-      @person.birth_date_and_time = time_string
-      @person.birth_date_and_time_changed?.should be_true
-    end
-    
     describe "dirty attributes" do
+    
+      it "should return true for attribute changed? when value updated" do
+        time_string = "2000-01-01 02:03:04"
+        @person.birth_date_and_time = time_string
+        @person.birth_date_and_time_changed?.should be_true
+      end
     
       it "should show changes when time attribute changed from nil to Time object" do
         time_string = "2000-01-01 02:03:04"
