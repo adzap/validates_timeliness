@@ -1,3 +1,6 @@
+[2008-10-28]
+  - fixed bug when dirty attributes not reflecting change when attribute changed from time value to nil [reported by Brad (pvjq)]
+
 [2008-09-24]
   - refactored attribute write method definitions
 

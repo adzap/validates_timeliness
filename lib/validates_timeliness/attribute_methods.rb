@@ -71,8 +71,7 @@ module ValidatesTimeliness
     def write_date_time_attribute(attr_name, value)
       attr_name = attr_name.to_s
       column = column_for_attribute(attr_name)
-
-      old = read_attribute('#{attr_name}') if defined?(ActiveRecord::Dirty)
+      old = read_attribute(attr_name) if defined?(ActiveRecord::Dirty)
       new = self.class.parse_date_time(value, column.type)
 
       if self.class.send(:create_time_zone_conversion_attribute?, attr_name, column)

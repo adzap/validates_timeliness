@@ -92,13 +92,45 @@ describe ValidatesTimeliness::AttributeMethods do
       @person.birth_date_and_time_changed?.should be_true
     end
     
-    it "should show changes for time attribute as nil to Time object" do
-      time_string = "2000-01-01 02:03:04"
-      @person.birth_date_and_time = time_string
-      time = @person.birth_date_and_time
-      @person.changes.should == {"birth_date_and_time" => [nil, time]}
-    end
+    describe "dirty attributes" do
     
+      it "should show changes when time attribute changed from nil to Time object" do
+        time_string = "2000-01-01 02:03:04"
+        @person.birth_date_and_time = time_string
+        time = @person.birth_date_and_time
+        @person.changes.should == {"birth_date_and_time" => [nil, time]}
+      end
+      
+      it "should show changes when time attribute changed from Time object to nil" do
+        time_string = "2020-01-01 02:03:04"
+        @person.birth_date_and_time = time_string
+        @person.save false
+        @person.reload
+        time = @person.birth_date_and_time
+        @person.birth_date_and_time = nil
+        @person.changes.should == {"birth_date_and_time" => [time, nil]}
+      end
+      
+      it "should show no changes when assigned same value as Time object" do
+        time_string = "2020-01-01 02:03:04"
+        @person.birth_date_and_time = time_string
+        @person.save false
+        @person.reload
+        time = @person.birth_date_and_time
+        @person.birth_date_and_time = time
+        @person.changes.should == {}
+      end
+      
+      it "should show no changes when assigned same value as time string" do
+        time_string = "2020-01-01 02:03:04"
+        @person.birth_date_and_time = time_string
+        @person.save false
+        @person.reload
+        @person.birth_date_and_time = time_string
+        @person.changes.should == {}
+      end
+      
+    end
   else
     
     it "should return time object from database in default timezone" do        
