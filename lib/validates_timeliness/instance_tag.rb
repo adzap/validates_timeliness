@@ -7,15 +7,25 @@ module ValidatesTimeliness
   module InstanceTag    
   
     def self.included(base)
-      base.alias_method_chain :date_or_time_select, :timeliness
-      base.alias_method_chain :value, :timeliness      
+      if Rails::VERSION::STRING >= '2.2'
+        base.class_eval do
+          alias_method :datetime_selector_without_timeliness, :datetime_selector
+          alias_method :datetime_selector, :datetime_selector_with_timeliness
+        end
+      else
+        base.class_eval do
+          alias_method :datetime_selector_without_timeliness, :date_or_time_select
+          alias_method :date_or_time_select, :datetime_selector_with_timeliness
+        end
+      end
+      base.alias_method_chain :value, :timeliness
     end
     
     TimelinessDateTime = Struct.new(:year, :month, :day, :hour, :min, :sec)      
       
-    def date_or_time_select_with_timeliness(*args)
+    def datetime_selector_with_timeliness(*args)
       @timeliness_date_or_time_tag = true
-      date_or_time_select_without_timeliness(*args)
+      datetime_selector_without_timeliness(*args)
     end
   
     def value_with_timeliness(object)

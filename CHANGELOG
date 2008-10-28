@@ -1,5 +1,6 @@
 [2008-10-28]
   - fixed bug when dirty attributes not reflecting change when attribute changed from time value to nil [reported by Brad (pvjq)]
+  - fixes for Rails 2.2 compatibility. Will refactor in to Rails version specific branches in the future.
 
 [2008-09-24]
   - refactored attribute write method definitions

@@ -32,7 +32,10 @@ puts "Using #{vendored ? 'vendored' : 'gem'} Rails version #{RAILS_VER} (ActiveR
 
 ActiveRecord::Base.default_timezone = :utc
 
-if RAILS_VER >= '2.1'
+if RAILS_VER >= '2.2'
+  Time.zone_default = ActiveSupport::TimeZone['UTC']
+  ActiveRecord::Base.time_zone_aware_attributes = true
+elsif RAILS_VER >= '2.1'
   Time.zone_default = TimeZone['UTC']
   ActiveRecord::Base.time_zone_aware_attributes = true
 end
