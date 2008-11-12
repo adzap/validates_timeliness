@@ -13,11 +13,11 @@ describe ValidatesTimeliness::Formats do
     end
     
     it "should generate regexp for time with meridian" do
-      generate_regexp_str('hh:nn:ss ampm').should == '/(\d{2}):(\d{2}):(\d{2}) ((?:a|p)\.?m\.?)/'
+      generate_regexp_str('hh:nn:ss ampm').should == '/(\d{2}):(\d{2}):(\d{2}) ((?:[aApP])\.?[mM]\.?)/'
     end
     
     it "should generate regexp for time with meridian and optional space between" do
-      generate_regexp_str('hh:nn:ss_ampm').should == '/(\d{2}):(\d{2}):(\d{2})\s?((?:a|p)\.?m\.?)/'
+      generate_regexp_str('hh:nn:ss_ampm').should == '/(\d{2}):(\d{2}):(\d{2})\s?((?:[aApP])\.?[mM]\.?)/'
     end
     
     it "should generate regexp for time with single or double digits" do
@@ -83,13 +83,13 @@ describe ValidatesTimeliness::Formats do
         'h.nn'      => {:pass => ['2.12', '12.12'], :fail => ['2.1', '12:12']},
         'h nn'      => {:pass => ['2 12', '12 12'], :fail => ['2 1', '2.12', '12:12']},
         'h-nn'      => {:pass => ['2-12', '12-12'], :fail => ['2-1', '2.12', '12:12']},
-        'h:nn_ampm' => {:pass => ['2:12am', '2:12 pm'], :fail => ['1:2am', '1:12  pm', '2.12am']},
+        'h:nn_ampm' => {:pass => ['2:12am', '2:12 pm', '2:12 AM', '2:12PM'], :fail => ['1:2am', '1:12  pm', '2.12am']},
         'h.nn_ampm' => {:pass => ['2.12am', '2.12 pm'], :fail => ['1:2am', '1:12  pm', '2:12am']},
         'h nn_ampm' => {:pass => ['2 12am', '2 12 pm'], :fail => ['1 2am', '1 12  pm', '2:12am']},
         'h-nn_ampm' => {:pass => ['2-12am', '2-12 pm'], :fail => ['1-2am', '1-12  pm', '2:12am']},
         'h_ampm'    => {:pass => ['2am', '2 am', '12 pm'], :fail => ['1.am', '12  pm', '2:12am']},
-      }    
-      format_tests.each do |format, values|      
+      }
+      format_tests.each do |format, values|
         it "should correctly validate times in format '#{format}'" do
           regexp = generate_regexp(format)
           values[:pass].each {|value| value.should match(regexp)}
