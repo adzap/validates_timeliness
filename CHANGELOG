@@ -1,5 +1,5 @@
 [2008-11-13]
-  - allow uppercase meridian to be valid
+  - allow uppercase meridian to be valid [reported by Alex (http://alex.digns.com/)]
 
 [2008-10-28]
   - fixed bug when dirty attributes not reflecting change when attribute changed from time value to nil [reported by Brad (pvjq)]
