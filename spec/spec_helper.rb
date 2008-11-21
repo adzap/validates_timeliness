@@ -1,11 +1,12 @@
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 $:.unshift(File.dirname(__FILE__))
+$:.unshift(File.dirname(__FILE__) + '/resources')
 
 ENV['RAILS_ENV'] = 'test'
 
 require 'rubygems'
 require 'spec'
-require 'spec/interop/test'
+#require 'spec/interop/test'
 
 vendored_rails = File.dirname(__FILE__) + '/../../../../vendor/rails'
 
@@ -15,14 +16,17 @@ else
   gem 'rails', "=#{ENV['VERSION']}" if ENV['VERSION']
 end
 
+RAILS_ROOT = File.dirname(__FILE__)
+
 require 'rails/version'
 require 'active_record'
 require 'active_record/version'
 require 'action_controller'
-require 'action_controller/test_process'
 require 'action_view'
 
-require 'rspec-rails/rspec-rails'
+ActiveSupport::Deprecation.silenced = true
+
+require 'spec/rails'
 require 'time_travel/time_travel'
 require 'validates_timeliness'
 
@@ -40,5 +44,5 @@ end
 ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})
 
-require 'resources/schema'
-require 'resources/person'
+require 'schema'
+require 'person'
