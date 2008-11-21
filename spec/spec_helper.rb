@@ -6,7 +6,6 @@ ENV['RAILS_ENV'] = 'test'
 
 require 'rubygems'
 require 'spec'
-#require 'spec/interop/test'
 
 vendored_rails = File.dirname(__FILE__) + '/../../../../vendor/rails'
 
