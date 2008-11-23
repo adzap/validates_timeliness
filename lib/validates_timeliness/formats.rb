@@ -189,7 +189,7 @@ module ValidatesTimeliness
       # Adds new formats. Must specify format type and can specify a :before
       # option to nominate which format the new formats should be inserted in 
       # front on to take higher precedence. 
-      # Error is raise if format already exists or if :before format is not found.
+      # Error is raised if format already exists or if :before format is not found.
       def add_formats(type, *add_formats)
         formats = self.send("#{type}_formats")
         options = {}

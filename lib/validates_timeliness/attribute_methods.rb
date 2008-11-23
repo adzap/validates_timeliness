@@ -1,7 +1,7 @@
 module ValidatesTimeliness
 
-  # The crux of the plugin is being able to store raw user entered values,
-  # while not interferring with the Rails 2.1 automatic timezone handling. This
+  # The crux of the plugin is being able to store raw user entered values
+  # while not interfering with the Rails 2.1 automatic timezone handling. This
   # requires us to distinguish a user entered value from a value read from the
   # database. Both maybe in string form, but only the database value should be
   # interpreted as being in the default timezone which is normally UTC. The user
@@ -18,10 +18,6 @@ module ValidatesTimeliness
   # The wholesale replacement of the Rails time type casting is not done to
   # preserve the quickest conversion for timestamp columns and also any value
   # which is never changed during the life of the record object.
-  #
-  # Dates are also handled but only write to cache value converted by plugin
-  # parser. Default read method will retrieve from cache or do default
-  # conversion
   module AttributeMethods
 
     def self.included(base)
@@ -64,7 +60,7 @@ module ValidatesTimeliness
     # Writes attribute value by storing raw value in attributes hash,
     # then convert it with parser and cache it.
     #
-    # If Rails 2.1 dirty attributes is enabled then the value is added to
+    # If Rails dirty attributes is enabled then the value is added to
     # changed attributes if changed. Can't use the default dirty checking
     # implementation as it chains the write_attribute method which deletes
     # the attribute from the cache.
