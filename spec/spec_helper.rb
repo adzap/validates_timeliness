@@ -12,7 +12,11 @@ vendored_rails = File.dirname(__FILE__) + '/../../../../vendor/rails'
 if vendored = File.exists?(vendored_rails)
   Dir.glob(vendored_rails + "/**/lib").each { |dir| $:.unshift dir }
 else
-  gem 'rails', "=#{ENV['VERSION']}" if ENV['VERSION']
+  begin
+   require 'ginger' 
+  rescue LoadError
+  end
+  gem 'rails'
 end
 
 RAILS_ROOT = File.dirname(__FILE__)
