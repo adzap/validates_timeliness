@@ -7,16 +7,10 @@ module ValidatesTimeliness
   module InstanceTag    
   
     def self.included(base)
-      if Rails::VERSION::STRING >= '2.2'
-        base.class_eval do
-          alias_method :datetime_selector_without_timeliness, :datetime_selector
-          alias_method :datetime_selector, :datetime_selector_with_timeliness
-        end
-      else
-        base.class_eval do
-          alias_method :datetime_selector_without_timeliness, :date_or_time_select
-          alias_method :date_or_time_select, :datetime_selector_with_timeliness
-        end
+      selector_method = Rails::VERSION::STRING < '2.2' ? :date_or_time_select : :datetime_selector
+      base.class_eval do
+        alias_method :datetime_selector_without_timeliness, selector_method
+        alias_method selector_method, :datetime_selector_with_timeliness
       end
       base.alias_method_chain :value, :timeliness
     end
