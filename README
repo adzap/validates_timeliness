@@ -27,11 +27,7 @@ think should be a valid date or time string.
 
 == INSTALLATION:
 
-Rails 2.1
   ./script/plugin git://github.com/adzap/validates_timeliness
-
-Rails 2.0
-  # TODO: best practice for git with Rails 2.0? 
 
   
 == USAGE:
@@ -84,8 +80,8 @@ The temporal options can take 4 different value types:
   * A symbol matching the method name in the model  
 
 When an attribute value is compared to temporal options, they are compared as 
-the same type as the validation method type. So validates_date means all values
-are compared as dates.
+the same type as the validation method type. So using validates_date means all
+values are compared as dates.
 
 == EXAMPLES:
 
@@ -93,8 +89,8 @@ are compared as dates.
                                 :before_message => "must be at least 18 years old"
   
   validates_time :breakfast_time, :on_or_after => '6:00am',
+                                  :on_or_after_message => 'must be after opening time',
                                   :before => :second_breakfast_time,
-                                  :on_or_after_message => 'must after opening time',
                                   :allow_nil => true
 
   validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
@@ -108,7 +104,8 @@ removed without hacking the plugin at all.
 
 Below are the default formats. If you think they are easy to read then you will 
 be happy to know that is exactly the format you can use to define your own if 
-you want. No regular expressions or duck punching (monkey patching) the plugin.
+you want. No complex regular expressions or duck punching (monkey patching) the
+plugin is needed.
 
   Time formats:  
     hh:nn:ss
@@ -200,14 +197,14 @@ Now '01/02/2000' will be parsed as 1st February 2000, instead of 2nd January 200
 === CUSTOMISING FORMATS:
 
 I hear you say "Thats greats but I don't want X format to be valid". Well to 
-remove a format stick this in an initializer file or environment.rb
+remove a format stick this in an initializer file
 
   ValidatesTimeliness::Formats.remove_formats(:date, 'm\d\yy')
 
 Done! That format is no longer considered valid. Easy!
 
 Ok, now I hear you say "Well I have format that I want to use but you don't have it".
-Ahh, then add it yourself. Again stick this in an initializer file or environment.rb.
+Ahh, then add it yourself. Again stick this in an initializer file
 
     ValidatesTimeliness::Formats.add_formats(:time, "d o'clock")
 
@@ -217,7 +214,7 @@ You can embed regular expressions in the format but no gurantees that it will
 remain intact. If you avoid the use of any token characters and regexp dots or 
 backslashes as special characters in the regexp, it may well work as expected. 
 For special characters use POSIX character classes for safety. See the ISO 8601 
-datetime for an example of of an embedded regular expression.
+datetime for an example of an embedded regular expression.
 
 Because formats are evaluated in order, adding a format which may be ambiguous 
 with an existing format, will mean your format is ignored. If you need to make
