@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe ValidatesTimeliness::MultiparameterAttributes do
+describe ValidatesTimeliness::ActiveRecord::MultiparameterAttributes do
   def obj
     @obj ||= Person.new
   end

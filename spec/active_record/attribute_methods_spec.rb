@@ -1,7 +1,7 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe ValidatesTimeliness::AttributeMethods do
-  include ValidatesTimeliness::AttributeMethods
+describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
+  include ValidatesTimeliness::ActiveRecord::AttributeMethods
   include ValidatesTimeliness::Validations
   
   before do

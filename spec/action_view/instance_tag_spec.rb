@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe ValidatesTimeliness::InstanceTag, :type => :helper do
+describe ValidatesTimeliness::ActionView::InstanceTag, :type => :helper do
   
   before do
     @person = Person.new

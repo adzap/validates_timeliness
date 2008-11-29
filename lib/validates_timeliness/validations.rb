@@ -12,14 +12,14 @@ module ValidatesTimeliness
       base.class_inheritable_accessor :ignore_datetime_restriction_errors
       base.ignore_datetime_restriction_errors = false
       
-      ActiveRecord::Errors.class_inheritable_accessor :date_time_error_value_formats
-      ActiveRecord::Errors.date_time_error_value_formats = {
+      ::ActiveRecord::Errors.class_inheritable_accessor :date_time_error_value_formats
+      ::ActiveRecord::Errors.date_time_error_value_formats = {
         :time     => '%H:%M:%S',
         :date     => '%Y-%m-%d',
         :datetime => '%Y-%m-%d %H:%M:%S'
       }      
       
-      ActiveRecord::Errors.default_error_messages.update(
+      ::ActiveRecord::Errors.default_error_messages.update(
         :invalid_date     => "is not a valid date",
         :invalid_time     => "is not a valid time",
         :invalid_datetime => "is not a valid datetime",
@@ -140,7 +140,7 @@ module ValidatesTimeliness
         
         type_cast_method = restriction_type_cast_method(configuration[:type])
         
-        display = ActiveRecord::Errors.date_time_error_value_formats[configuration[:type]]
+        display = ::ActiveRecord::Errors.date_time_error_value_formats[configuration[:type]]
         
         value = value.send(type_cast_method)
         
@@ -161,7 +161,7 @@ module ValidatesTimeliness
       
       # Map error message keys to *_message to merge with validation options
       def timeliness_default_error_messages
-        defaults = ActiveRecord::Errors.default_error_messages.slice(
+        defaults = ::ActiveRecord::Errors.default_error_messages.slice(
           :blank, :invalid_date, :invalid_time, :invalid_datetime, :before, :on_or_before, :after, :on_or_after)
         returning({}) do |messages|
           defaults.each {|k, v| messages["#{k}_message".to_sym] = v }
@@ -175,9 +175,9 @@ module ValidatesTimeliness
           Time.zone.local(*time_array)
         else
           begin
-            Time.send(ActiveRecord::Base.default_timezone, *time_array)
+            Time.send(::ActiveRecord::Base.default_timezone, *time_array)
           rescue ArgumentError, TypeError
-            zone_offset = ActiveRecord::Base.default_timezone == :local ? DateTime.local_offset : 0
+            zone_offset = ::ActiveRecord::Base.default_timezone == :local ? DateTime.local_offset : 0
             time_array.pop # remove microseconds
             DateTime.civil(*(time_array << zone_offset))
           end
