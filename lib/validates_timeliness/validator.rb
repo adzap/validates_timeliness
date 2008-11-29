@@ -4,7 +4,7 @@ module ValidatesTimeliness
   # The validity of values can be restricted to be before or after certain dates
   # or times.
   class Validator
-    attr_accessor :configuration
+    attr_accessor :configuration, :errors
 
     cattr_accessor :ignore_datetime_restriction_errors
     cattr_accessor :date_time_error_value_formats
@@ -34,50 +34,31 @@ module ValidatesTimeliness
       defaults = { :on => :save, :type => :datetime, :allow_nil => false, :allow_blank => false }
       defaults.update(self.class.mapped_default_error_messages)
       @configuration = defaults.merge(configuration)
+      @errors = []
     end
       
     # The main validation method which can be used directly or called through
     # the other specific type validation methods.      
-    def evaluate(record, attr_name, value)
+    def call(record, attr_name, value)
+      @errors = []
       return if (value.nil? && configuration[:allow_nil]) || (value.blank? && configuration[:allow_blank])
 
-      record.errors.add(attr_name, configuration[:blank_message]) and return if value.blank?
+      @errors << configuration[:blank_message] and return if value.blank?
       
       begin
         unless time = record.class.parse_date_time(value, configuration[:type])
-          record.errors.add(attr_name, configuration["invalid_#{configuration[:type]}_message".to_sym])
+          @errors << configuration["invalid_#{configuration[:type]}_message".to_sym]
           return
         end
        
         validate_restrictions(record, attr_name, time)
       rescue Exception => e
-        record.errors.add(attr_name, configuration["invalid_#{configuration[:type]}_message".to_sym])
+        @errors << configuration["invalid_#{configuration[:type]}_message".to_sym]
       end
     end
     
    private
    
-    def self.restriction_value(restriction, record, type)
-      case restriction
-        when Time, Date, DateTime
-          restriction
-        when Symbol
-          restriction_value(record.send(restriction), record, type)
-        when Proc
-          restriction_value(restriction.call(record), record, type)
-        else
-         record.class.parse_date_time(restriction, type, false)
-      end
-    end
-    
-    def self.restriction_type_cast_method(type)
-      case type
-        when :time     then :to_dummy_time
-        when :date     then :to_date
-        when :datetime then :to_time
-      end
-    end
-    
     # Validate value against the temporal restrictions. Restriction values 
     # maybe of mixed type, so they are evaluated as a common type, which may
     # require conversion. The type used is defined by validation type.
@@ -98,13 +79,33 @@ module ValidatesTimeliness
           next if compare.nil?
           
           compare = compare.send(type_cast_method)
-          record.errors.add(attr_name, configuration["#{option}_message".to_sym] % compare.strftime(display)) unless value.send(method, compare)
+          @errors << (configuration["#{option}_message".to_sym] % compare.strftime(display)) unless value.send(method, compare)
         rescue
-          record.errors.add(attr_name, "restriction '#{option}' value was invalid") unless self.ignore_datetime_restriction_errors
+          @errors << "restriction '#{option}' value was invalid" unless self.ignore_datetime_restriction_errors
         end
       end
     end
     
+    def self.restriction_value(restriction, record, type)
+      case restriction
+        when Time, Date, DateTime
+          restriction
+        when Symbol
+          restriction_value(record.send(restriction), record, type)
+        when Proc
+          restriction_value(restriction.call(record), record, type)
+        else
+         record.class.parse_date_time(restriction, type, false)
+      end
+    end
+    
+    def self.restriction_type_cast_method(type)
+      case type
+        when :time     then :to_dummy_time
+        when :date     then :to_date
+        when :datetime then :to_time
+      end
+    end
     # Map error message keys to *_message to merge with validation options
     def self.mapped_default_error_messages
       returning({}) do |messages|
