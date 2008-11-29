@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
   include ValidatesTimeliness::ActiveRecord::AttributeMethods
-  include ValidatesTimeliness::Validations
+  include ValidatesTimeliness::ValidationMethods
   
   before do
     @person = Person.new

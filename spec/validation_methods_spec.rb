@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe ValidatesTimeliness::Validations do
+describe ValidatesTimeliness::ValidationMethods do
   attr_accessor :person
 
   before :all do
@@ -46,37 +46,37 @@ describe ValidatesTimeliness::Validations do
     end
   end
   
-  describe "timeliness_restriction_value" do
-    it "should return Time object when restriction is Time object" do
-      restriction_value(Time.now, person, :datetime).should be_kind_of(Time)
-    end
-    
-    it "should return Time object when restriction is string" do
-      restriction_value("2007-01-01 12:00", person, :datetime).should be_kind_of(Time)
-    end
-    
-    it "should return Time object when restriction is method symbol which returns Time object" do
-      person.stub!(:datetime_attr).and_return(Time.now)
-      restriction_value(:datetime_attr, person, :datetime).should be_kind_of(Time)
-    end
-    
-    it "should return Time object when restriction is method symbol which returns string" do
-      person.stub!(:datetime_attr).and_return("2007-01-01 12:00")
-      restriction_value(:datetime_attr, person, :datetime).should be_kind_of(Time)
-    end
-    
-    it "should return Time object when restriction is proc which returns Time object" do
-      restriction_value(lambda { Time.now }, person, :datetime).should be_kind_of(Time)
-    end
-    
-    it "should return Time object when restriction is proc which returns string" do
-      restriction_value(lambda {"2007-01-01 12:00"}, person, :datetime).should be_kind_of(Time)
-    end
-    
-    def restriction_value(*args)
-      ActiveRecord::Base.send(:timeliness_restriction_value, *args)
-    end
-  end
+  # describe "timeliness_restriction_value" do
+  #   it "should return Time object when restriction is Time object" do
+  #     restriction_value(Time.now, person, :datetime).should be_kind_of(Time)
+  #   end
+  #   
+  #   it "should return Time object when restriction is string" do
+  #     restriction_value("2007-01-01 12:00", person, :datetime).should be_kind_of(Time)
+  #   end
+  #   
+  #   it "should return Time object when restriction is method symbol which returns Time object" do
+  #     person.stub!(:datetime_attr).and_return(Time.now)
+  #     restriction_value(:datetime_attr, person, :datetime).should be_kind_of(Time)
+  #   end
+  #   
+  #   it "should return Time object when restriction is method symbol which returns string" do
+  #     person.stub!(:datetime_attr).and_return("2007-01-01 12:00")
+  #     restriction_value(:datetime_attr, person, :datetime).should be_kind_of(Time)
+  #   end
+  #   
+  #   it "should return Time object when restriction is proc which returns Time object" do
+  #     restriction_value(lambda { Time.now }, person, :datetime).should be_kind_of(Time)
+  #   end
+  #   
+  #   it "should return Time object when restriction is proc which returns string" do
+  #     restriction_value(lambda {"2007-01-01 12:00"}, person, :datetime).should be_kind_of(Time)
+  #   end
+  #   
+  #   def restriction_value(*args)
+  #     ActiveRecord::Base.send(:timeliness_restriction_value, *args)
+  #   end
+  # end
    
   describe "with no restrictions" do
     before :all do
@@ -416,9 +416,9 @@ describe ValidatesTimeliness::Validations do
   
   describe "ignoring restriction errors" do
     before :all do
+      ValidatesTimeliness::Validator.ignore_datetime_restriction_errors = true
       class BadRestriction < Person        
         validates_date :birth_date, :before => Proc.new { raise }
-        self.ignore_datetime_restriction_errors = true
       end
     end
     
@@ -473,7 +473,7 @@ describe ValidatesTimeliness::Validations do
           validates_time :birth_time, :allow_blank => true, :after => '23:59:59'
         end
 
-        ActiveRecord::Errors.date_time_error_value_formats = {
+        ValidatesTimeliness::Validator.date_time_error_value_formats = {
           :time => '%H:%M %p',
           :date => '%d-%m-%Y',
           :datetime => '%d-%m-%Y %H:%M %p'

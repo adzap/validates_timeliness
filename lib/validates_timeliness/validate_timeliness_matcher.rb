@@ -1,7 +1,7 @@
 module Spec
   module Rails
     module Matchers
-      class ValidateTimeliness        
+      class ValidateTimeliness
    
         def initialize(attribute, options)
           @expected, @options = attribute, options
@@ -63,13 +63,13 @@ module Spec
         end
        
         def parse_and_cast(value)          
-          value = ActiveRecord::Base.send(:timeliness_restriction_value, value, record, options[:type])
-          cast_method = ActiveRecord::Base.send(:restriction_type_cast_method, options[:type])
+          value = ValidatesTimeliness::Validator.send(:restriction_value, value, record, options[:type])
+          cast_method = ValidatesTimeliness::Validator.send(:restriction_type_cast_method, options[:type])
           value.send(cast_method) rescue nil
         end
 
         def error_messages
-          messages = ActiveRecord::Base.send(:timeliness_default_error_messages)
+          messages = ValidatesTimeliness::Validator.send(:mapped_default_error_messages)
           messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(' %s', ''); h } 
           @options.reverse_merge!(messages)
         end
@@ -83,7 +83,7 @@ module Spec
           pass
         end
         
-        def no_error_matching(value, match)        
+        def no_error_matching(value, match)
           pass = !error_matching(value, match)
           @last_failure = "no error matching #{match.inspect} when value is #{format_value(value)}" unless pass
           pass
@@ -91,7 +91,7 @@ module Spec
         
         def format_value(value)
           return value if value.is_a?(String)
-          value.strftime(ActiveRecord::Errors.date_time_error_value_formats[options[:type]])
+          value.strftime(ValidatesTimeliness::Validator.date_time_error_value_formats[options[:type]])
         end
       end
 
@@ -110,10 +110,11 @@ module Spec
         validate_timeliness_of(attribute, options)
       end
 
-      private      
+      private
+
         def validate_timeliness_of(attribute, options={})
           ValidateTimeliness.new(attribute, options)
-        end        
+        end
     end
-  end  
+  end
 end
