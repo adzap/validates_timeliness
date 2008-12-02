@@ -1,8 +1,6 @@
 module ValidatesTimeliness
   module ValidationMethods
 
-    # Error messages and error value formats added to AR defaults to allow 
-    # global override.  
     def self.included(base)
       base.extend ClassMethods
     end
@@ -30,24 +28,18 @@ module ValidatesTimeliness
         nil
       end
 
-      # Use this validation to force validation of values and restrictions 
-      # as dummy time
       def validates_time(*attr_names)
         configuration = attr_names.extract_options!
         configuration[:type] = :time
         validates_timeliness_of(attr_names, configuration)
       end
       
-      # Use this validation to force validation of values and restrictions 
-      # as Date
       def validates_date(*attr_names)
         configuration = attr_names.extract_options!
         configuration[:type] = :date
         validates_timeliness_of(attr_names, configuration)
       end
       
-      # Use this validation to force validation of values and restrictions
-      # as Time/DateTime
       def validates_datetime(*attr_names)
         configuration = attr_names.extract_options!
         configuration[:type] = :datetime
@@ -56,8 +48,6 @@ module ValidatesTimeliness
 
       private
 
-      # The main validation method which can be used directly or called through
-      # the other specific type validation methods
       def validates_timeliness_of(*attr_names)
         configuration = attr_names.extract_options!
         validator = ValidatesTimeliness::Validator.new(configuration)
