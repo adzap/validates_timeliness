@@ -80,7 +80,7 @@ module Spec
           record.valid?
           errors = record.errors.on(expected)
           pass = [ errors ].flatten.any? {|error| match === error }
-          @last_failure = "error matching #{match.inspect} when value is #{format_value(value)} #{errors.inspect}" unless pass
+          @last_failure = "error matching #{match.inspect} when value is #{format_value(value)}" unless pass
           pass
         end
         
