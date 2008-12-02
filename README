@@ -51,7 +51,7 @@ The list of validation methods available are as follows:
 The validation methods take the usual options plus some specific ones to restrict
 the valid range of dates or times allowed
 
-  Temporal options:  
+  Temporal options (or restrictions):  
     :before       - Attribute must be before this value to be valid
     :on_or_before - Attribute must be equal to or before this value to be valid
     :after        - Attribute must be after this value to be valid
@@ -72,14 +72,14 @@ the valid range of dates or times allowed
     :after_message
     :on_or_after_message
 
-The temporal options can take 4 different value types:
+The temporal restrictions can take 4 different value types:
 
   * String value
   * Date, Time, or DateTime object value
   * Proc or lambda object
   * A symbol matching the method name in the model  
 
-When an attribute value is compared to temporal options, they are compared as 
+When an attribute value is compared to temporal restrictions, they are compared as 
 the same type as the validation method type. So using validates_date means all
 values are compared as dates.
 
@@ -227,23 +227,17 @@ Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves
 you adding a new one and deleting an old one to get it to work.
 
 
-=== TEMPORAL OPTION ERRORS:
+=== TEMPORAL RESTRICTION ERRORS:
 
-When using the validation temporal options there are times when the restriction
+When using the validation temporal restrictions there are times when the restriction
 value itself may be invalid. Normally this will add an error to the model such as
 'restriction :before value was invalid'. These can be annoying if you are using 
 procs or methods as restrictions and don't care if they don't evaluate properly
 and you want the validation to complete. In these situations you turn them off.
 
-To turn them off globally:
+To turn them off:
 
-  ActiveRecord::Base.ignore_datetime_restriction_errors = true
-
-To switch them on or off per model:
-
-  class Person < ActiveRecord::Base
-    self.ignore_datetime_restriction_errors = false
-  end
+  ValidatesTimeliness.ignore_restriction_errors = true
 
 A word of warning though, as this may hide issues with the model and make those
 corner cases a little harder to test. In general if you are using procs or 
@@ -252,7 +246,7 @@ return nil in all other situations. Restrictions are skipped if they are nil.
 
 === OTHER CUSTOMISATION:
 
-The error messages for each temporal option can also be globally overridden by 
+The error messages for each temporal restrictions can also be globally overridden by 
 updating the default AR error messages like so
 
   ActiveRecord::Errors.default_error_messages.update(
@@ -266,9 +260,9 @@ updating the default AR error messages like so
   )
 
 Or for something a little more specific you can override the format of the values
-inserted in the error messages for temporal options like so
+inserted in the error messages for temporal restrictions like so
 
-  ActiveRecord::Errors.date_time_error_value_formats.update(
+  ValidatesTimeliness.error_value_formats.update(
     :time     => '%H:%M:%S',
     :date     => '%Y-%m-%d',
     :datetime => '%Y-%m-%d %H:%M:%S'
@@ -284,7 +278,6 @@ you model specs. Now you can easily test the validations you have just written
 with the plugin or better yet *before* you write them! You just use the 
 validation options you want as you would with the validation method. Those 
 options are then verified and reported if they fail. Use it like so:
-
 
    @person.should validate_date(:birth_date, :before => Time.now, :before_message => 'should be before today')
 
