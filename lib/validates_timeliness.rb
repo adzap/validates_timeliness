@@ -1,7 +1,7 @@
 require 'validates_timeliness/formats'
 require 'validates_timeliness/validator'
 require 'validates_timeliness/validation_methods'
-require 'validates_timeliness/validate_timeliness_matcher' if ENV['RAILS_ENV'] == 'test'
+require 'validates_timeliness/spec/rails/matchers/validate_timeliness' if ENV['RAILS_ENV'] == 'test'
 
 require 'validates_timeliness/active_record/attribute_methods'
 require 'validates_timeliness/active_record/multiparameter_attributes'
