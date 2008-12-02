@@ -2,26 +2,33 @@ module Spec
   module Rails
     module Matchers
       class ValidateTimeliness
+        cattr_accessor :test_values
    
+        @@test_values = {
+          :date     => {:pass => '2000-01-01', :fail => '2000-01-32'},
+          :time     => {:pass => '12:00',      :fail => '25:00'},
+          :datetime => {:pass => '2000-01-01 00:00:00', :fail => '2000-01-32 00:00:00'}
+        }
+
         def initialize(attribute, options)
           @expected, @options = attribute, options
-          @options.reverse_merge!(error_messages)
+          compile_error_messages
         end
         
+        def compile_error_messages
+          validator = ValidatesTimeliness::Validator.new(options)
+          messages = validator.send(:error_messages)
+          @messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(' %s', ''); h }
+        end
+
         def matches?(record)
           @record = record
           type = options[:type]
           
-          test_values = {
-            :date     => {:pass => '2000-01-01', :fail => '2000-01-32'},
-            :time     => {:pass => '12:00',      :fail => '25:00'},
-            :datetime => {:pass => '2000-01-01 00:00:00', :fail => '2000-01-32 00:00:00'}
-          }
-          
-          invalid_value = test_values[type][:fail]
-          valid_value   = parse_and_cast(test_values[type][:pass])
-          valid = error_matching(invalid_value, /#{options["invalid_#{type}_message".to_sym]}/) &&
-              no_error_matching(valid_value, /#{options["invalid_#{type}_message".to_sym]}/)
+          invalid_value = @@test_values[type][:fail]
+          valid_value   = parse_and_cast(@@test_values[type][:pass])
+          valid = error_matching(invalid_value, /#{messages["invalid_#{type}".to_sym]}/) &&
+              no_error_matching(valid_value, /#{messages["invalid_#{type}".to_sym]}/)
 
           valid = test_option(:before, :-) if options[:before] && valid
           valid = test_option(:after, :+) if options[:after] && valid
@@ -45,7 +52,7 @@ module Spec
         end
         
        private
-        attr_reader :actual, :expected, :record, :options, :last_failure
+        attr_reader :actual, :expected, :record, :options, :messages, :last_failure
         
         def test_option(option, modifier, settings={})
           settings.reverse_merge!(:modify_on => :valid)
@@ -57,29 +64,23 @@ module Spec
             [ boundary, boundary.send(modifier, 1) ]
           end
           
-          message = options["#{option}_message".to_sym]
+          message = messages[option]
           error_matching(invalid_value, /#{message}/) && 
             no_error_matching(valid_value, /#{message}/)
         end
        
-        def parse_and_cast(value)          
+        def parse_and_cast(value)
           value = ValidatesTimeliness::Validator.send(:restriction_value, value, record, options[:type])
           cast_method = ValidatesTimeliness::Validator.send(:restriction_type_cast_method, options[:type])
           value.send(cast_method) rescue nil
         end
 
-        def error_messages
-          messages = ValidatesTimeliness::Validator.send(:mapped_default_error_messages)
-          messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(' %s', ''); h } 
-          @options.reverse_merge!(messages)
-        end
-        
         def error_matching(value, match)
           record.send("#{expected}=", value)
           record.valid?
           errors = record.errors.on(expected)
           pass = [ errors ].flatten.any? {|error| match === error }
-          @last_failure = "error matching #{match.inspect} when value is #{format_value(value)}" unless pass
+          @last_failure = "error matching #{match.inspect} when value is #{format_value(value)} #{errors.inspect}" unless pass
           pass
         end
         
@@ -91,7 +92,7 @@ module Spec
         
         def format_value(value)
           return value if value.is_a?(String)
-          value.strftime(ValidatesTimeliness::Validator.date_time_error_value_formats[options[:type]])
+          value.strftime(ValidatesTimeliness.date_time_error_value_formats[options[:type]])
         end
       end
 
@@ -112,9 +113,10 @@ module Spec
 
       private
 
-        def validate_timeliness_of(attribute, options={})
-          ValidateTimeliness.new(attribute, options)
-        end
+      def validate_timeliness_of(attribute, options={})
+        ValidateTimeliness.new(attribute, options)
+      end
+
     end
   end
 end

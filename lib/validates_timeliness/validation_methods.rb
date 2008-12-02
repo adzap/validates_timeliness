@@ -68,8 +68,6 @@ module ValidatesTimeliness
         validates_each(attr_names, configuration) do |record, attr_name, value|
           raw_value = record.send("#{attr_name}_before_type_cast")
           validator.call(record, attr_name, raw_value)
-          errors = validator.errors
-          add_errors(record, attr_name, errors) unless errors.empty?
         end
       end
 
@@ -88,9 +86,6 @@ module ValidatesTimeliness
         end
       end
 
-      def add_errors(record, attr_name, errors)
-        errors.each {|e| record.errors.add(attr_name, e) }
-      end
     end
 
   end

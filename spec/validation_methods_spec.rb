@@ -48,12 +48,10 @@ describe ValidatesTimeliness::ValidationMethods do
   
    
   describe "with no restrictions" do
-    before :all do
-      class BasicValidation < Person
-        validates_datetime :birth_date_and_time, :allow_blank => true
-        validates_date :birth_date, :allow_blank => true
-        validates_time :birth_time, :allow_blank => true
-      end
+    class BasicValidation < Person
+      validates_datetime :birth_date_and_time, :allow_blank => true
+      validates_date :birth_date, :allow_blank => true
+      validates_time :birth_time, :allow_blank => true
     end
 
     before :each do
@@ -104,7 +102,7 @@ describe ValidatesTimeliness::ValidationMethods do
     it "should be valid with nil values when allow_blank is true" do
       person.birth_date_and_time = nil
       person.birth_date = nil
-      person.birth_time = nil      
+      person.birth_time = nil
       person.should be_valid
     end
   end
@@ -112,11 +110,9 @@ describe ValidatesTimeliness::ValidationMethods do
   describe "for datetime type" do
     
     describe "with before and after restrictions" do
-      before :all do
-        class DateTimeBeforeAfter < Person
-          validates_datetime :birth_date_and_time,
-            :before => lambda { Time.now }, :after => lambda { 1.day.ago}
-        end
+      class DateTimeBeforeAfter < Person
+        validates_datetime :birth_date_and_time,
+          :before => lambda { Time.now }, :after => lambda { 1.day.ago}
       end
 
       before :each do
@@ -149,12 +145,10 @@ describe ValidatesTimeliness::ValidationMethods do
     end
 
     describe "with on_or_before and on_or_after restrictions" do
-      before :all do
-        class DateTimeOnOrBeforeAndAfter < Person
-          validates_datetime :birth_date_and_time, :type => :datetime,
-            :on_or_before => lambda { Time.now.at_midnight },
-            :on_or_after => lambda { 1.day.ago }
-        end
+      class DateTimeOnOrBeforeAndAfter < Person
+        validates_datetime :birth_date_and_time, :type => :datetime,
+          :on_or_before => lambda { Time.now.at_midnight },
+          :on_or_after => lambda { 1.day.ago }
       end
       
       before do  
@@ -180,7 +174,7 @@ describe ValidatesTimeliness::ValidationMethods do
 
       it "should be valid when value equal to :on_or_after restriction" do
         person.birth_date_and_time = 1.day.ago
-        person.should be_valid        
+        person.should be_valid
       end 
     end
 
@@ -190,11 +184,11 @@ describe ValidatesTimeliness::ValidationMethods do
     
     describe "with before and after restrictions" do
       before :all do
-        class DateBeforeAfter < Person
-          validates_date :birth_date,
-            :before => 1.day.from_now, 
-            :after => 1.day.ago
-        end        
+      class DateBeforeAfter < Person
+        validates_date :birth_date,
+          :before => 1.day.from_now, 
+          :after => 1.day.ago
+      end
       end
 
       before :each do
@@ -216,13 +210,13 @@ describe ValidatesTimeliness::ValidationMethods do
 
     describe "with on_or_before and on_or_after restrictions" do
       before :all do
-        class DateOnOrBeforeAndAfter < Person
-          validates_date :birth_date,
-            :on_or_before => 1.day.from_now,
-            :on_or_after => 1.day.ago
-        end
+      class DateOnOrBeforeAndAfter < Person
+        validates_date :birth_date,
+          :on_or_before => 1.day.from_now,
+          :on_or_after => 1.day.ago
       end
-      
+      end
+
       before :each do
         @person = DateOnOrBeforeAndAfter.new
       end
@@ -254,12 +248,10 @@ describe ValidatesTimeliness::ValidationMethods do
   describe "for time type" do
   
     describe "with before and after restrictions" do
-      before :all do
-        class TimeBeforeAfter < Person
-          validates_time :birth_time,
-            :before => "23:00", 
-            :after => "06:00"
-        end        
+      class TimeBeforeAfter < Person
+        validates_time :birth_time,
+          :before => "23:00", 
+          :after => "06:00"
       end
 
       before :each do
@@ -302,12 +294,10 @@ describe ValidatesTimeliness::ValidationMethods do
     end
 
     describe "with on_or_before and on_or_after restrictions" do
-      before :all do
-        class TimeOnOrBeforeAndAfter < Person
-          validates_time :birth_time,
-            :on_or_before => "23:00",
-            :on_or_after => "06:00"
-        end
+      class TimeOnOrBeforeAndAfter < Person
+        validates_time :birth_time,
+          :on_or_before => "23:00",
+          :on_or_after => "06:00"
       end
       
       before :each do
@@ -339,16 +329,13 @@ describe ValidatesTimeliness::ValidationMethods do
   end
   
   describe "with mixed value and restriction types" do
-    before :all do
-      
-      class MixedBeforeAndAfter < Person
-        validates_datetime :birth_date_and_time, 
-                            :before => Date.new(2000,1,2), 
-                            :after => lambda { "2000-01-01" }
-        validates_date :birth_date,
-                            :on_or_before => lambda { "2000-01-01" }, 
-                            :on_or_after => :birth_date_and_time
-      end
+    class MixedBeforeAndAfter < Person
+      validates_datetime :birth_date_and_time, 
+                          :before => Date.new(2000,1,2), 
+                          :after => lambda { "2000-01-01" }
+      validates_date :birth_date,
+                          :on_or_before => lambda { "2000-01-01" }, 
+                          :on_or_after => :birth_date_and_time
     end
     
     before :each do
@@ -384,11 +371,16 @@ describe ValidatesTimeliness::ValidationMethods do
   end
   
   describe "ignoring restriction errors" do
+    class BadRestriction < Person        
+      validates_date :birth_date, :before => Proc.new { raise }
+    end
+
     before :all do
-      ValidatesTimeliness::Validator.ignore_datetime_restriction_errors = true
-      class BadRestriction < Person        
-        validates_date :birth_date, :before => Proc.new { raise }
-      end
+      ValidatesTimeliness.ignore_datetime_restriction_errors = true
+    end
+
+    after :all do
+      ValidatesTimeliness.ignore_datetime_restriction_errors = false
     end
     
     before :each do
@@ -402,17 +394,15 @@ describe ValidatesTimeliness::ValidationMethods do
   end
   
   describe "restriction value error message" do
-    describe "default formats" do
-      before :all do
-        class DefaultFormats < Person
-          validates_datetime :birth_date_and_time, :allow_blank => true, :after => 1.day.from_now
-          validates_date :birth_date, :allow_blank => true, :after => 1.day.from_now
-          validates_time :birth_time, :allow_blank => true, :after => '23:59:59'
-        end
-      end
+    class ValueFormats < Person
+      validates_datetime :birth_date_and_time, :allow_blank => true, :after => 1.day.from_now
+      validates_date :birth_date, :allow_blank => true, :after => 1.day.from_now
+      validates_time :birth_time, :allow_blank => true, :after => '23:59:59'
+    end
 
+    describe "default formats" do 
       before :each do
-        @person = DefaultFormats.new
+        @person = ValueFormats.new
       end
       
       it "should format datetime value of restriction" do
@@ -436,13 +426,7 @@ describe ValidatesTimeliness::ValidationMethods do
     
     describe "custom formats" do
       before :all do
-        class CustomFormats < Person
-          validates_datetime :birth_date_and_time, :allow_blank => true, :after => 1.day.from_now
-          validates_date :birth_date, :allow_blank => true, :after => 1.day.from_now
-          validates_time :birth_time, :allow_blank => true, :after => '23:59:59'
-        end
-
-        ValidatesTimeliness::Validator.date_time_error_value_formats = {
+        ValidatesTimeliness.date_time_error_value_formats = {
           :time => '%H:%M %p',
           :date => '%d-%m-%Y',
           :datetime => '%d-%m-%Y %H:%M %p'
@@ -450,7 +434,7 @@ describe ValidatesTimeliness::ValidationMethods do
       end
 
       before :each do
-        @person = CustomFormats.new
+        @person = ValueFormats.new
       end
       
       it "should format datetime value of restriction" do

@@ -1,26 +1,33 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
+class NoValidation < Person
+end
+
+class WithValidation < Person
+  validates_date :birth_date, 
+    :before       => '2000-01-10',        :after       => '2000-01-01',
+    :on_or_before => '2000-01-09',        :on_or_after => '2000-01-02'
+  validates_time :birth_time, 
+    :before       => '23:00',             :after       => '09:00',
+    :on_or_before => '22:00',             :on_or_after => '10:00'
+  validates_datetime :birth_date_and_time, 
+    :before       => '2000-01-10 23:00',  :after       => '2000-01-01 09:00',
+    :on_or_before => '2000-01-09 23:00',  :on_or_after => '2000-01-02 09:00'
+
+end
+
+class CustomMessages < Person
+  validates_date :birth_date, :invalid_date_message => 'is not really a date',
+    :before      => '2000-01-10', :before_message => 'is too late',
+    :after       => '2000-01-01', :after_message => 'is too early',
+    :on_or_before=> '2000-01-09', :on_or_before_message => 'is just too late',
+    :on_or_after => '2000-01-02', :on_or_after_message => 'is just too early'
+end
+
 describe "ValidateTimeliness matcher" do
   attr_accessor :no_validation, :with_validation
   
   before do
-    class NoValidation < Person
-      alias_attribute :birth_datetime, :birth_date_and_time
-    end
-    
-    class WithValidation < Person
-      validates_date :birth_date, 
-        :before       => '2000-01-10', :after       => '2000-01-01',
-        :on_or_before => '2000-01-09', :on_or_after => '2000-01-02'
-      validates_time :birth_time, 
-        :before       => '23:00', :after       => '09:00',
-        :on_or_before => '22:00', :on_or_after => '10:00'
-      validates_datetime :birth_date_and_time, 
-        :before       => '2000-01-10 23:00', :after       => '2000-01-01 09:00',
-        :on_or_before => '2000-01-09 23:00', :on_or_after => '2000-01-02 09:00'
-      
-      alias_attribute :birth_datetime, :birth_date_and_time
-    end
     @no_validation = NoValidation.new
     @with_validation = WithValidation.new
   end
@@ -134,14 +141,8 @@ describe "ValidateTimeliness matcher" do
   end
   
   describe "custom messages" do
+
     before do
-      class CustomMessages < Person
-        validates_date :birth_date, :invalid_date_message => 'is not really a date',
-          :before      => '2000-01-10', :before_message => 'is too late',
-          :after       => '2000-01-01', :after_message => 'is too early',
-          :on_or_before=> '2000-01-09', :on_or_before_message => 'is just too late',
-          :on_or_after => '2000-01-02', :on_or_after_message => 'is just too early'
-      end
       @person = CustomMessages.new
     end
     

@@ -27,8 +27,6 @@ require 'active_record/version'
 require 'action_controller'
 require 'action_view'
 
-ActiveSupport::Deprecation.silenced = true
-
 require 'spec/rails'
 require 'time_travel/time_travel'
 require 'validates_timeliness'

@@ -21,3 +21,31 @@ Date.send(:include, ValidatesTimeliness::CoreExtensions::Date)
 DateTime.send(:include, ValidatesTimeliness::CoreExtensions::DateTime)
 
 ValidatesTimeliness::Formats.compile_format_expressions
+
+module ValidatesTimeliness
+  
+  mattr_accessor :ignore_datetime_restriction_errors
+  mattr_accessor :date_time_error_value_formats
+  mattr_accessor :default_error_messages
+  
+  @@ignore_datetime_restriction_errors = false
+    
+  @@date_time_error_value_formats = {
+    :time     => '%H:%M:%S',
+    :date     => '%Y-%m-%d',
+    :datetime => '%Y-%m-%d %H:%M:%S'
+  }      
+    
+  @@default_error_messages = {
+    :empty            => "cannot be empty",
+    :blank            => "cannot be blank",
+    :invalid_date     => "is not a valid date",
+    :invalid_time     => "is not a valid time",
+    :invalid_datetime => "is not a valid datetime",
+    :before           => "must be before %s",
+    :on_or_before     => "must be on or before %s",
+    :after            => "must be after %s",
+    :on_or_after      => "must be on or after %s"
+  }
+
+end
