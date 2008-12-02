@@ -376,11 +376,11 @@ describe ValidatesTimeliness::ValidationMethods do
     end
 
     before :all do
-      ValidatesTimeliness.ignore_datetime_restriction_errors = true
+      ValidatesTimeliness.ignore_restriction_errors = true
     end
 
     after :all do
-      ValidatesTimeliness.ignore_datetime_restriction_errors = false
+      ValidatesTimeliness.ignore_restriction_errors = false
     end
     
     before :each do
@@ -426,7 +426,7 @@ describe ValidatesTimeliness::ValidationMethods do
     
     describe "custom formats" do
       before :all do
-        ValidatesTimeliness.date_time_error_value_formats = {
+        ValidatesTimeliness.error_value_formats = {
           :time => '%H:%M %p',
           :date => '%d-%m-%Y',
           :datetime => '%d-%m-%Y %H:%M %p'

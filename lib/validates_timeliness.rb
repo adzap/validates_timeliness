@@ -24,13 +24,13 @@ ValidatesTimeliness::Formats.compile_format_expressions
 
 module ValidatesTimeliness
   
-  mattr_accessor :ignore_datetime_restriction_errors
-  mattr_accessor :date_time_error_value_formats
+  mattr_accessor :ignore_restriction_errors
+  mattr_accessor :error_value_formats
   mattr_accessor :default_error_messages
   
-  @@ignore_datetime_restriction_errors = false
+  @@ignore_restriction_errors = false
     
-  @@date_time_error_value_formats = {
+  @@error_value_formats = {
     :time     => '%H:%M:%S',
     :date     => '%Y-%m-%d',
     :datetime => '%Y-%m-%d %H:%M:%S'

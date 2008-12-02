@@ -36,7 +36,7 @@ module ValidatesTimeliness
       
       type_cast_method = self.class.restriction_type_cast_method(type)
       
-      display = ValidatesTimeliness.date_time_error_value_formats[type]
+      display = ValidatesTimeliness.error_value_formats[type]
       
       value = value.send(type_cast_method)
       
@@ -51,7 +51,7 @@ module ValidatesTimeliness
             add_error(record, attr_name, error_messages[option] % compare.strftime(display))
           end
         rescue
-          unless ValidatesTimeliness.ignore_datetime_restriction_errors
+          unless ValidatesTimeliness.ignore_restriction_errors
             add_error(record, attr_name, "restriction '#{option}' value was invalid")
           end
         end

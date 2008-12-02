@@ -92,7 +92,7 @@ module Spec
         
         def format_value(value)
           return value if value.is_a?(String)
-          value.strftime(ValidatesTimeliness.date_time_error_value_formats[options[:type]])
+          value.strftime(ValidatesTimeliness.error_value_formats[options[:type]])
         end
       end
 
