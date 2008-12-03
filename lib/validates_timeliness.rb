@@ -11,15 +11,6 @@ require 'validates_timeliness/core_ext/time'
 require 'validates_timeliness/core_ext/date'
 require 'validates_timeliness/core_ext/date_time'
 
-ActiveRecord::Base.send(:include, ValidatesTimeliness::ValidationMethods)
-ActiveRecord::Base.send(:include, ValidatesTimeliness::ActiveRecord::AttributeMethods)
-ActiveRecord::Base.send(:include, ValidatesTimeliness::ActiveRecord::MultiparameterAttributes)
-ActionView::Helpers::InstanceTag.send(:include, ValidatesTimeliness::ActionView::InstanceTag)
-
-Time.send(:include, ValidatesTimeliness::CoreExtensions::Time)
-Date.send(:include, ValidatesTimeliness::CoreExtensions::Date)
-DateTime.send(:include, ValidatesTimeliness::CoreExtensions::DateTime)
-
 module ValidatesTimeliness
   
   mattr_accessor :ignore_restriction_errors

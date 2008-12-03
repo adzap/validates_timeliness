@@ -9,3 +9,5 @@ module ValidatesTimeliness
     end
   end
 end
+
+DateTime.send(:include, ValidatesTimeliness::CoreExtensions::DateTime)

@@ -41,3 +41,5 @@ module ValidatesTimeliness
 
   end   
 end
+
+ActionView::Helpers::InstanceTag.send(:include, ValidatesTimeliness::ActionView::InstanceTag)

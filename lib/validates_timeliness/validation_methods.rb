@@ -80,3 +80,5 @@ module ValidatesTimeliness
 
   end
 end
+
+ActiveRecord::Base.send(:include, ValidatesTimeliness::ValidationMethods)

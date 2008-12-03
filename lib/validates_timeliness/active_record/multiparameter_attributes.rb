@@ -60,3 +60,5 @@ module ValidatesTimeliness
 
   end
 end
+
+ActiveRecord::Base.send(:include, ValidatesTimeliness::ActiveRecord::MultiparameterAttributes)
