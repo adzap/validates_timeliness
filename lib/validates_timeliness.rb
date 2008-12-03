@@ -20,39 +20,62 @@ Time.send(:include, ValidatesTimeliness::CoreExtensions::Time)
 Date.send(:include, ValidatesTimeliness::CoreExtensions::Date)
 DateTime.send(:include, ValidatesTimeliness::CoreExtensions::DateTime)
 
-ValidatesTimeliness::Formats.compile_format_expressions
-
 module ValidatesTimeliness
   
   mattr_accessor :ignore_restriction_errors
   mattr_accessor :error_value_formats
   
-  @@ignore_restriction_errors = false
+  self.ignore_restriction_errors = false
     
-  @@error_value_formats = {
+  self.error_value_formats = {
     :time     => '%H:%M:%S',
     :date     => '%Y-%m-%d',
     :datetime => '%Y-%m-%d %H:%M:%S'
   }      
     
-  def self.load_error_messages
-    path = File.expand_path(File.dirname(__FILE__) + '/validates_timeliness/locale/en.yml')
-    if Rails::VERSION::STRING < '2.2'
-      messages = YAML::load(IO.read(path))
+  LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/validates_timeliness/locale/en.yml')
+
+  class << self
+
+    def load_error_messages_with_i18n
+      I18n.load_path += [ LOCALE_PATH ]
+    end
+
+    def load_error_messages_without_i18n
+      messages = YAML::load(IO.read(LOCALE_PATH))
       errors = messages['en']['activerecord']['errors']['messages'].inject({}) {|h,(k,v)| h[k.to_sym] = v.gsub(/\{\{\w*\}\}/, '%s');h }
       ::ActiveRecord::Errors.default_error_messages.update(errors)
-    else
-      I18n.load_path += [ path ]
     end
-  end
+    
+    def default_error_messages
+      if Rails::VERSION::STRING < '2.2'
+        ::ActiveRecord::Errors.default_error_messages
+      else
+        I18n.translate('activerecord.errors.messages')
+      end
+    end
 
-  def self.default_error_messages
-    if Rails::VERSION::STRING < '2.2'
-      ::ActiveRecord::Errors.default_error_messages
-    else
-      I18n.translate('activerecord.errors.messages')
+    def setup_for_rails_2_0
+      load_error_messages_without_i18n
+    end
+
+    def setup_for_rails_2_1
+      load_error_messages_without_i18n
+    end
+
+    def setup_for_rails_2_2
+      load_error_messages_with_i18n
+    end
+
+    def setup_for_rails
+      major, minor = Rails::VERSION::MAJOR, Rails::VERSION::MINOR
+      self.send("setup_for_rails_#{major}_#{minor}")
+    rescue
+      raise "Rails version #{Rails::VERSION::STRING} not yet supported by validates_timeliness plugin"
     end
   end
 end
 
-ValidatesTimeliness.load_error_messages
+ValidatesTimeliness.setup_for_rails
+
+ValidatesTimeliness::Formats.compile_format_expressions
