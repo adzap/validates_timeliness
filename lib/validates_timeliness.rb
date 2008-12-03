@@ -26,7 +26,6 @@ module ValidatesTimeliness
   
   mattr_accessor :ignore_restriction_errors
   mattr_accessor :error_value_formats
-  mattr_accessor :default_error_messages
   
   @@ignore_restriction_errors = false
     
@@ -36,16 +35,24 @@ module ValidatesTimeliness
     :datetime => '%Y-%m-%d %H:%M:%S'
   }      
     
-  @@default_error_messages = {
-    :empty            => "cannot be empty",
-    :blank            => "cannot be blank",
-    :invalid_date     => "is not a valid date",
-    :invalid_time     => "is not a valid time",
-    :invalid_datetime => "is not a valid datetime",
-    :before           => "must be before %s",
-    :on_or_before     => "must be on or before %s",
-    :after            => "must be after %s",
-    :on_or_after      => "must be on or after %s"
-  }
+  def self.load_error_messages
+    path = File.expand_path(File.dirname(__FILE__) + '/validates_timeliness/locale/en.yml')
+    if Rails::VERSION::STRING < '2.2'
+      messages = YAML::load(IO.read(path))
+      errors = messages['en']['activerecord']['errors']['messages'].inject({}) {|h,(k,v)| h[k.to_sym] = v.gsub(/\{\{\w*\}\}/, '%s');h }
+      ::ActiveRecord::Errors.default_error_messages.update(errors)
+    else
+      I18n.load_path += [ path ]
+    end
+  end
 
+  def self.default_error_messages
+    if Rails::VERSION::STRING < '2.2'
+      ::ActiveRecord::Errors.default_error_messages
+    else
+      I18n.translate('activerecord.errors.messages')
+    end
+  end
 end
+
+ValidatesTimeliness.load_error_messages

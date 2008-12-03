@@ -18,7 +18,7 @@ module Spec
         def compile_error_messages
           validator = ValidatesTimeliness::Validator.new(options)
           messages = validator.send(:error_messages)
-          @messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(' %s', ''); h }
+          @messages = messages.inject({}) {|h, (k, v)| h[k] = v.gsub(/ (\%s|\{\{\w*\}\})/, ''); h }
         end
 
         def matches?(record)

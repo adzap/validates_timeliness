@@ -1,7 +1,7 @@
 = validates_timeliness
 
   * Source:  http://github.com/adzap/validates_timeliness
-  * Tickets: http://adzap.lighthouseapp.com/projects/14111-validates_timeliness
+  * Bugs:    http://adzap.lighthouseapp.com/projects/14111-validates_timeliness
 
 == DESCRIPTION:
 
@@ -249,6 +249,8 @@ return nil in all other situations. Restrictions are skipped if they are nil.
 The error messages for each temporal restrictions can also be globally overridden by 
 updating the default AR error messages like so
 
+For Rails 2.0/2.1:
+
   ActiveRecord::Errors.default_error_messages.update(
     :invalid_date     => "is not a valid date",
     :invalid_time     => "is not a valid time",
@@ -259,8 +261,22 @@ updating the default AR error messages like so
     :on_or_after      => "must be on or after %s"
   )
 
-Or for something a little more specific you can override the format of the values
-inserted in the error messages for temporal restrictions like so
+Where %s is the interpolation value for the restriction.
+
+Rails 2.2+ using the I18n system to define new defaults:
+
+  en:
+    activerecord:
+      errors:
+        messages:
+          on_or_before: "must equal to or before {{restriction}}"
+          on_or_after:  "must equal to or after {{restriction}}"
+
+The {{restriction}} signifies where the interpolation value for the restriction
+will be inserted.
+
+And for something a little more specific you can override the format of the interpolation
+values inserted in the error messages for temporal restrictions like so
 
   ValidatesTimeliness.error_value_formats.update(
     :time     => '%H:%M:%S',

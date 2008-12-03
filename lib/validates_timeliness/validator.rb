@@ -48,7 +48,7 @@ module ValidatesTimeliness
           compare = compare.send(type_cast_method)
 
           unless value.send(method, compare)
-            add_error(record, attr_name, error_messages[option] % compare.strftime(display))
+            add_error(record, attr_name, option, :restriction => compare.strftime(display))
           end
         rescue
           unless ValidatesTimeliness.ignore_restriction_errors
@@ -58,16 +58,25 @@ module ValidatesTimeliness
       end
     end
     
-    def add_error(record, attr_name, message)
-      message = error_messages[message] if message.is_a?(Symbol)
-      record.errors.add(attr_name, message)
+    def add_error(record, attr_name, message, interpolate={})
+      if Rails::VERSION::STRING < '2.2'
+        message = error_messages[message] if message.is_a?(Symbol)
+        message = message % interpolate.values unless interpolate.empty?
+        record.errors.add(attr_name, message)
+      else
+        custom = custom_error_messages[message]
+        record.errors.add(attr_name, custom || message, interpolate)
+      end
     end
 
     def error_messages
       return @error_messages if defined?(@error_messages)
-      custom = {}
-      configuration.each {|k, v| custom[$1.to_sym] = v if k.to_s =~ /(.*)_message$/ }
-      @error_messages = ValidatesTimeliness.default_error_messages.merge(custom)
+      @error_messages = ValidatesTimeliness.default_error_messages.merge(custom_error_messages)
+    end
+    
+    def custom_error_messages
+      return @custom_error_messages if defined?(@custom_error_messages)
+      @custom_error_messages = configuration.inject({}) {|h, (k, v)| h[$1.to_sym] = v if k.to_s =~ /(.*)_message$/;h }
     end
     
     def self.restriction_value(restriction, record, type)
