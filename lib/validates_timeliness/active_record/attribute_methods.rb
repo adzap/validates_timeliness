@@ -1,20 +1,19 @@
 module ValidatesTimeliness
   module ActiveRecord
 
-    # The crux of the plugin is being able to store raw user entered values
-    # while not interfering with the Rails 2.1 automatic timezone handling. This
-    # requires us to distinguish a user entered value from a value read from the
-    # database. Both maybe in string form, but only the database value should be
-    # interpreted as being in the default timezone which is normally UTC. The user
-    # entered value should be interpreted as being in the current zone as indicated
-    # by Time.zone.
+    # Rails 2.1 removed the ability to retrieve the raw value of a time or datetime
+    # attribute. The raw value is necessary to properly validate a string time or 
+    # datetime value instead of the internal Rails type casting which is very limited 
+    # and does not allow custom formats. These methods restore that ability while 
+    # respecting the automatic timezone handling.
     #
-    # To do this we must cache the user entered values on write and store the raw
-    # value in the attributes hash for later retrieval and possibly validation.
-    # Any value from the database will not be in the attribute cache on first
-    # read so will be considered in default timezone and converted to local time.
-    # It is then stored back in the attributes hash and cached to avoid the need
-    # for any subsequent differentiation.
+    # The automatic timezone handling sets the assigned attribute value to the current
+    # zone in Time.zone. To preserve this localised value and capture the raw value 
+    # we cache the localised value on write and store the raw value in the attributes
+    # hash for later retrieval and possibly validation. Any value from the database
+    # will not be in the attribute cache on first read so will be considered in default
+    # timezone and converted to local time. It is then stored back in the attributes
+    # hash and cached to avoid the need for any subsequent differentiation.
     #
     # The wholesale replacement of the Rails time type casting is not done to
     # preserve the quickest conversion for timestamp columns and also any value
