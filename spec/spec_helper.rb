@@ -16,7 +16,11 @@ else
    require 'ginger' 
   rescue LoadError
   end
-  gem 'rails'
+  if ENV['VERSION']
+    gem 'rails', ENV['VERSION']
+  else
+    gem 'rails'
+  end
 end
 
 RAILS_ROOT = File.dirname(__FILE__)
@@ -41,8 +45,31 @@ if RAILS_VER >= '2.1'
   ActiveRecord::Base.time_zone_aware_attributes = true
 end
 
+
 ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})
+
+# patches adapter in rails 2.0 which mistakenly made time attributes map to datetime column typs
+if RAILS_VER < '2.1'
+  ActiveRecord::ConnectionAdapters::SQLiteAdapter.class_eval do
+    def native_database_types #:nodoc:
+      {
+        :primary_key => default_primary_key_type,
+        :string      => { :name => "varchar", :limit => 255 },
+        :text        => { :name => "text" },
+        :integer     => { :name => "integer" },
+        :float       => { :name => "float" },
+        :decimal     => { :name => "decimal" },
+        :datetime    => { :name => "datetime" },
+        :timestamp   => { :name => "datetime" },
+        :time        => { :name => "time" },
+        :date        => { :name => "date" },
+        :binary      => { :name => "blob" },
+        :boolean     => { :name => "boolean" }
+      }
+    end
+  end
+end
 
 require 'schema'
 require 'person'

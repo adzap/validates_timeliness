@@ -39,11 +39,9 @@ describe ValidatesTimeliness::ActiveRecord::MultiparameterAttributes do
       obj.send(:execute_callstack_for_multiparameter_attributes, @callstack)
     end
    
-    unless RAILS_VER < '2.1' # sqlite doesn't support :time attribute in rails 2.0.x
-      it "should store time string for a time column" do
-        obj.should_receive(:birth_time=).once.with("09:10:11")
-        obj.send(:execute_callstack_for_multiparameter_attributes, @callstack)
-      end
+    it "should store time string for a time column" do
+      obj.should_receive(:birth_time=).once.with("09:10:11")
+      obj.send(:execute_callstack_for_multiparameter_attributes, @callstack)
     end
   end
   
