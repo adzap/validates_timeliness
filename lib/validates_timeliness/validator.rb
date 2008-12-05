@@ -39,8 +39,6 @@ module ValidatesTimeliness
     def validate_restrictions(record, attr_name, value)
       restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
       
-      type_cast_method = self.class.restriction_type_cast_method(type)
-      
       display = ValidatesTimeliness.error_value_formats[type]
       
       value = type_cast_value(value)
@@ -48,7 +46,7 @@ module ValidatesTimeliness
       restriction_methods.each do |option, method|
         next unless restriction = configuration[option]
         begin
-          compare = self.class.restriction_value(restriction, record, type)
+          compare = restriction_value(restriction, record)
           next if compare.nil?
           compare = type_cast_value(compare)
 
@@ -85,27 +83,19 @@ module ValidatesTimeliness
       @custom_error_messages = configuration.inject({}) {|h, (k, v)| h[$1.to_sym] = v if k.to_s =~ /(.*)_message$/;h }
     end
     
-    def self.restriction_value(restriction, record, type)
+    def restriction_value(restriction, record)
       case restriction
         when Time, Date, DateTime
           restriction
         when Symbol
-          restriction_value(record.send(restriction), record, type)
+          restriction_value(record.send(restriction), record)
         when Proc
-          restriction_value(restriction.call(record), record, type)
+          restriction_value(restriction.call(record), record)
         else
          record.class.parse_date_time(restriction, type, false)
       end
     end
     
-    def self.restriction_type_cast_method(type)
-      case type
-        when :time     then :to_dummy_time
-        when :date     then :to_date
-        when :datetime then :to_time
-      end
-    end
-  
     def type_cast_value(value)
       case type
         when :time

@@ -70,7 +70,7 @@ module Spec
         end
        
         def parse_and_cast(value)
-          value = ValidatesTimeliness::Validator.send(:restriction_value, value, record, options[:type])
+          value = validator.send(:restriction_value, value, record)
           validator.send(:type_cast_value, value)
         end
 
