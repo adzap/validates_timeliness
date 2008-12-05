@@ -45,12 +45,4 @@ describe ValidatesTimeliness::ValidationMethods do
       ActiveRecord::Base.parse_date_time(*args)
     end
   end
-  
-    # it "should have same value for before_type_cast after failed validation" do
-    #   person.birth_date_and_time = "2000-01-01 25:02:03"
-    #   person.should_not be_valid
-    #   person.birth_date_and_time_before_type_cast.should == "2000-01-01 25:02:03"
-    # end
-    # 
-   
 end

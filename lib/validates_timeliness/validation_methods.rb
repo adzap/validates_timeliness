@@ -48,8 +48,7 @@ module ValidatesTimeliness
 
       private
 
-      def validates_timeliness_of(*attr_names)
-        configuration = attr_names.extract_options!
+      def validates_timeliness_of(attr_names, configuration)
         validator = ValidatesTimeliness::Validator.new(configuration)
         
         # bypass handling of allow_nil and allow_blank to validate raw value
