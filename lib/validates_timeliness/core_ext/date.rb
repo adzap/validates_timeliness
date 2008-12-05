@@ -3,7 +3,7 @@ module ValidatesTimeliness
     module Date
     
       def to_dummy_time
-        ::Time.mktime(2000, 1, 1, 0, 0, 0)
+        ::Time.send(ValidatesTimeliness.default_timezone, 2000, 1, 1, 0, 0, 0)
       end
 
     end

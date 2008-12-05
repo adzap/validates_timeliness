@@ -14,10 +14,11 @@ require 'validates_timeliness/core_ext/date_time'
 module ValidatesTimeliness
   
   mattr_accessor :ignore_restriction_errors
+  mattr_accessor :default_timezone
   mattr_accessor :error_value_formats
-  
+
   self.ignore_restriction_errors = false
-    
+  self.default_timezone = :utc 
   self.error_value_formats = {
     :time     => '%H:%M:%S',
     :date     => '%Y-%m-%d',
@@ -61,6 +62,7 @@ module ValidatesTimeliness
     def setup_for_rails
       major, minor = Rails::VERSION::MAJOR, Rails::VERSION::MINOR
       self.send("setup_for_rails_#{major}_#{minor}")
+      self.default_timezone = ::ActiveRecord::Base.default_timezone
     rescue
       raise "Rails version #{Rails::VERSION::STRING} not yet supported by validates_timeliness plugin"
     end
