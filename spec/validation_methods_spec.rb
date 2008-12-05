@@ -45,4 +45,26 @@ describe ValidatesTimeliness::ValidationMethods do
       ActiveRecord::Base.parse_date_time(*args)
     end
   end
+
+  describe "make_time" do
+
+    if RAILS_VER >= '2.1'
+
+      it "should create time using current timezone" do
+        Time.zone = 'Melbourne'
+        time = ActiveRecord::Base.send(:make_time, [2000,1,1,12,0,0])
+        time.zone.should == "EST"
+      end
+
+    else
+
+      it "should create time using default timezone" do
+        time = ActiveRecord::Base.send(:make_time, [2000,1,1,12,0,0])
+        time.zone.should == "UTC"
+      end
+
+    end
+
+  end
+
 end
