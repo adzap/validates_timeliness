@@ -13,18 +13,10 @@ require 'validates_timeliness/core_ext/date_time'
 
 module ValidatesTimeliness
   
-  mattr_accessor :ignore_restriction_errors
   mattr_accessor :default_timezone
-  mattr_accessor :error_value_formats
 
-  self.ignore_restriction_errors = false
   self.default_timezone = :utc 
-  self.error_value_formats = {
-    :time     => '%H:%M:%S',
-    :date     => '%Y-%m-%d',
-    :datetime => '%Y-%m-%d %H:%M:%S'
-  }      
-    
+
   LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/validates_timeliness/locale/en.yml')
 
   class << self

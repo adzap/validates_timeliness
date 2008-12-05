@@ -187,7 +187,7 @@ of d/my/yy. By default the plugin uses the US formats as this is the Ruby defaul
 when it does date interpretation, and is in keeping PoLS (principle of least
 surprise). 
 
-To switch to using the European (or Rest of The World) formats put this in an
+To switch to using the :after => 1.day.from_nowEuropean (or Rest of The World) formats put this in an
 initializer or environment.rb
 
   ValidatesTimeliness::Formats.remove_us_formats  
@@ -237,7 +237,7 @@ and you want the validation to complete. In these situations you turn them off.
 
 To turn them off:
 
-  ValidatesTimeliness.ignore_restriction_errors = true
+  ValidatesTimeliness::Validator.ignore_restriction_errors = true
 
 A word of warning though, as this may hide issues with the model and make those
 corner cases a little harder to test. In general if you are using procs or 
@@ -278,7 +278,7 @@ will be inserted.
 And for something a little more specific you can override the format of the interpolation
 values inserted in the error messages for temporal restrictions like so
 
-  ValidatesTimeliness.error_value_formats.update(
+  ValidatesTimeliness::Validator.error_value_formats.update(
     :time     => '%H:%M:%S',
     :date     => '%Y-%m-%d',
     :datetime => '%Y-%m-%d %H:%M:%S'

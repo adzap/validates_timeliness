@@ -121,7 +121,6 @@ describe ValidatesTimeliness::Validator do
 
   end
 
-
   describe "instance with before and after restrictions" do
 
     describe "for datetime type" do
@@ -333,18 +332,18 @@ describe ValidatesTimeliness::Validator do
     end
 
     it "should be added by default for invalid restriction" do
-      ValidatesTimeliness.ignore_restriction_errors = false
+      ValidatesTimeliness::Validator.ignore_restriction_errors = false
       validate_with(:birth_date, Date.today)
       person.errors.on(:birth_date).should match(/restriction 'before' value was invalid/)
     end
 
     it "should not be added when ignore switch is true and restriction is invalid" do
-      ValidatesTimeliness.ignore_restriction_errors = true
+      ValidatesTimeliness::Validator.ignore_restriction_errors = true
       person.should be_valid
     end
 
     after :all do
-      ValidatesTimeliness.ignore_restriction_errors = false
+      ValidatesTimeliness::Validator.ignore_restriction_errors = false
     end
   end
 
@@ -374,8 +373,8 @@ describe ValidatesTimeliness::Validator do
     describe "custom formats" do
 
       before :all do
-        @@formats = ValidatesTimeliness.error_value_formats
-        ValidatesTimeliness.error_value_formats = {
+        @@formats = ValidatesTimeliness::Validator.error_value_formats
+        ValidatesTimeliness::Validator.error_value_formats = {
           :time     => '%H:%M %p',
           :date     => '%d-%m-%Y',
           :datetime => '%d-%m-%Y %H:%M %p'
@@ -401,7 +400,7 @@ describe ValidatesTimeliness::Validator do
       end
 
       after :all do
-        ValidatesTimeliness.error_value_formats = @@formats
+        ValidatesTimeliness::Validator.error_value_formats = @@formats
       end
     end
 

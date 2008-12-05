@@ -1,9 +1,16 @@
 module ValidatesTimeliness
 
-  # Adds ActiveRecord validation methods for date, time and datetime validation.
-  # The validity of values can be restricted to be before or after certain dates
-  # or times.
   class Validator
+    cattr_accessor :ignore_restriction_errors
+    cattr_accessor :error_value_formats
+
+    self.ignore_restriction_errors = false
+    self.error_value_formats = {
+      :time     => '%H:%M:%S',
+      :date     => '%Y-%m-%d',
+      :datetime => '%Y-%m-%d %H:%M:%S'
+    }      
+
     attr_reader :configuration, :type
 
     def initialize(configuration)
@@ -33,13 +40,10 @@ module ValidatesTimeliness
       record.send("#{attr_name}_before_type_cast")
     end
    
-    # Validate value against the temporal restrictions. Restriction values 
-    # maybe of mixed type, so they are evaluated as a common type, which may
-    # require conversion. The type used is defined by validation type.
     def validate_restrictions(record, attr_name, value)
       restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
       
-      display = ValidatesTimeliness.error_value_formats[type]
+      display = self.class.error_value_formats[type]
       
       value = type_cast_value(value)
       
@@ -54,7 +58,7 @@ module ValidatesTimeliness
             add_error(record, attr_name, option, :restriction => compare.strftime(display))
           end
         rescue
-          unless ValidatesTimeliness.ignore_restriction_errors
+          unless self.class.ignore_restriction_errors
             add_error(record, attr_name, "restriction '#{option}' value was invalid")
           end
         end
