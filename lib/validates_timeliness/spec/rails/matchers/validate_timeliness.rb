@@ -12,11 +12,11 @@ module Spec
 
         def initialize(attribute, options)
           @expected, @options = attribute, options
+          @validator = ValidatesTimeliness::Validator.new(options)
           compile_error_messages
         end
         
         def compile_error_messages
-          validator = ValidatesTimeliness::Validator.new(options)
           messages = validator.send(:error_messages)
           @messages = messages.inject({}) {|h, (k, v)| h[k] = v.gsub(/ (\%s|\{\{\w*\}\})/, ''); h }
         end
@@ -52,7 +52,7 @@ module Spec
         end
         
        private
-        attr_reader :actual, :expected, :record, :options, :messages, :last_failure
+        attr_reader :actual, :expected, :record, :options, :messages, :last_failure, :validator
         
         def test_option(option, modifier, settings={})
           settings.reverse_merge!(:modify_on => :valid)
@@ -71,8 +71,7 @@ module Spec
        
         def parse_and_cast(value)
           value = ValidatesTimeliness::Validator.send(:restriction_value, value, record, options[:type])
-          cast_method = ValidatesTimeliness::Validator.send(:restriction_type_cast_method, options[:type])
-          value.send(cast_method) rescue nil
+          validator.send(:type_cast_value, value)
         end
 
         def error_matching(value, match)

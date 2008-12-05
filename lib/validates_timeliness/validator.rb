@@ -4,7 +4,7 @@ module ValidatesTimeliness
   # The validity of values can be restricted to be before or after certain dates
   # or times.
   class Validator
-    attr_reader :configuration, :type, :messages
+    attr_reader :configuration, :type
 
     def initialize(configuration)
       defaults = { :on => :save, :type => :datetime, :allow_nil => false, :allow_blank => false }
@@ -14,19 +14,24 @@ module ValidatesTimeliness
       
     # The main validation method which can be used directly or called through
     # the other specific type validation methods.      
-    def call(record, attr_name, value)
-      return if (value.nil? && configuration[:allow_nil]) || (value.blank? && configuration[:allow_blank])
+    def call(record, attr_name)
+      value     = record.send(attr_name)
+      raw_value = raw_value(record, attr_name)
 
-      add_error(record, attr_name, :blank) and return if value.blank?
-      
-      time = record.class.parse_date_time(value, type)
-      unless time
-        add_error(record, attr_name, "invalid_#{type}".to_sym) and return
-      end
-      validate_restrictions(record, attr_name, time)
+      return if (raw_value.nil? && configuration[:allow_nil]) || (raw_value.blank? && configuration[:allow_blank])
+
+      add_error(record, attr_name, :blank) and return if raw_value.blank?
+       
+      add_error(record, attr_name, "invalid_#{type}".to_sym) and return unless value
+
+      validate_restrictions(record, attr_name, value)
     end
     
    private
+
+    def raw_value(record, attr_name)
+      record.send("#{attr_name}_before_type_cast")
+    end
    
     # Validate value against the temporal restrictions. Restriction values 
     # maybe of mixed type, so they are evaluated as a common type, which may
@@ -38,14 +43,14 @@ module ValidatesTimeliness
       
       display = ValidatesTimeliness.error_value_formats[type]
       
-      value = value.send(type_cast_method)
+      value = type_cast_value(value)
       
       restriction_methods.each do |option, method|
         next unless restriction = configuration[option]
         begin
           compare = self.class.restriction_value(restriction, record, type)
           next if compare.nil?
-          compare = compare.send(type_cast_method)
+          compare = type_cast_value(compare)
 
           unless value.send(method, compare)
             add_error(record, attr_name, option, :restriction => compare.strftime(display))
@@ -64,6 +69,7 @@ module ValidatesTimeliness
         message = message % interpolate.values unless interpolate.empty?
         record.errors.add(attr_name, message)
       else
+        # use i18n support in AR for message or us custom message passed to validation method
         custom = custom_error_messages[message]
         record.errors.add(attr_name, custom || message, interpolate)
       end
@@ -100,5 +106,22 @@ module ValidatesTimeliness
       end
     end
   
+    def type_cast_value(value)
+      case type
+        when :time
+          value.to_dummy_time
+        when :date
+          value.to_date
+        when :datetime
+          if value.is_a?(DateTime) || value.is_a?(Time)
+            value.to_time
+          else
+            value.to_time(ValidatesTimelines.default_timezone)
+          end
+        else
+          nil
+      end
+    end
+
   end
 end

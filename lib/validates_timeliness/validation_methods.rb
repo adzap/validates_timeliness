@@ -56,8 +56,7 @@ module ValidatesTimeliness
         configuration.delete(:allow_nil)
         configuration.delete(:allow_blank)
         validates_each(attr_names, configuration) do |record, attr_name, value|
-          raw_value = record.send("#{attr_name}_before_type_cast")
-          validator.call(record, attr_name, raw_value)
+          validator.call(record, attr_name)
         end
       end
 
