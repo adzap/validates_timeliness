@@ -71,7 +71,7 @@ module ValidatesTimeliness
         message = message % interpolate.values unless interpolate.empty?
         record.errors.add(attr_name, message)
       else
-        # use i18n support in AR for message or us custom message passed to validation method
+        # use i18n support in AR for message or use custom message passed to validation method
         custom = custom_error_messages[message]
         record.errors.add(attr_name, custom || message, interpolate)
       end
