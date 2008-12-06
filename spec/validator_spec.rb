@@ -82,7 +82,7 @@ describe ValidatesTimeliness::Validator do
         configure_validator(:type => :date)
       end
 
-      it "should have invalid error value is invalid" do
+      it "should have invalid error when value is invalid" do
         validate_with(:birth_date, "2000-01-32")
         should_have_error(:birth_date, :invalid_date)
       end
