@@ -3,15 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe ValidatesTimeliness::ValidationMethods do
   attr_accessor :person
 
-  before :all do
-    # freezes time using time_travel plugin
-    Time.now = Time.utc(2000, 1, 1, 0, 0, 0)
-  end
-  
-  after :all do
-    Time.now = nil
-  end
-  
   describe "parse_date_time" do
     it "should return time object for valid time string" do
       parse_method("2000-01-01 12:13:14", :datetime).should be_kind_of(Time)
