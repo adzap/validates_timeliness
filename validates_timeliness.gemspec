@@ -1,0 +1,30 @@
+# -*- encoding: utf-8 -*-
+
+Gem::Specification.new do |s|
+  s.name = %q{validates_timeliness}
+  s.version = "1.0.0"
+
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.authors = ["Adam Meehan"]
+  s.autorequire = %q{validates_timeliness}
+  s.date = %q{2008-12-06}
+  s.description = %q{Date and time validation plugin for Rails 2.x which allows custom formats}
+  s.email = %q{adam.meehan@gmail.com}
+  s.extra_rdoc_files = ["README.rdoc", "LICENSE", "TODO"]
+  s.files = ["LICENSE", "README.rdoc", "Rakefile", "TODO", "lib/validates_timeliness", "lib/validates_timeliness/core_ext", "lib/validates_timeliness/core_ext/date.rb", "lib/validates_timeliness/core_ext/date_time.rb", "lib/validates_timeliness/core_ext/time.rb", "lib/validates_timeliness/action_view", "lib/validates_timeliness/action_view/instance_tag.rb", "lib/validates_timeliness/locale", "lib/validates_timeliness/locale/en.yml", "lib/validates_timeliness/validation_methods.rb", "lib/validates_timeliness/active_record", "lib/validates_timeliness/active_record/attribute_methods.rb", "lib/validates_timeliness/active_record/multiparameter_attributes.rb", "lib/validates_timeliness/formats.rb", "lib/validates_timeliness/validator.rb", "lib/validates_timeliness/spec", "lib/validates_timeliness/spec/rails", "lib/validates_timeliness/spec/rails/matchers", "lib/validates_timeliness/spec/rails/matchers/validate_timeliness.rb", "lib/validates_timeliness.rb", "spec/core_ext", "spec/core_ext/dummy_time_spec.rb", "spec/validator_spec.rb", "spec/action_view", "spec/action_view/instance_tag_spec.rb", "spec/ginger_scenarios.rb", "spec/validation_methods_spec.rb", "spec/spec_helper.rb", "spec/formats_spec.rb", "spec/active_record", "spec/active_record/attribute_methods_spec.rb", "spec/active_record/multiparameter_attributes_spec.rb", "spec/time_travel", "spec/time_travel/time_travel.rb", "spec/time_travel/time_extensions.rb", "spec/time_travel/MIT-LICENSE", "spec/spec", "spec/spec/rails", "spec/spec/rails/matchers", "spec/spec/rails/matchers/validate_timeliness_spec.rb", "spec/resources", "spec/resources/person.rb", "spec/resources/sqlite_patch.rb", "spec/resources/schema.rb", "spec/resources/application.rb"]
+  s.has_rdoc = true
+  s.homepage = %q{http://duckpunching.com}
+  s.require_paths = ["lib"]
+  s.rubygems_version = %q{1.3.1}
+  s.summary = %q{Date and time validation plugin for Rails 2.x which allows custom formats}
+
+  if s.respond_to? :specification_version then
+    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
+    s.specification_version = 2
+
+    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    else
+    end
+  else
+  end
+end
