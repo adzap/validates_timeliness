@@ -27,9 +27,15 @@ think should be a valid date or time string.
 
 == INSTALLATION:
 
+As plugin (from master)
+
   ./script/plugin git://github.com/adzap/validates_timeliness
 
-  
+As gem
+
+  sudo gem install validates_timeliness
+
+
 == USAGE:
 
 To validate a model with a date, time or datetime attribute you just use the 

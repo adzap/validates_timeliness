@@ -1,28 +1,40 @@
-[2008-11-13]
-  - allow uppercase meridian to be valid [reported by Alex (http://alex.digns.com/)]
+= 1.0.0 [2008-12-06]
+- Gemified!
+- Refactor of plugin into a Data Mapper style validator class which makes for a cleaner implementation and possible future Data Mapper support
+- Added Rails 2.2 i18n support. Plugin error messages can specified in locale files. See README.
+- ignore_datetime_restriction_errors setting has been moved from AR to ValidatesTimeliness::Validator.ignore_restriction_errors
+- date_time_error_value_formats setting has been moved from AR to ValidatesTimeliness::Validator.error_value_formats
+- Namespaced modules and specs 
+- Clean up of specs
 
-[2008-10-28]
-  - fixed bug when dirty attributes not reflecting change when attribute changed from time value to nil [reported by Brad (pvjq)]
-  - fixes for Rails 2.2 compatibility. Will refactor in to Rails version specific branches in the future.
+= 0.1.0 [2008-12-06]
+- Tagged plugin as version 0.1.0
 
-[2008-09-24]
-  - refactored attribute write method definitions
+= 2008-11-13
+- allow uppercase meridian to be valid [reported by Alex (http://alex.digns.com/)]
 
-[2008-08-25]
-  - fixed bug for non-timezone write method not updating changed attributes hash [reported by Sylvestre Mergulhão]
+= 2008-10-28
+- fixed bug when dirty attributes not reflecting change when attribute changed from time value to nil [reported by Brad (pvjq)]
+- fixes for Rails 2.2 compatibility. Will refactor in to Rails version specific branches in the future.
 
-[2008-08-22]
-  - fixed bug with attribute cache not clearing on write for date and time columns [reported by Sylvestre Mergulhão]
-  - parse method returns Date object for date column assigned string as per normal Rails behaviour
-  - parse method returns same object type when assigned Date or Time object as per normal Rails behaviour
+= 2008-09-24
+- refactored attribute write method definitions
 
-[2008-08-07]
-  - modified matcher option value parsing to allow same value types as validation method
-  - fixed matcher message
+= 2008-08-25
+- fixed bug for non-timezone write method not updating changed attributes hash [reported by Sylvestre Mergulhão]
 
-[2008-08-02]
-  - refactored validation
-  - refactored matcher
+= 2008-08-22
+- fixed bug with attribute cache not clearing on write for date and time columns [reported by Sylvestre Mergulhão]
+- parse method returns Date object for date column assigned string as per normal Rails behaviour
+- parse method returns same object type when assigned Date or Time object as per normal Rails behaviour
 
-[2008-07-30]
-  - removed setting values to nil when validation fails to preserve before_type_cast value
+= 2008-08-07
+- modified matcher option value parsing to allow same value types as validation method
+- fixed matcher message
+
+= 2008-08-02
+- refactored validation
+- refactored matcher
+
+= 2008-07-30
+- removed setting values to nil when validation fails to preserve before_type_cast value
