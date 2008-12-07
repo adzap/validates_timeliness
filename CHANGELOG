@@ -1,11 +1,14 @@
 = 1.0.0 [2008-12-06]
 - Gemified!
-- Refactor of plugin into a Data Mapper style validator class which makes for a cleaner implementation and possible future Data Mapper support
+- Refactor of plugin into a Data Mapper style validator class which makes for a cleaner implementation and possible future Merb\Data Mapper support
 - Added Rails 2.2 i18n support. Plugin error messages can specified in locale files. See README.
 - ignore_datetime_restriction_errors setting has been moved from AR to ValidatesTimeliness::Validator.ignore_restriction_errors
 - date_time_error_value_formats setting has been moved from AR to ValidatesTimeliness::Validator.error_value_formats
 - Namespaced modules and specs 
 - Clean up of specs
+- fixed a few bugs
+  - accessor methods not generating properly due method name stored as symbol in generated_attributes which fails on lookup
+  - force value assigned to time/datetime attributes to time objects
 
 = 0.1.0 [2008-12-06]
 - Tagged plugin as version 0.1.0

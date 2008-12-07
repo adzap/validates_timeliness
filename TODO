@@ -1,3 +1,4 @@
+- :between option
 - :format option
 - :with_date and :with_time options
 - Merb and Data Mapper support
