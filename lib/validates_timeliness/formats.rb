@@ -237,8 +237,7 @@ module ValidatesTimeliness
 
         return Regexp.new(regexp), format_proc(order)
       rescue
-        puts "The following format regular expression failed to compile: #{regexp}\n from format #{string_format}."
-        raise
+        raise "The following format regular expression failed to compile: #{regexp}\n from format #{string_format}."
       end
       
       # Generates a proc which when executed maps the regexp capture groups to a 
