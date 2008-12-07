@@ -65,10 +65,13 @@ module ValidatesTimeliness
       # implementation as it chains the write_attribute method which deletes
       # the attribute from the cache.
       def write_date_time_attribute(attr_name, value)
-        attr_name = attr_name.to_s
         column = column_for_attribute(attr_name)
         old = read_attribute(attr_name) if defined?(::ActiveRecord::Dirty)
         new = self.class.parse_date_time(value, column.type)
+
+        unless column.type == :date || new.nil?
+          new = new.to_time rescue new
+        end
 
         if self.class.send(:create_time_zone_conversion_attribute?, attr_name, column)
           new = new.in_time_zone rescue nil
@@ -92,7 +95,7 @@ module ValidatesTimeliness
               if self.serialized_attributes[name]
                 define_read_method_for_serialized_attribute(name)
               elsif create_time_zone_conversion_attribute?(name, column)
-                define_read_method_for_time_zone_conversion(name.to_sym)
+                define_read_method_for_time_zone_conversion(name)
               else
                 define_read_method(name.to_sym, name, column)
               end
@@ -100,7 +103,7 @@ module ValidatesTimeliness
 
             unless instance_method_already_implemented?("#{name}=")
               if [:date, :time, :datetime].include?(column.type)
-                define_write_method_for_dates_and_times(name.to_sym)
+                define_write_method_for_dates_and_times(name)
               else
                 define_write_method(name.to_sym)
               end
@@ -119,7 +122,7 @@ module ValidatesTimeliness
                write_date_time_attribute('#{attr_name}', value)
             end
           EOV
-          evaluate_attribute_method attr_name, method_body
+          evaluate_attribute_method attr_name, method_body, "#{attr_name}="
         end
 
         # Define time attribute reader. If reloading then check if cached,

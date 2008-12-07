@@ -8,6 +8,21 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person = Person.new
   end
 
+  it "should call write_date_time_attribute when date attribute assigned value" do
+    @person.should_receive(:write_date_time_attribute)
+    @person.birth_date = "2000-01-01"
+  end
+
+  it "should call write_date_time_attribute when time attribute assigned value" do
+    @person.should_receive(:write_date_time_attribute)
+    @person.birth_time = "12:00"
+  end
+
+  it "should call write_date_time_attribute when datetime attribute assigned value" do
+    @person.should_receive(:write_date_time_attribute)
+    @person.birth_date_and_time = "2000-01-01 12:00"
+  end
+
   it "should call parser on write for datetime attribute" do
     @person.class.should_receive(:parse_date_time).once
     @person.birth_date_and_time = "2000-01-01 02:03:04"
