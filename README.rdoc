@@ -31,7 +31,7 @@ think should be a valid date or time string.
 
 As plugin (from master)
 
-  ./script/plugin git://github.com/adzap/validates_timeliness
+  ./script/plugin git://github.com/adzap/validates_timeliness.git
 
 As gem
 
