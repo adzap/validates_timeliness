@@ -1,7 +1,7 @@
 = validates_timeliness
 
-  * Source:  http://github.com/adzap/validates_timeliness
-  * Bugs:    http://adzap.lighthouseapp.com/projects/14111-validates_timeliness
+* Source:  http://github.com/adzap/validates_timeliness
+* Bugs:    http://adzap.lighthouseapp.com/projects/14111-validates_timeliness
 
 == DESCRIPTION:
 
@@ -23,6 +23,8 @@ think should be a valid date or time string.
   _before_type_cast modifier, which was lost in Rails 2.1.
 
 * Respects new timezone features of Rails 2.1.
+
+* Supports Rails 2.2 I18n for the error messages
 
 
 == INSTALLATION:
@@ -275,8 +277,8 @@ Rails 2.2+ using the I18n system to define new defaults:
     activerecord:
       errors:
         messages:
-          on_or_before: "must equal to or before {{restriction}}"
-          on_or_after:  "must equal to or after {{restriction}}"
+          on_or_before: "must be equal to or before {{restriction}}"
+          on_or_after:  "must be equal to or after {{restriction}}"
 
 The {{restriction}} signifies where the interpolation value for the restriction
 will be inserted.
