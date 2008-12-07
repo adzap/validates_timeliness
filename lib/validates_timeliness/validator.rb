@@ -9,7 +9,7 @@ module ValidatesTimeliness
       :time     => '%H:%M:%S',
       :date     => '%Y-%m-%d',
       :datetime => '%Y-%m-%d %H:%M:%S'
-    }      
+    }
 
     attr_reader :configuration, :type
 
@@ -19,10 +19,9 @@ module ValidatesTimeliness
       @type = @configuration.delete(:type)
     end
       
-    # The main validation method which can be used directly or called through
-    # the other specific type validation methods.      
     def call(record, attr_name)
       value     = record.send(attr_name)
+      value     = record.class.parse_date_time(value, type, false) if value.is_a?(String)
       raw_value = raw_value(record, attr_name)
 
       return if (raw_value.nil? && configuration[:allow_nil]) || (raw_value.blank? && configuration[:allow_blank])
