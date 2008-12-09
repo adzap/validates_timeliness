@@ -195,7 +195,7 @@ of d/my/yy. By default the plugin uses the US formats as this is the Ruby defaul
 when it does date interpretation, and is in keeping PoLS (principle of least
 surprise). 
 
-To switch to using the :after => 1.day.from_nowEuropean (or Rest of The World) formats put this in an
+To switch to using the European (or Rest of The World) formats put this in an
 initializer or environment.rb
 
   ValidatesTimeliness::Formats.remove_us_formats  
