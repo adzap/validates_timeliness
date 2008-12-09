@@ -65,14 +65,14 @@ module ValidatesTimeliness
     end
     
     def add_error(record, attr_name, message, interpolate={})
-      if Rails::VERSION::STRING < '2.2'
-        message = error_messages[message] if message.is_a?(Symbol)
-        message = message % interpolate.values unless interpolate.empty?
-        record.errors.add(attr_name, message)
-      else
+      if defined?(I18n)
         # use i18n support in AR for message or use custom message passed to validation method
         custom = custom_error_messages[message]
         record.errors.add(attr_name, custom || message, interpolate)
+      else
+        message = error_messages[message] if message.is_a?(Symbol)
+        message = message % interpolate.values unless interpolate.empty?
+        record.errors.add(attr_name, message)
       end
     end
 
