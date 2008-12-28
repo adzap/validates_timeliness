@@ -27,20 +27,21 @@ end
 describe "ValidateTimeliness matcher" do
   attr_accessor :no_validation, :with_validation
   
+  @@attribute_for_type = { :date => :birth_date, :time => :birth_time, :datetime => :birth_date_and_time }
+  
   before do
     @no_validation = NoValidation.new
     @with_validation = WithValidation.new
   end
 
   [:date, :time, :datetime].each do |type|
-    attribute = type == :datetime ? :date_and_time : type
     
     it "should report that #{type} is validated" do
-      with_validation.should self.send("validate_#{type}", "birth_#{attribute}".to_sym)
+      with_validation.should self.send("validate_#{type}", attribute_for_type(type))
     end
     
     it "should report that #{type} is not validated" do
-      no_validation.should_not self.send("validate_#{type}", "birth_#{attribute}".to_sym)
+      no_validation.should_not self.send("validate_#{type}", attribute_for_type(type))
     end    
   end
    
@@ -52,18 +53,17 @@ describe "ValidateTimeliness matcher" do
     }
     
     [:date, :time, :datetime].each do |type|
-      attribute = type == :datetime ? :date_and_time : type
 
       it "should report that #{type} is validated" do
-        with_validation.should self.send("validate_#{type}", "birth_#{attribute}", :before => test_values[type][0])
+        with_validation.should self.send("validate_#{type}", attribute_for_type(type), :before => test_values[type][0])
       end
       
       it "should report that #{type} is not validated when option value is incorrect" do
-        with_validation.should_not self.send("validate_#{type}", "birth_#{attribute}", :before => test_values[type][1])
+        with_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :before => test_values[type][1])
       end
       
       it "should report that #{type} is not validated with option" do
-        no_validation.should_not self.send("validate_#{type}", "birth_#{attribute}", :before => test_values[type][0])
+        no_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :before => test_values[type][0])
       end
     end
   end
@@ -76,18 +76,17 @@ describe "ValidateTimeliness matcher" do
     }
     
     [:date, :time, :datetime].each do |type|
-      attribute = type == :datetime ? :date_and_time : type
 
       it "should report that #{type} is validated" do
-        with_validation.should self.send("validate_#{type}", "birth_#{attribute}", :after => test_values[type][0])
+        with_validation.should self.send("validate_#{type}", attribute_for_type(type), :after => test_values[type][0])
       end
       
       it "should report that #{type} is not validated when option value is incorrect" do
-        with_validation.should_not self.send("validate_#{type}", "birth_#{attribute}", :after => test_values[type][1])
+        with_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :after => test_values[type][1])
       end
       
       it "should report that #{type} is not validated with option" do
-        no_validation.should_not self.send("validate_#{type}", "birth_#{attribute}", :after => test_values[type][0])
+        no_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :after => test_values[type][0])
       end
     end
   end
@@ -100,18 +99,17 @@ describe "ValidateTimeliness matcher" do
     }
     
     [:date, :time, :datetime].each do |type|
-      attribute = type == :datetime ? :date_and_time : type
 
       it "should report that #{type} is validated" do
-        with_validation.should self.send("validate_#{type}", "birth_#{attribute}", :on_or_before => test_values[type][0])
+        with_validation.should self.send("validate_#{type}", attribute_for_type(type), :on_or_before => test_values[type][0])
       end
       
       it "should report that #{type} is not validated when option value is incorrect" do
-        with_validation.should_not self.send("validate_#{type}", "birth_#{attribute}", :on_or_before => test_values[type][1])
+        with_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :on_or_before => test_values[type][1])
       end
       
       it "should report that #{type} is not validated with option" do
-        no_validation.should_not self.send("validate_#{type}", "birth_#{attribute}", :on_or_before => test_values[type][0])
+        no_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :on_or_before => test_values[type][0])
       end
     end
   end
@@ -124,18 +122,17 @@ describe "ValidateTimeliness matcher" do
     }
     
     [:date, :time, :datetime].each do |type|
-      attribute = type == :datetime ? :date_and_time : type
 
       it "should report that #{type} is validated" do
-        with_validation.should self.send("validate_#{type}", "birth_#{attribute}", :on_or_after => test_values[type][0])
+        with_validation.should self.send("validate_#{type}", attribute_for_type(type), :on_or_after => test_values[type][0])
       end
       
       it "should report that #{type} is not validated when option value is incorrect" do
-        with_validation.should_not self.send("validate_#{type}", "birth_#{attribute}", :on_or_after => test_values[type][1])
+        with_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :on_or_after => test_values[type][1])
       end
       
       it "should report that #{type} is not validated with option" do
-        no_validation.should_not self.send("validate_#{type}", "birth_#{attribute}", :on_or_after => test_values[type][0])
+        no_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :on_or_after => test_values[type][0])
       end
     end
   end
@@ -174,5 +171,9 @@ describe "ValidateTimeliness matcher" do
         :on_or_after_message => 'is just too early')
     end
     
+  end
+
+  def attribute_for_type(type)
+    @@attribute_for_type[type.to_sym]
   end
 end
