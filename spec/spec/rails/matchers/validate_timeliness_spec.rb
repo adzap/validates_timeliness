@@ -6,13 +6,17 @@ end
 class WithValidation < Person
   validates_date :birth_date, 
     :before       => '2000-01-10',        :after       => '2000-01-01',
-    :on_or_before => '2000-01-09',        :on_or_after => '2000-01-02'
+    :on_or_before => '2000-01-09',        :on_or_after => '2000-01-02',
+    :between      => ['2000-01-01', '2000-01-03']
+
   validates_time :birth_time, 
     :before       => '23:00',             :after       => '09:00',
-    :on_or_before => '22:00',             :on_or_after => '10:00'
+    :on_or_before => '22:00',             :on_or_after => '10:00',
+    :between      => ['09:00', '17:00']
   validates_datetime :birth_date_and_time, 
     :before       => '2000-01-10 23:00',  :after       => '2000-01-01 09:00',
-    :on_or_before => '2000-01-09 23:00',  :on_or_after => '2000-01-02 09:00'
+    :on_or_before => '2000-01-09 23:00',  :on_or_after => '2000-01-02 09:00',
+    :between      => ['2000-01-01 09:00', '2000-01-01 17:00']
 
 end
 
@@ -137,6 +141,29 @@ describe "ValidateTimeliness matcher" do
     end
   end
   
+  describe "between option" do
+    test_values = {
+      :date     => [ ['2000-01-01', '2000-01-03'], ['2000-01-01', '2000-01-04'] ],
+      :time     => [ ['09:00', '17:00'], ['09:00', '17:01'] ], 
+      :datetime => [ ['2000-01-01 09:00', '2000-01-01 17:00'], ['2000-01-01 09:00', '2000-01-01 17:01'] ] 
+    }
+    
+    [:date, :time, :datetime].each do |type|
+
+      it "should report that #{type} is validated" do
+        with_validation.should self.send("validate_#{type}", attribute_for_type(type), :between => test_values[type][0])
+      end
+      
+      it "should report that #{type} is not validated when option value is incorrect" do
+        with_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :between => test_values[type][1])
+      end
+      
+      it "should report that #{type} is not validated with option" do
+        no_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :between => test_values[type][0])
+      end
+    end
+  end
+
   describe "custom messages" do
 
     before do
