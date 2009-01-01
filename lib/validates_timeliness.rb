@@ -56,7 +56,8 @@ module ValidatesTimeliness
       self.send("setup_for_rails_#{major}_#{minor}")
       self.default_timezone = ::ActiveRecord::Base.default_timezone
     rescue
-      raise "Rails version #{Rails::VERSION::STRING} not yet supported by validates_timeliness plugin"
+      puts "Rails version #{Rails::VERSION::STRING} not explicitly supported by validates_timeliness plugin. You may encounter some problems."
+      resume
     end
   end
 end
