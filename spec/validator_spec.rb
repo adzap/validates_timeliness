@@ -43,6 +43,25 @@ describe ValidatesTimeliness::Validator do
       restriction_value(lambda {"2007-01-01 12:00"}, :datetime).should be_kind_of(Time)
     end
 
+    it "should return array of Time objects when restriction is array of Time objects" do
+      time1, time2 = Time.now, 1.day.ago
+      restriction_value([time1, time2], :datetime).should == [time2, time1]
+    end
+
+    it "should return array of Time objects when restriction is array of strings" do
+      time1, time2 = "2000-01-02", "2000-01-01"
+      restriction_value([time1, time2], :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
+    end
+
+    it "should return array of Time objects when restriction is Range of Time objects" do
+      time1, time2 = Time.now, 1.day.ago
+      restriction_value(time1..time2, :datetime).should == [time2, time1]
+    end
+
+    it "should return array of Time objects when restriction is Range of time strings" do
+      time1, time2 = "2000-01-02", "2000-01-01"
+      restriction_value(time1..time2, :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
+    end
     def restriction_value(restriction, type)
       configure_validator(:type => type)
       validator.send(:restriction_value, restriction, person)
@@ -212,83 +231,101 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
-  describe "instance with on_or_before and on_or_after restrictions" do
+  describe "instance with between restriction" do
 
     describe "for datetime type" do
       before do
-        configure_validator(:on_or_before => Time.now.at_midnight, :on_or_after => 1.day.ago)
+        configure_validator(:between => [1.day.ago.at_midnight, 1.day.from_now.at_midnight])
       end
 
-      it "should have error when value is past :on_or_before restriction" do
-        validate_with(:birth_date_and_time, Time.now.at_midnight + 1)
-        should_have_error(:birth_date_and_time, :on_of_before)
+      it "should have error when value is before earlist :between restriction" do
+        validate_with(:birth_date_and_time, 2.days.ago)
+        should_have_error(:birth_date_and_time, :between)
       end
 
-      it "should be valid when value is equal to :on_or_before restriction" do
-        validate_with(:birth_date_and_time, Time.now.at_midnight)
-        should_have_no_error(:birth_date_and_time, :on_of_before)
+      it "should have error when value is after latest :between restriction" do
+        validate_with(:birth_date_and_time, 2.days.from_now)
+        should_have_error(:birth_date_and_time, :between)
       end
 
-      it "should have error when value is before :on_or_after restriction" do
-        validate_with(:birth_date_and_time, 1.days.ago - 1)
-        should_have_error(:birth_date_and_time, :on_of_after)
+      it "should be valid when value is equal to earliest :between restriction" do
+        validate_with(:birth_date_and_time, 1.day.ago.at_midnight)
+        should_have_no_error(:birth_date_and_time, :between)
       end
 
-      it "should be valid when value is value equal to :on_or_after restriction" do
-        validate_with(:birth_date_and_time, 1.day.ago)
-        should_have_no_error(:birth_date_and_time, :on_of_after)
+      it "should be valid when value is equal to latest :between restriction" do
+        validate_with(:birth_date_and_time, 1.day.from_now.at_midnight)
+        should_have_no_error(:birth_date_and_time, :between)
+      end
+
+      it "should allow a range for between restriction" do
+        configure_validator(:type => :datetime, :between => (1.day.ago.at_midnight)..(1.day.from_now.at_midnight))
+        validate_with(:birth_date_and_time, 1.day.from_now.at_midnight)
+        should_have_no_error(:birth_date_and_time, :between)
       end
     end
 
     describe "for date type" do
-      before :each do
-        configure_validator(:on_or_before => 1.day.from_now, :on_or_after => 1.day.ago, :type => :date)
+      before do
+        configure_validator(:type => :date, :between => [1.day.ago.to_date, 1.day.from_now.to_date])
       end
 
-      it "should have error when value is past :on_or_before restriction" do
-        validate_with(:birth_date, 2.days.from_now)
-        should_have_error(:birth_date, :on_or_before)
+      it "should have error when value is before earlist :between restriction" do
+        validate_with(:birth_date, 2.days.ago.to_date)
+        should_have_error(:birth_date, :between)
       end
 
-      it "should have error when value is before :on_or_after restriction" do
-        validate_with(:birth_date, 2.days.ago)
-        should_have_error(:birth_date, :on_or_after)
+      it "should have error when value is after latest :between restriction" do
+        validate_with(:birth_date, 2.days.from_now.to_date)
+        should_have_error(:birth_date, :between)
       end
 
-      it "should be valid when value is equal to :on_or_before restriction" do
-        validate_with(:birth_date, 1.day.from_now)
-        should_have_no_error(:birth_date, :on_or_before)
+      it "should be valid when value is equal to earliest :between restriction" do
+        validate_with(:birth_date, 1.day.ago.to_date)
+        should_have_no_error(:birth_date, :between)
       end
 
-      it "should be valid when value value is equal to :on_or_after restriction" do
-        validate_with(:birth_date, 1.day.ago)
-        should_have_no_error(:birth_date, :on_or_before)
+      it "should be valid when value is equal to latest :between restriction" do
+        validate_with(:birth_date, 1.day.from_now.to_date)
+        should_have_no_error(:birth_date, :between)
+      end
+      
+      it "should allow a range for between restriction" do
+        configure_validator(:type => :date, :between => (1.day.ago.to_date)..(1.day.from_now.to_date))
+        validate_with(:birth_date, 1.day.from_now.to_date)
+        should_have_no_error(:birth_date, :between)
       end
     end
 
     describe "for time type" do
-      before :each do
-        configure_validator(:on_or_before => "23:00", :on_or_after => "06:00", :type => :time)
+      before do
+        configure_validator(:type => :time, :between => ["09:00", "17:00"])
       end
 
-      it "should have error when value is past :on_or_before restriction" do
-        validate_with(:birth_time, "23:01")
-        should_have_error(:birth_time, :on_or_before)
+      it "should have error when value is before earlist :between restriction" do
+        validate_with(:birth_time, "08:59")
+        should_have_error(:birth_time, :between)
       end
 
-      it "should have error when value is before :on_or_after restriction" do
-        validate_with(:birth_time, "05:59")
-        should_have_error(:birth_time, :on_or_after)
+      it "should have error when value is after latest :between restriction" do
+        validate_with(:birth_time, "17:01")
+        should_have_error(:birth_time, :between)
       end
 
-      it "should be valid when value is on boundary of :on_or_before restriction" do
-        validate_with(:birth_time, "23:00")
-        should_have_no_error(:birth_time, :on_or_before)
+      it "should be valid when value is equal to earliest :between restriction" do
+        validate_with(:birth_time, "09:00")
+        should_have_no_error(:birth_time, :between)
       end
 
-      it "should be valid when value is on boundary of :on_or_after restriction" do
-        validate_with(:birth_time, "06:00")
-        should_have_no_error(:birth_time, :on_or_after)
+      it "should be valid when value is equal to latest :between restriction" do
+        validate_with(:birth_time, "17:00")
+        should_have_no_error(:birth_time, :between)
+      end
+
+      it "should allow a range for between restriction" do
+        configure_validator(:type => :time, :between => "09:00".."17:00")
+        validate_with(:birth_time, "17:00")
+        should_have_no_error(:birth_time, :between)
       end
     end
   end
@@ -433,6 +470,6 @@ describe ValidatesTimeliness::Validator do
   def error_messages
     return @error_messages if defined?(@error_messages)
     messages = validator.send(:error_messages)
-    @error_messages = messages.inject({}) {|h, (k, v)| h[k] = v.gsub(/ (\%s|\{\{\w*\}\})/, ''); h }
+    @error_messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(/ (\%s|\{\{\w*\}\}).*/, ''); h }
   end
 end

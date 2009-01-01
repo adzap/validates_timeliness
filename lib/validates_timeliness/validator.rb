@@ -11,6 +11,14 @@ module ValidatesTimeliness
       :datetime => '%Y-%m-%d %H:%M:%S'
     }
 
+    RESTRICTION_METHODS = {
+      :before       => :<, 
+      :after        => :>, 
+      :on_or_before => :<=,
+      :on_or_after  => :>=,
+      :between      => lambda {|v, r| (r.first..r.last).include?(v) } 
+    }
+
     attr_reader :configuration, :type
 
     def initialize(configuration)
@@ -40,21 +48,17 @@ module ValidatesTimeliness
     end
    
     def validate_restrictions(record, attr_name, value)
-      restriction_methods = {:before => '<', :after => '>', :on_or_before => '<=', :on_or_after => '>='}
-      
-      display = self.class.error_value_formats[type]
-      
       value = type_cast_value(value)
       
-      restriction_methods.each do |option, method|
+      RESTRICTION_METHODS.each do |option, method|
         next unless restriction = configuration[option]
         begin
-          compare = restriction_value(restriction, record)
-          next if compare.nil?
-          compare = type_cast_value(compare)
+          restriction = restriction_value(restriction, record)
+          next if restriction.nil?
+          restriction = type_cast_value(restriction)
 
-          unless value.send(method, compare)
-            add_error(record, attr_name, option, :restriction => compare.strftime(display))
+          unless evaluate_restriction(restriction, value, method)
+            add_error(record, attr_name, option, interpolation_values(option, restriction))
           end
         rescue
           unless self.class.ignore_restriction_errors
@@ -63,15 +67,41 @@ module ValidatesTimeliness
         end
       end
     end
+
+    def interpolation_values(option, restriction)
+      format = self.class.error_value_formats[type]
+      restriction = [restriction] unless restriction.is_a?(Array)
+
+      if defined?(I18n)
+        message = custom_error_messages[option] || I18n.translate('activerecord.errors.messages')[option]
+        subs = message.scan(/\{\{([^\}]*)\}\}/)
+        interpolations = {}
+        subs.each_with_index {|s, i| interpolations[s[0].to_sym] = restriction[i].strftime(format) }
+        interpolations
+      else
+        restriction.map {|r| r.strftime(format) }
+      end
+    end
+
+    def evaluate_restriction(restriction, value, comparator)
+      return true if restriction.nil?
+
+      case comparator
+        when Symbol
+          value.send(comparator, restriction)
+        when Proc
+          comparator.call(value, restriction)
+      end
+    end
     
-    def add_error(record, attr_name, message, interpolate={})
+    def add_error(record, attr_name, message, interpolate=nil)
       if defined?(I18n)
         # use i18n support in AR for message or use custom message passed to validation method
         custom = custom_error_messages[message]
-        record.errors.add(attr_name, custom || message, interpolate)
+        record.errors.add(attr_name, custom || message, interpolate || {})
       else
         message = error_messages[message] if message.is_a?(Symbol)
-        message = message % interpolate.values unless interpolate.empty?
+        message = message % interpolate
         record.errors.add(attr_name, message)
       end
     end
@@ -83,7 +113,12 @@ module ValidatesTimeliness
     
     def custom_error_messages
       return @custom_error_messages if defined?(@custom_error_messages)
-      @custom_error_messages = configuration.inject({}) {|h, (k, v)| h[$1.to_sym] = v if k.to_s =~ /(.*)_message$/;h }
+      @custom_error_messages = configuration.inject({}) {|msgs, (k, v)|
+        if md = /(.*)_message$/.match(k.to_s) 
+          msgs[md[0].to_sym] = v 
+        end
+        msgs
+      }
     end
     
     def restriction_value(restriction, record)
@@ -94,13 +129,20 @@ module ValidatesTimeliness
           restriction_value(record.send(restriction), record)
         when Proc
           restriction_value(restriction.call(record), record)
+        when Array
+          restriction.map {|r| restriction_value(r, record) }.sort
+        when Range
+          restriction_value([restriction.first, restriction.last], record)
         else
          record.class.parse_date_time(restriction, type, false)
       end
     end
     
     def type_cast_value(value)
-      case type
+      if value.is_a?(Array)
+        value.map {|v| type_cast_value(v) }
+      else 
+        case type
         when :time
           value.to_dummy_time
         when :date
@@ -109,10 +151,11 @@ module ValidatesTimeliness
           if value.is_a?(DateTime) || value.is_a?(Time)
             value.to_time
           else
-            value.to_time(ValidatesTimelines.default_timezone)
+            value.to_time(ValidatesTimeliness.default_timezone)
           end
         else
           nil
+        end
       end
     end
 

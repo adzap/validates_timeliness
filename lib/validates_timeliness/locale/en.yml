@@ -9,3 +9,4 @@ en:
         on_or_before: "must be on or before {{restriction}}"
         after: "must be after {{restriction}}"
         on_or_after: "must be on or after {{restriction}}"
+        between: "must be between {{earliest}} and {{latest}}"
