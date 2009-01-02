@@ -26,6 +26,8 @@ think should be a valid date or time string.
 
 * Supports Rails 2.2 I18n for the error messages
 
+* Rspec matcher for testing model validation of dates and times
+
 
 == INSTALLATION:
 
