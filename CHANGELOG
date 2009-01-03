@@ -1,3 +1,6 @@
+= 1.1.1 [2009-01-03]
+- Fixed bug in matcher for options local variable
+
 = 1.1.0 [2009-01-01]
 - Added between option
 
