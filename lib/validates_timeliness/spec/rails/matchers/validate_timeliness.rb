@@ -23,7 +23,7 @@ module Spec
 
         def matches?(record)
           @record = record
-          @type = options[:type]
+          @type = @options[:type]
           
           valid = test_validity
 
