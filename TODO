@@ -1,7 +1,5 @@
 - :format option
 - :with_date and :with_time options
-- Merb and Data Mapper support
-  - does it have before_type_cast
-  - timezone handling
-  - view helper support
 - valid formats could come from locale file
+- formats to use month and day names from i18n
+- add replace_formats instead add_formats :before
