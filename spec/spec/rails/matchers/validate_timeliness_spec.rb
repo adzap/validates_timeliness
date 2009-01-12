@@ -5,27 +5,39 @@ end
 
 class WithValidation < Person
   validates_date :birth_date, 
-    :before       => '2000-01-10',        :after       => '2000-01-01',
-    :on_or_before => '2000-01-09',        :on_or_after => '2000-01-02',
+    :before       => '2000-01-10',
+    :after        => '2000-01-01',
+    :on_or_before => '2000-01-09',
+    :on_or_after  => '2000-01-02',
     :between      => ['2000-01-01', '2000-01-03']
 
   validates_time :birth_time, 
-    :before       => '23:00',             :after       => '09:00',
-    :on_or_before => '22:00',             :on_or_after => '10:00',
+    :before       => '23:00',
+    :after        => '09:00',
+    :on_or_before => '22:00',
+    :on_or_after  => '10:00',
     :between      => ['09:00', '17:00']
+
   validates_datetime :birth_date_and_time, 
-    :before       => '2000-01-10 23:00',  :after       => '2000-01-01 09:00',
-    :on_or_before => '2000-01-09 23:00',  :on_or_after => '2000-01-02 09:00',
+    :before       => '2000-01-10 23:00',
+    :after        => '2000-01-01 09:00',
+    :on_or_before => '2000-01-09 23:00',
+    :on_or_after  => '2000-01-02 09:00',
     :between      => ['2000-01-01 09:00', '2000-01-01 17:00']
 
 end
 
 class CustomMessages < Person
-  validates_date :birth_date, :invalid_date_message => 'is not really a date',
-    :before      => '2000-01-10', :before_message => 'is too late',
-    :after       => '2000-01-01', :after_message => 'is too early',
-    :on_or_before=> '2000-01-09', :on_or_before_message => 'is just too late',
-    :on_or_after => '2000-01-02', :on_or_after_message => 'is just too early'
+  validates_date :birth_date,
+    :invalid_date_message => 'is not really a date',
+    :before               => '2000-01-10',
+    :before_message       => 'is too late',
+    :after                => '2000-01-01',
+    :after_message        => 'is too early',
+    :on_or_before         => '2000-01-09',
+    :on_or_before_message => 'is just too late',
+    :on_or_after          => '2000-01-02',
+    :on_or_after_message  => 'is just too early'
 end
 
 describe "ValidateTimeliness matcher" do
