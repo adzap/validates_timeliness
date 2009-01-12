@@ -23,6 +23,24 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person.birth_date_and_time = "2000-01-01 12:00"
   end
 
+  it "should call read_date_time_attribute when date attribute is retrieved" do
+    @person.should_receive(:read_date_time_attribute)
+    @person.birth_date = "2000-01-01"
+    @person.birth_date
+  end
+
+  it "should call read_date_time_attribute when time attribute is retrieved" do
+    @person.should_receive(:read_date_time_attribute)
+    @person.birth_time = "12:00"
+    @person.birth_time
+  end
+
+  it "should call rea_date_time_attribute when datetime attribute is retrieved" do
+    @person.should_receive(:read_date_time_attribute)
+    @person.birth_date_and_time = "2000-01-01 12:00"
+    @person.birth_date_and_time
+  end
+
   it "should call parser on write for datetime attribute" do
     @person.class.should_receive(:parse_date_time).once
     @person.birth_date_and_time = "2000-01-01 02:03:04"
