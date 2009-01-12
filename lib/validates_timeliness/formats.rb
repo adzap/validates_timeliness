@@ -10,16 +10,14 @@ module ValidatesTimeliness
   # string values.
   #
   class Formats
-    cattr_accessor :time_formats
-    cattr_accessor :date_formats
-    cattr_accessor :datetime_formats
-    
-    cattr_accessor :time_expressions
-    cattr_accessor :date_expressions
-    cattr_accessor :datetime_expressions
-    
-    cattr_accessor :format_tokens
-    cattr_accessor :format_proc_args
+    cattr_accessor :time_formats,
+                   :date_formats,
+                   :datetime_formats,
+                   :time_expressions,
+                   :date_expressions,
+                   :datetime_expressions,
+                   :format_tokens,
+                   :format_proc_args
     
     # Format tokens:   
     #       y = year
@@ -139,13 +137,13 @@ module ValidatesTimeliness
     # should just be the arg name.
     #
     @@format_proc_args = {
-      :year     => [0, 'y', 'unambiguous_year(y)'],
-      :month    => [1, 'm', 'month_index(m)'],
-      :day      => [2, 'd', 'd'],
-      :hour     => [3, 'h', 'full_hour(h,md)'],
-      :min      => [4, 'n', 'n'],
-      :sec      => [5, 's', 's'],
-      :usec     => [6, 'u', 'microseconds(u)'],
+      :year     => [0,   'y', 'unambiguous_year(y)'],
+      :month    => [1,   'm', 'month_index(m)'],
+      :day      => [2,   'd', 'd'],
+      :hour     => [3,   'h', 'full_hour(h,md)'],
+      :min      => [4,   'n', 'n'],
+      :sec      => [5,   's', 's'],
+      :usec     => [6,   'u', 'microseconds(u)'],
       :meridian => [nil, 'md', nil]
     }
     
@@ -163,17 +161,18 @@ module ValidatesTimeliness
       # Returns 7 part time array.
       def parse(string, type, strict=true)
         return string unless string.is_a?(String)
-        
-        expressions = expression_set(type, string)
-        time_array = nil
-        expressions.each do |(regexp, processor)|
-          regexp = strict || type == :datetime ? /\A#{regexp}\Z/ : (type == :date ? /\A#{regexp}/ : /#{regexp}\Z/)
-          if matches = regexp.match(string.strip)
-            time_array = processor.call(*matches[1..7])
-            break
+
+        matches = nil
+        exp, processor = expression_set(type, string).find do |regexp, proc|
+          full = /\A#{regexp}\Z/ if strict
+          full ||= case type
+            when :datetime then /\A#{regexp}\Z/
+            when :date     then /\A#{regexp}/
+            else                /#{regexp}\Z/
           end
+          matches = full.match(string.strip)
         end
-        return time_array
+        processor.call(*matches[1..7]) if matches
       end   
       
       # Delete formats of specified type. Error raised if format not found.
@@ -223,7 +222,7 @@ module ValidatesTimeliness
       def format_expression_generator(string_format)
         regexp = string_format.dup      
         order  = {}
-        regexp.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes ]/
+        regexp.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes
         
         format_tokens.each do |token|
           token_name = token.keys.first
@@ -260,7 +259,7 @@ module ValidatesTimeliness
       end
       
       def compile_formats(formats)
-        formats.collect { |format| regexp, format_proc = format_expression_generator(format) }
+        formats.map { |format| regexp, format_proc = format_expression_generator(format) }
       end
   
       # Pick expression set and combine date and datetimes for 
