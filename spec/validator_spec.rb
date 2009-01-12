@@ -363,6 +363,32 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe "custom_error_messages" do
+    it "should return hash of custom error messages from configuration with _message truncated from keys" do
+      configure_validator(:type => :date, :invalid_date_message => 'thats no date')
+      validator.send(:custom_error_messages)[:invalid_date].should == 'thats no date'
+    end
+
+    it "should return empty hash if no custom error messages in configuration" do
+      configure_validator(:type => :date)
+      validator.send(:custom_error_messages).should be_empty
+    end
+  end
+
+  describe "interpolation_values" do
+    it "should return hash of interpolation keys with restriction values" do
+      before = '1900-01-01'
+      configure_validator(:type => :date, :before => before)
+      validator.send(:interpolation_values, :before, before.to_date).should == {:restriction => before}
+    end
+
+    it "should return empty hash if no interpolation keys are in message" do
+      before = '1900-01-01'
+      configure_validator(:type => :date, :before => before, :before_message => 'too late')
+      validator.send(:interpolation_values, :before, before.to_date).should be_empty
+    end
+  end
+
   describe "restriction errors" do
     before :each do
       configure_validator(:type => :date, :before => lambda { raise })
