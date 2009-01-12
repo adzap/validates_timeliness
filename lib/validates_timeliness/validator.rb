@@ -115,7 +115,7 @@ module ValidatesTimeliness
       return @custom_error_messages if defined?(@custom_error_messages)
       @custom_error_messages = configuration.inject({}) {|msgs, (k, v)|
         if md = /(.*)_message$/.match(k.to_s) 
-          msgs[md[0].to_sym] = v 
+          msgs[md[1].to_sym] = v
         end
         msgs
       }
