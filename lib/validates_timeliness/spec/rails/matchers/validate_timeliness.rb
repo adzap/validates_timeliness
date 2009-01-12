@@ -124,7 +124,7 @@ module Spec
             restriction.map! {|r| @validator.send(:type_cast_value, r) }
             interpolate = @validator.send(:interpolation_values, option, restriction )
             # get I18n message if defined and has interpolation keys in msg
-            if defined?(I18n) && msg.match(/\{\{/)
+            if defined?(I18n) && !@validator.send(:custom_error_messages).include?(option)
               msg = @record.errors.generate_message(@expected, option, interpolate)
             else
               msg = msg % interpolate
