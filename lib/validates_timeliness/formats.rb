@@ -1,3 +1,5 @@
+require 'date'
+
 module ValidatesTimeliness
   
   # A date and time format regular expression generator. Allows you to 
@@ -297,9 +299,17 @@ module ValidatesTimeliness
       
       def month_index(month)
         return month.to_i if month.to_i.nonzero?
-        Date::ABBR_MONTHNAMES.index(month.capitalize) || Date::MONTHNAMES.index(month.capitalize)
+        abbr_month_names.index(month.capitalize) || month_names.index(month.capitalize)
       end
-    
+
+      def month_names
+        defined?(I18n) ? I18n.t('date.month_names') : Date::MONTHNAMES
+      end
+
+      def abbr_month_names
+        defined?(I18n) ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
+      end
+
       def microseconds(usec)
         (".#{usec}".to_f * 1_000_000).to_i
       end

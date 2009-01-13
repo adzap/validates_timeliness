@@ -1,5 +1,4 @@
 - :format option
 - :with_date and :with_time options
 - valid formats could come from locale file
-- formats to use month and day names from i18n
 - add replace_formats instead add_formats :before
