@@ -119,7 +119,7 @@ module ValidatesTimeliness
         def define_write_method_for_dates_and_times(attr_name, type, time_zone_aware)
           method_body = <<-EOV
             def #{attr_name}=(value)
-               write_date_time_attribute('#{attr_name}', value, #{type.inspect}, #{time_zone_aware})
+              write_date_time_attribute('#{attr_name}', value, #{type.inspect}, #{time_zone_aware})
             end
           EOV
           evaluate_attribute_method attr_name, method_body, "#{attr_name}="
