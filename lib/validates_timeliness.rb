@@ -53,11 +53,10 @@ module ValidatesTimeliness
 
     def setup_for_rails
       major, minor = Rails::VERSION::MAJOR, Rails::VERSION::MINOR
-      self.send("setup_for_rails_#{major}_#{minor}")
       self.default_timezone = ::ActiveRecord::Base.default_timezone
+      self.send("setup_for_rails_#{major}_#{minor}")
     rescue
-      puts "Rails version #{Rails::VERSION::STRING} not explicitly supported by validates_timeliness plugin. You may encounter some problems."
-      resume
+      puts "Rails version #{major}.#{minor}.x not explicitly supported by validates_timeliness plugin. You may encounter some problems."
     end
   end
 end
