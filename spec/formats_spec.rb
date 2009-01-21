@@ -157,9 +157,14 @@ describe ValidatesTimeliness::Formats do
       time_array = formats.parse('2000-02-01', :datetime, false)
       time_array.should == [2000,2,1,0,0,0,0]
     end
-    
+
     it "should ignore time when extracting date and strict is false" do
       time_array = formats.parse('2000-02-01 12:12', :date, false)
+      time_array.should == [2000,2,1,0,0,0,0]
+    end
+
+    it "should ignore time when extracting date from format with trailing year and strict is false" do
+      time_array = formats.parse('01-02-2000 12:12', :date, false)
       time_array.should == [2000,2,1,0,0,0,0]
     end
     
