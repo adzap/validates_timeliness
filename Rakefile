@@ -5,7 +5,7 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "validates_timeliness"
-GEM_VERSION = "1.1.4"
+GEM_VERSION = "1.1.5"
 AUTHOR = "Adam Meehan"
 EMAIL = "adam.meehan@gmail.com"
 HOMEPAGE = "http://github.com/adzap/validates_timeliness"
