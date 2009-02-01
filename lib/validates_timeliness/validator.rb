@@ -19,12 +19,17 @@ module ValidatesTimeliness
       :between      => lambda {|v, r| (r.first..r.last).include?(v) } 
     }
 
+    VALID_OPTIONS = [
+      :on, :allow_nil, :empty, :allow_blank, :blank, :invalid_time_message, :invalid_date_message, :invalid_datetime_message
+    ] + RESTRICTION_METHODS.keys.map {|option| [option, "#{option}_message".to_sym] }.flatten
+
     attr_reader :configuration, :type
 
     def initialize(configuration)
       defaults = { :on => :save, :type => :datetime, :allow_nil => false, :allow_blank => false }
       @configuration = defaults.merge(configuration)
       @type = @configuration.delete(:type)
+      validate_options(@configuration)
     end
       
     def call(record, attr_name)
@@ -157,6 +162,13 @@ module ValidatesTimeliness
           nil
         end
       end
+    end
+
+    def validate_options(options)
+      invalid_types = [:time, :date, :datetime]
+      invalid_types.delete(@type)
+      valid_options = VALID_OPTIONS.reject {|option| invalid_types.include?("#{option}_message".to_sym) }
+      options.assert_valid_keys(valid_options)
     end
 
   end

@@ -16,6 +16,23 @@ describe ValidatesTimeliness::Validator do
     @person = Person.new
   end
 
+  describe "option keys validation" do
+    before do
+      @valid_options = ValidatesTimeliness::Validator::VALID_OPTIONS.inject({}) {|hash, opt| hash[opt] = nil; hash } 
+      @valid_options.delete(:invalid_date_message)
+      @valid_options.delete(:invalid_time_message)
+    end
+
+    it "should raise error if invalid option key passed" do
+      @valid_options.update(:invalid_key => 'will not open lock')
+      lambda { Person.validates_datetime(@valid_options) }.should raise_error(ArgumentError)
+    end
+
+    it "should not raise error if option keys are valid" do
+      lambda { Person.validates_datetime(@valid_options) }.should_not raise_error(ArgumentError)
+    end
+  end
+
   describe "restriction_value" do
     it "should return Time object when restriction is Time object" do
       restriction_value(Time.now, :datetime).should be_kind_of(Time)

@@ -49,7 +49,7 @@ module ValidatesTimeliness
       private
 
       def validates_timeliness_of(attr_names, configuration)
-        validator = ValidatesTimeliness::Validator.new(configuration)
+        validator = ValidatesTimeliness::Validator.new(configuration.symbolize_keys)
         
         # bypass handling of allow_nil and allow_blank to validate raw value
         configuration.delete(:allow_nil)
