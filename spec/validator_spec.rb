@@ -500,7 +500,7 @@ describe ValidatesTimeliness::Validator do
 
   def validate_with(attr_name, value)
     person.send("#{attr_name}=", value)
-    validator.call(person, attr_name)
+    validator.call(person, attr_name, value)
   end
 
   def should_have_error(attr_name, error)

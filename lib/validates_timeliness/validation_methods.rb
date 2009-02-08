@@ -55,7 +55,7 @@ module ValidatesTimeliness
         configuration.delete(:allow_nil)
         configuration.delete(:allow_blank)
         validates_each(attr_names, configuration) do |record, attr_name, value|
-          validator.call(record, attr_name)
+          validator.call(record, attr_name, value)
         end
       end
 

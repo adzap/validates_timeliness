@@ -32,8 +32,7 @@ module ValidatesTimeliness
       validate_options(@configuration)
     end
       
-    def call(record, attr_name)
-      value     = record.send(attr_name)
+    def call(record, attr_name, value)
       value     = record.class.parse_date_time(value, type, false) if value.is_a?(String)
       raw_value = raw_value(record, attr_name)
 
