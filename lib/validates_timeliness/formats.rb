@@ -316,3 +316,5 @@ module ValidatesTimeliness
     end
   end
 end
+
+ValidatesTimeliness::Formats.compile_format_expressions

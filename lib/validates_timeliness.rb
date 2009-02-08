@@ -62,5 +62,3 @@ module ValidatesTimeliness
 end
 
 ValidatesTimeliness.setup_for_rails
-
-ValidatesTimeliness::Formats.compile_format_expressions
