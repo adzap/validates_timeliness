@@ -23,6 +23,7 @@ module ValidatesTimeliness
 
     def load_error_messages_with_i18n
       I18n.load_path += [ LOCALE_PATH ]
+      I18n.reload!
     end
 
     def load_error_messages_without_i18n
@@ -42,21 +43,20 @@ module ValidatesTimeliness
     def setup_for_rails_2_0
       load_error_messages_without_i18n
     end
-
-    def setup_for_rails_2_1
-      load_error_messages_without_i18n
-    end
+    alias :setup_for_rails_2_1 :setup_for_rails_2_0
 
     def setup_for_rails_2_2
       load_error_messages_with_i18n
     end
+    alias :setup_for_rails_2_3 :setup_for_rails_2_2
 
     def setup_for_rails
       major, minor = Rails::VERSION::MAJOR, Rails::VERSION::MINOR
       self.default_timezone = ::ActiveRecord::Base.default_timezone
       self.send("setup_for_rails_#{major}_#{minor}")
     rescue
-      puts "Rails version #{major}.#{minor}.x not explicitly supported by validates_timeliness plugin. You may encounter some problems."
+      puts "Rails version #{major}.#{minor}.x not explicitly supported by validates_timeliness plugin. Setting up for Rails 2.2, but you may encounter some problems."
+      setup_for_rails_2_2
     end
   end
 end
