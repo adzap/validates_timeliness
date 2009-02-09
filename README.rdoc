@@ -93,7 +93,7 @@ The temporal restrictions, with_date and with_time can take 4 different value ty
 
 When an attribute value is compared to temporal restrictions, they are compared as 
 the same type as the validation method type. So using validates_date means all
-values are compared as dates. This s except in the case of with_time and with_date
+values are compared as dates. This is except in the case of with_time and with_date
 options which effectively force the value to validated as a datetime against the
 temporal options.
 
