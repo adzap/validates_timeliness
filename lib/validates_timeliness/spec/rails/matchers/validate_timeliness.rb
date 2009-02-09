@@ -92,8 +92,8 @@ module Spec
         end
        
         def parse_and_cast(value)
-          value = @validator.send(:restriction_value, value, @record)
-          @validator.send(:type_cast_value, value)
+          value = @validator.class.send(:evaluate_option_value, value, @type, @record)
+          @validator.class.send(:type_cast_value, value, @type)
         end
 
         def error_matching(value, option)
@@ -117,11 +117,11 @@ module Spec
 
         def error_message_for(option)
           msg = @validator.send(:error_messages)[option]
-          restriction = @validator.send(:restriction_value, @validator.configuration[option], @record)
+          restriction = @validator.class.send(:evaluate_option_value, @validator.configuration[option], @type, @record)
 
           if restriction 
             restriction = [restriction] unless restriction.is_a?(Array)
-            restriction.map! {|r| @validator.send(:type_cast_value, r) }
+            restriction.map! {|r| @validator.class.send(:type_cast_value, r, @type) }
             interpolate = @validator.send(:interpolation_values, option, restriction )
             # get I18n message if defined and has interpolation keys in msg
             if defined?(I18n) && !@validator.send(:custom_error_messages).include?(option)

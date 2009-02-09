@@ -20,7 +20,8 @@ module ValidatesTimeliness
     }
 
     VALID_OPTIONS = [
-      :on, :allow_nil, :empty, :allow_blank, :blank, :invalid_time_message, :invalid_date_message, :invalid_datetime_message
+      :on, :allow_nil, :empty, :allow_blank, :blank, :with_time, :with_date,
+      :invalid_time_message, :invalid_date_message, :invalid_datetime_message
     ] + RESTRICTION_METHODS.keys.map {|option| [option, "#{option}_message".to_sym] }.flatten
 
     attr_reader :configuration, :type
@@ -52,14 +53,21 @@ module ValidatesTimeliness
     end
    
     def validate_restrictions(record, attr_name, value)
-      value = type_cast_value(value)
-      
+      value = if @configuration[:with_time] || @configuration[:with_date]
+        restriction_type = :datetime
+        combine_date_and_time(value, record)
+      else
+        restriction_type = type
+        self.class.type_cast_value(value, type)
+      end
+      return if value.nil?
+
       RESTRICTION_METHODS.each do |option, method|
         next unless restriction = configuration[option]
         begin
-          restriction = restriction_value(restriction, record)
+          restriction = self.class.evaluate_option_value(restriction, restriction_type, record)
           next if restriction.nil?
-          restriction = type_cast_value(restriction)
+          restriction = self.class.type_cast_value(restriction, restriction_type)
 
           unless evaluate_restriction(restriction, value, method)
             add_error(record, attr_name, option, interpolation_values(option, restriction))
@@ -123,49 +131,67 @@ module ValidatesTimeliness
       }
     end
     
-    def restriction_value(restriction, record)
-      case restriction
-      when Time, Date, DateTime
-        restriction
-      when Symbol
-        restriction_value(record.send(restriction), record)
-      when Proc
-        restriction_value(restriction.call(record), record)
-      when Array
-        restriction.map {|r| restriction_value(r, record) }.sort
-      when Range
-        restriction_value([restriction.first, restriction.last], record)
+    def combine_date_and_time(value, record)
+      if type == :date
+        date = value
+        time = @configuration[:with_time]
       else
-       record.class.parse_date_time(restriction, type, false)
+        date = @configuration[:with_date]
+        time = value
       end
-    end
-    
-    def type_cast_value(value)
-      if value.is_a?(Array)
-        value.map {|v| type_cast_value(v) }
-      else 
-        case type
-        when :time
-          value.to_dummy_time
-        when :date
-          value.to_date
-        when :datetime
-          if value.is_a?(DateTime) || value.is_a?(Time)
-            value.to_time
-          else
-            value.to_time(ValidatesTimeliness.default_timezone)
-          end
-        else
-          nil
-        end
-      end
+      date, time = self.class.evaluate_option_value(date, :date, record), self.class.evaluate_option_value(time, :time, record)
+      return if date.nil? || time.nil?
+      record.class.send(:make_time, [date.year, date.month, date.day, time.hour, time.min, time.sec, time.usec]) 
     end
 
     def validate_options(options)
-      invalid_types = [:time, :date, :datetime]
-      invalid_types.delete(@type)
-      valid_options = VALID_OPTIONS.reject {|option| invalid_types.include?("#{option}_message".to_sym) }
-      options.assert_valid_keys(valid_options)
+      invalid_for_type = ([:time, :date, :datetime] - [@type]).map {|k| "invalid_#{k}_message".to_sym }
+      invalid_for_type << :with_date unless @type == :time
+      invalid_for_type << :with_time unless @type == :date
+      options.assert_valid_keys(VALID_OPTIONS - invalid_for_type)
+    end
+
+    # class methods
+    class << self
+
+      def evaluate_option_value(value, type, record)
+        case value
+        when Time, Date, DateTime
+          value
+        when Symbol
+          evaluate_option_value(record.send(value), type, record)
+        when Proc
+          evaluate_option_value(value.call(record), type, record)
+        when Array
+          value.map {|r| evaluate_option_value(r, type, record) }.sort
+        when Range
+          evaluate_option_value([value.first, value.last], type, record)
+        else
+          record.class.parse_date_time(value, type, false)
+        end
+      end
+
+      def type_cast_value(value, type)
+        if value.is_a?(Array)
+          value.map {|v| type_cast_value(v, type) }
+        else
+          case type
+          when :time
+            value.to_dummy_time
+          when :date
+            value.to_date
+          when :datetime
+            if value.is_a?(DateTime) || value.is_a?(Time)
+              value.to_time
+            else
+              value.to_time(ValidatesTimeliness.default_timezone)
+            end
+          else
+            nil
+          end
+        end
+      end
+
     end
 
   end
