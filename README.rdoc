@@ -51,54 +51,51 @@ validation method
   end
   
 The list of validation methods available are as follows:
-
-  * validates_date     - validate value as date
-  
-  * validates_time     - validate value as time only i.e. '12:20pm'
-  
-  * validates_datetime - validate value as a full date and time
+* validates_date     - validate value as date
+* validates_time     - validate value as time only i.e. '12:20pm'
+* validates_datetime - validate value as a full date and time
   
 The validation methods take the usual options plus some specific ones to restrict
 the valid range of dates or times allowed
 
-  Temporal options (or restrictions):  
-    :before       - Attribute must be before this value to be valid
-    :on_or_before - Attribute must be equal to or before this value to be valid
-    :after        - Attribute must be after this value to be valid
-    :on_or_after  - Attribute must be equal to or after this value to be valid
-    :between      - Attribute must be between the values to be valid
+Temporal options (or restrictions):  
+  :before       - Attribute must be before this value to be valid
+  :on_or_before - Attribute must be equal to or before this value to be valid
+  :after        - Attribute must be after this value to be valid
+  :on_or_after  - Attribute must be equal to or after this value to be valid
+  :between      - Attribute must be between the values to be valid. Takes an array of two values or a range
 
-  Regular validation options:  
-    :allow_nil    - Allow a nil value to be valid
-    :allow_blank  - Allows a nil or empty string value to be valid
-    :if           - Execute validation when :if evaluates true
-    :unless       - Execute validation when :unless evaluates false
+Regular validation options:  
+  :allow_nil    - Allow a nil value to be valid
+  :allow_blank  - Allows a nil or empty string value to be valid
+  :if           - Execute validation when :if evaluates true
+  :unless       - Execute validation when :unless evaluates false
 
-  Special options:
-    :with_time    - Validate a date attribute value combined with a time value against any temporal restrictions
-    :with_date    - Validate a time attribute value combined with a date value against any temporal restrictions 
+Special options:
+  :with_time    - Validate a date attribute value combined with a time value against any temporal restrictions
+  :with_date    - Validate a time attribute value combined with a date value against any temporal restrictions 
+  
+Message options: - Use these to override the default error messages
+  :invalid_date_message
+  :invalid_time_message
+  :invalid_datetime_message
+  :before_message
+  :on_or_before_message
+  :after_message
+  :on_or_after_message
+  :between_message
 
-  Message options: - Use these to override the default error messages
-    :invalid_date_message
-    :invalid_time_message
-    :invalid_datetime_message
-    :before_message
-    :on_or_before_message
-    :after_message
-    :on_or_after_message
-    :between_message
-
-The temporal restrictions can take 4 different value types:
-
-  * String value
-  * Date, Time, or DateTime object value
-  * Proc or lambda object
-  * A symbol matching the method name in the model  
-  * Between option takes an array of two values or a range
+The temporal restrictions, with_date and with_time can take 4 different value types:
+* String value
+* Date, Time, or DateTime object value
+* Proc or lambda object which may take an optional parameter being the record object
+* A symbol matching the method name in the model
 
 When an attribute value is compared to temporal restrictions, they are compared as 
 the same type as the validation method type. So using validates_date means all
-values are compared as dates.
+values are compared as dates. This s except in the case of with_time and with_date
+options which effectively force the value to validated as a datetime against the
+temporal options.
 
 == EXAMPLES:
 
@@ -109,6 +106,8 @@ values are compared as dates.
                                   :on_or_after_message => 'must be after opening time',
                                   :before => :second_breakfast_time,
                                   :allow_nil => true
+
+  validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
 
   validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
 
@@ -126,44 +125,44 @@ be happy to know that is exactly the format you can use to define your own if
 you want. No complex regular expressions or duck punching (monkey patching) the
 plugin is needed.
 
-  Time formats:  
-    hh:nn:ss
-    hh-nn-ss
-    h:nn
-    h.nn
-    h nn
-    h-nn
-    h:nn_ampm
-    h.nn_ampm 
-    h nn_ampm
-    h-nn_ampm
-    h_ampm
-  
-  NOTE: Any time format without a meridian token (the 'ampm' token) is considered 
-        in 24 hour time.
-  
-  Date formats:  
-    yyyy/mm/dd
-    yyyy-mm-dd
-    yyyy.mm.dd
-    m/d/yy  OR  d/m/yy
-    m\d\yy  OR  d\m\yy
-    d-m-yy
-    d.m.yy
-    d mmm yy
-  
-  NOTE: To use non-US date formats see US/EURO FORMATS section
-  
-  Datetime formats:  
-    m/d/yy h:nn:ss   OR  d/m/yy hh:nn:ss
-    m/d/yy h:nn      OR  d/m/yy h:nn
-    m/d/yy h:nn_ampm OR  d/m/yy h:nn_ampm
-    yyyy-mm-dd hh:nn:ss
-    yyyy-mm-dd h:nn
-    ddd mmm d hh:nn:ss zo yyyy # Ruby time string
-    yyyy-mm-ddThh:nn:ss(?:Z|zo) # ISO 8601
+Time formats:  
+  hh:nn:ss
+  hh-nn-ss
+  h:nn
+  h.nn
+  h nn
+  h-nn
+  h:nn_ampm
+  h.nn_ampm 
+  h nn_ampm
+  h-nn_ampm
+  h_ampm
 
-  NOTE: To use non-US date formats see US/EURO FORMATS section
+NOTE: Any time format without a meridian token (the 'ampm' token) is considered 
+      in 24 hour time.
+
+Date formats:  
+  yyyy/mm/dd
+  yyyy-mm-dd
+  yyyy.mm.dd
+  m/d/yy  OR  d/m/yy
+  m\d\yy  OR  d\m\yy
+  d-m-yy
+  d.m.yy
+  d mmm yy
+
+NOTE: To use non-US date formats see US/EURO FORMATS section
+
+Datetime formats:  
+  m/d/yy h:nn:ss   OR  d/m/yy hh:nn:ss
+  m/d/yy h:nn      OR  d/m/yy h:nn
+  m/d/yy h:nn_ampm OR  d/m/yy h:nn_ampm
+  yyyy-mm-dd hh:nn:ss
+  yyyy-mm-dd h:nn
+  ddd mmm d hh:nn:ss zo yyyy # Ruby time string
+  yyyy-mm-ddThh:nn:ss(?:Z|zo) # ISO 8601
+
+NOTE: To use non-US date formats see US/EURO FORMATS section
 
 Here is what each format token means:
 
@@ -225,7 +224,7 @@ Done! That format is no longer considered valid. Easy!
 Ok, now I hear you say "Well I have format that I want to use but you don't have it".
 Ahh, then add it yourself. Again stick this in an initializer file
 
-    ValidatesTimeliness::Formats.add_formats(:time, "d o'clock")
+  ValidatesTimeliness::Formats.add_formats(:time, "d o'clock")
 
 Now "10 o'clock" will be a valid value. So easy, no more whingeing!
 
@@ -240,7 +239,7 @@ with an existing format, will mean your format is ignored. If you need to make
 your new format higher precedence than an existing format, you can include the 
 before option like so
 
-    ValidatesTimeliness::Formats.add_formats(:time, 'ss:nn:hh', :before => 'hh:nn:ss')
+  ValidatesTimeliness::Formats.add_formats(:time, 'ss:nn:hh', :before => 'hh:nn:ss')
 
 Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves
 you adding a new one and deleting an old one to get it to work.
