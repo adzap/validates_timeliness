@@ -74,6 +74,10 @@ the valid range of dates or times allowed
     :if           - Execute validation when :if evaluates true
     :unless       - Execute validation when :unless evaluates false
 
+  Special options:
+    :with_time    - Validate a date attribute value combined with a time value against any temporal restrictions
+    :with_date    - Validate a time attribute value combined with a date value against any temporal restrictions 
+
   Message options: - Use these to override the default error messages
     :invalid_date_message
     :invalid_time_message
@@ -107,6 +111,8 @@ values are compared as dates.
                                   :allow_nil => true
 
   validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
+
+  validates_date :entry_date, :with_time => '17:00', :on_or_before => :competition_closing
  
 
 === DATE/TIME FORMATS:
