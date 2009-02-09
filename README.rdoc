@@ -51,21 +51,21 @@ validation method
   end
   
 The list of validation methods available are as follows:
-* validates_date     - validate value as date
-* validates_time     - validate value as time only i.e. '12:20pm'
-* validates_datetime - validate value as a full date and time
+  validates_date     - validate value as date
+  validates_time     - validate value as time only i.e. '12:20pm'
+  validates_datetime - validate value as a full date and time
   
 The validation methods take the usual options plus some specific ones to restrict
 the valid range of dates or times allowed
 
-Temporal options (or restrictions):  
+Temporal options (or restrictions):
   :before       - Attribute must be before this value to be valid
   :on_or_before - Attribute must be equal to or before this value to be valid
   :after        - Attribute must be after this value to be valid
   :on_or_after  - Attribute must be equal to or after this value to be valid
   :between      - Attribute must be between the values to be valid. Takes an array of two values or a range
 
-Regular validation options:  
+Regular validation options:
   :allow_nil    - Allow a nil value to be valid
   :allow_blank  - Allows a nil or empty string value to be valid
   :if           - Execute validation when :if evaluates true
@@ -125,7 +125,7 @@ be happy to know that is exactly the format you can use to define your own if
 you want. No complex regular expressions or duck punching (monkey patching) the
 plugin is needed.
 
-Time formats:  
+Time formats:
   hh:nn:ss
   hh-nn-ss
   h:nn
@@ -133,15 +133,14 @@ Time formats:
   h nn
   h-nn
   h:nn_ampm
-  h.nn_ampm 
+  h.nn_ampm
   h nn_ampm
   h-nn_ampm
   h_ampm
 
-NOTE: Any time format without a meridian token (the 'ampm' token) is considered 
-      in 24 hour time.
+NOTE: Any time format without a meridian token (the 'ampm' token) is considered in 24 hour time.
 
-Date formats:  
+Date formats: 
   yyyy/mm/dd
   yyyy-mm-dd
   yyyy.mm.dd
@@ -153,7 +152,7 @@ Date formats:
 
 NOTE: To use non-US date formats see US/EURO FORMATS section
 
-Datetime formats:  
+Datetime formats:
   m/d/yy h:nn:ss   OR  d/m/yy hh:nn:ss
   m/d/yy h:nn      OR  d/m/yy h:nn
   m/d/yy h:nn_ampm OR  d/m/yy h:nn_ampm
