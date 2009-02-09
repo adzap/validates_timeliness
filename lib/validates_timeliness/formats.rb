@@ -168,9 +168,9 @@ module ValidatesTimeliness
         exp, processor = expression_set(type, string).find do |regexp, proc|
           full = /\A#{regexp}\Z/ if strict
           full ||= case type
-            when :datetime then /\A#{regexp}\Z/
-            when :date     then /\A#{regexp}/
-            else                /#{regexp}\Z/
+          when :date     then /\A#{regexp}/
+          when :time     then /#{regexp}\Z/
+          when :datetime then /\A#{regexp}\Z/
           end
           matches = full.match(string.strip)
         end
@@ -268,17 +268,17 @@ module ValidatesTimeliness
       # datetime attributes to allow date string as datetime
       def expression_set(type, string)
         case type
-          when :date
-            date_expressions
-          when :time
-            time_expressions
-          when :datetime
-            # gives a speed-up for date string as datetime attributes
-            if string.length < 11
-              date_expressions + datetime_expressions
-            else
-              datetime_expressions + date_expressions
-            end
+        when :date
+          date_expressions
+        when :time
+          time_expressions
+        when :datetime
+          # gives a speed-up for date string as datetime attributes
+          if string.length < 11
+            date_expressions + datetime_expressions
+          else
+            datetime_expressions + date_expressions
+          end
         end
       end
  

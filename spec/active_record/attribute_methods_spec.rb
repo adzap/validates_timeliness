@@ -35,7 +35,7 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person.birth_time
   end
 
-  it "should call rea_date_time_attribute when datetime attribute is retrieved" do
+  it "should call read_date_time_attribute when datetime attribute is retrieved" do
     @person.should_receive(:read_date_time_attribute)
     @person.birth_date_and_time = "2000-01-01 12:00"
     @person.birth_date_and_time

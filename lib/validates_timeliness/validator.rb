@@ -91,10 +91,10 @@ module ValidatesTimeliness
       return true if restriction.nil?
 
       case comparator
-        when Symbol
-          value.send(comparator, restriction)
-        when Proc
-          comparator.call(value, restriction)
+      when Symbol
+        value.send(comparator, restriction)
+      when Proc
+        comparator.call(value, restriction)
       end
     end
     
@@ -111,13 +111,11 @@ module ValidatesTimeliness
     end
 
     def error_messages
-      return @error_messages if defined?(@error_messages)
-      @error_messages = ValidatesTimeliness.default_error_messages.merge(custom_error_messages)
+      @error_messages ||= ValidatesTimeliness.default_error_messages.merge(custom_error_messages)
     end
     
     def custom_error_messages
-      return @custom_error_messages if defined?(@custom_error_messages)
-      @custom_error_messages = configuration.inject({}) {|msgs, (k, v)|
+      @custom_error_messages ||= configuration.inject({}) {|msgs, (k, v)|
         if md = /(.*)_message$/.match(k.to_s) 
           msgs[md[1].to_sym] = v
         end
@@ -127,18 +125,18 @@ module ValidatesTimeliness
     
     def restriction_value(restriction, record)
       case restriction
-        when Time, Date, DateTime
-          restriction
-        when Symbol
-          restriction_value(record.send(restriction), record)
-        when Proc
-          restriction_value(restriction.call(record), record)
-        when Array
-          restriction.map {|r| restriction_value(r, record) }.sort
-        when Range
-          restriction_value([restriction.first, restriction.last], record)
-        else
-         record.class.parse_date_time(restriction, type, false)
+      when Time, Date, DateTime
+        restriction
+      when Symbol
+        restriction_value(record.send(restriction), record)
+      when Proc
+        restriction_value(restriction.call(record), record)
+      when Array
+        restriction.map {|r| restriction_value(r, record) }.sort
+      when Range
+        restriction_value([restriction.first, restriction.last], record)
+      else
+       record.class.parse_date_time(restriction, type, false)
       end
     end
     
