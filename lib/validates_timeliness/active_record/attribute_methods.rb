@@ -18,25 +18,26 @@ module ValidatesTimeliness
 
       def self.included(base)
         base.extend ClassMethods
+        base.class_eval do
+          alias_method_chain :read_attribute, :timeliness
+          class << self
+            alias_method_chain :define_attribute_methods, :timeliness
+          end
+        end
       end
 
       # Adds check for cached date/time attributes which have been type cast already
       # and value can be used from cache. This prevents the raw date/time value from
       # being type cast using default Rails type casting when writing values
       # to the database.
-      def read_attribute(attr_name)
+      def read_attribute_with_timeliness(attr_name)
         attr_name = attr_name.to_s
         if !(value = @attributes[attr_name]).nil?
-          if column = column_for_attribute(attr_name)
-            if unserializable_attribute?(attr_name, column)
-              unserialize_attribute(attr_name)
-            elsif [:date, :time, :datetime].include?(column.type) && @attributes_cache.has_key?(attr_name)
-              @attributes_cache[attr_name]
-            else
-              column.type_cast(value)
-            end
+          column = column_for_attribute(attr_name)
+          if column && [:date, :time, :datetime].include?(column.type) && @attributes_cache.has_key?(attr_name)
+            @attributes_cache[attr_name]
           else
-            value
+            read_attribute_without_timeliness(attr_name)
           end
         else
           nil
@@ -84,19 +85,15 @@ module ValidatesTimeliness
 
       module ClassMethods
 
-        # Override AR method to define attribute reader and writer method for
-        # date, time and datetime attributes to use plugin parser.
-        def define_attribute_methods
+        # Define attribute reader and writer method for date, time and
+        # datetime attributes to use plugin parser.
+        def define_attribute_methods_with_timeliness
           return if generated_methods?
           columns_hash.each do |name, column|
             unless instance_method_already_implemented?(name)
-              if self.serialized_attributes[name]
-                define_read_method_for_serialized_attribute(name)
-              elsif [:date, :time, :datetime].include?(column.type)
+              if [:date, :time, :datetime].include?(column.type)
                 time_zone_aware = create_time_zone_conversion_attribute?(name, column) rescue false
                 define_read_method_for_dates_and_times(name, column.type, time_zone_aware)
-              else
-                define_read_method(name.to_sym, name, column)
               end
             end
 
@@ -104,15 +101,10 @@ module ValidatesTimeliness
               if [:date, :time, :datetime].include?(column.type)
                 time_zone_aware = create_time_zone_conversion_attribute?(name, column) rescue false
                 define_write_method_for_dates_and_times(name, column.type, time_zone_aware)
-              else
-                define_write_method(name.to_sym)
               end
             end
-
-            unless instance_method_already_implemented?("#{name}?")
-              define_question_method(name)
-            end
           end
+          define_attribute_methods_without_timeliness
         end
 
         # Define write method for date, time and datetime columns
