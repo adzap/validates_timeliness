@@ -20,7 +20,7 @@ module ValidatesTimeliness
     }
 
     VALID_OPTIONS = [
-      :on, :allow_nil, :empty, :allow_blank, :blank, :invalid_time_message, :invalid_date_message, :invalid_datetime_message
+      :on, :if, :unless, :allow_nil, :empty, :allow_blank, :blank, :invalid_time_message, :invalid_date_message, :invalid_datetime_message
     ] + RESTRICTION_METHODS.keys.map {|option| [option, "#{option}_message".to_sym] }.flatten
 
     attr_reader :configuration, :type
