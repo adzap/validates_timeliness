@@ -48,7 +48,7 @@ module ValidatesTimeliness
       def write_date_time_attribute(attr_name, value, type, time_zone_aware)
         new = self.class.parse_date_time(value, type)
 
-        if new.acts_like?(:time)
+        if new && type != :date
           new = new.to_time
           new = new.in_time_zone if time_zone_aware
         end

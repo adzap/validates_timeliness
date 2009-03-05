@@ -69,6 +69,11 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person.birth_date_and_time.should be_kind_of(Time)
   end
 
+  it "should return Time object for datetime attribute read method when assigned Date object" do
+    @person.birth_date_and_time = Date.today
+    @person.birth_date_and_time.should be_kind_of(Time)
+  end
+
   it "should return Time object for datetime attribute read method when assigned string" do
     @person.birth_date_and_time = "2000-01-01 02:03:04"
     @person.birth_date_and_time.should be_kind_of(Time)
