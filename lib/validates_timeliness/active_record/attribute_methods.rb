@@ -73,7 +73,7 @@ module ValidatesTimeliness
 
         if @attributes_cache.has_key?(attr_name)
           time = read_attribute_before_type_cast(attr_name)
-          time = self.class.parse_date_time(date, type)
+          time = self.class.parse_date_time(time, type)
         else
           time = read_attribute(attr_name)
           @attributes[attr_name] = time && time_zone_aware ? time.in_time_zone : time
