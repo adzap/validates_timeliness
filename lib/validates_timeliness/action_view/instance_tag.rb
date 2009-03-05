@@ -1,4 +1,9 @@
 module ValidatesTimeliness
+
+  def self.enable_datetime_select_extension!
+    ::ActionView::Helpers::InstanceTag.send(:include, ValidatesTimeliness::ActionView::InstanceTag)
+  end
+
   module ActionView
 
     # Intercepts the date and time select helpers to allow the 
@@ -41,5 +46,3 @@ module ValidatesTimeliness
 
   end   
 end
-
-ActionView::Helpers::InstanceTag.send(:include, ValidatesTimeliness::ActionView::InstanceTag)
