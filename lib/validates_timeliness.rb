@@ -21,15 +21,15 @@ module ValidatesTimeliness
 
   class << self
 
-    def load_error_messages_with_i18n
-      I18n.load_path += [ LOCALE_PATH ]
-      I18n.reload!
-    end
-
-    def load_error_messages_without_i18n
-      messages = YAML::load(IO.read(LOCALE_PATH))
-      errors = messages['en']['activerecord']['errors']['messages'].inject({}) {|h,(k,v)| h[k.to_sym] = v.gsub(/\{\{\w*\}\}/, '%s');h }
-      ::ActiveRecord::Errors.default_error_messages.update(errors)
+    def load_error_messages
+      if defined?(I18n)
+        I18n.load_path += [ LOCALE_PATH ]
+        I18n.reload!
+      else
+        messages = YAML::load(IO.read(LOCALE_PATH))
+        errors = messages['en']['activerecord']['errors']['messages'].inject({}) {|h,(k,v)| h[k.to_sym] = v.gsub(/\{\{\w*\}\}/, '%s');h }
+        ::ActiveRecord::Errors.default_error_messages.update(errors)
+      end
     end
     
     def default_error_messages
@@ -40,23 +40,11 @@ module ValidatesTimeliness
       end
     end
 
-    def setup_for_rails_2_0
-      load_error_messages_without_i18n
-    end
-    alias :setup_for_rails_2_1 :setup_for_rails_2_0
-
-    def setup_for_rails_2_2
-      load_error_messages_with_i18n
-    end
-    alias :setup_for_rails_2_3 :setup_for_rails_2_2
-
     def setup_for_rails
       major, minor = Rails::VERSION::MAJOR, Rails::VERSION::MINOR
       self.default_timezone = ::ActiveRecord::Base.default_timezone
-      self.send("setup_for_rails_#{major}_#{minor}")
-    rescue
-      puts "Rails version #{major}.#{minor}.x not explicitly supported by validates_timeliness plugin. Setting up for Rails 2.2, but you may encounter some problems."
-      setup_for_rails_2_2
+      self.enable_datetime_select_extension!
+      self.load_error_messages
     end
   end
 end
