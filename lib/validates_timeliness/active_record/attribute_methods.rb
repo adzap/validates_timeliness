@@ -35,13 +35,10 @@ module ValidatesTimeliness
         if !(value = @attributes[attr_name]).nil?
           column = column_for_attribute(attr_name)
           if column && [:date, :time, :datetime].include?(column.type) && @attributes_cache.has_key?(attr_name)
-            @attributes_cache[attr_name]
-          else
-            read_attribute_without_timeliness(attr_name)
+            return @attributes_cache[attr_name]
           end
-        else
-          nil
         end
+        read_attribute_without_timeliness(attr_name)
       end
 
       # If Rails dirty attributes is enabled then the value is added to
@@ -49,19 +46,20 @@ module ValidatesTimeliness
       # implementation as it chains the write_attribute method which deletes
       # the attribute from the cache.
       def write_date_time_attribute(attr_name, value, type, time_zone_aware)
-        old = read_attribute(attr_name) if defined?(::ActiveRecord::Dirty)
         new = self.class.parse_date_time(value, type)
 
-        unless type == :date || new.nil?
-          new = new.to_time rescue new
+        if new.acts_like?(:time)
+          new = new.to_time
+          new = new.in_time_zone if time_zone_aware
         end
 
-        new = new.in_time_zone if new && time_zone_aware
+        if defined?(::ActiveRecord::Dirty) && !changed_attributes.include?(attr_name)
+          old = read_attribute(attr_name)
+          if old != new
+            changed_attributes[attr_name] = (old.duplicable? ? old.clone : old)
+          end
+        end
         @attributes_cache[attr_name] = new
-
-        if defined?(::ActiveRecord::Dirty) && !changed_attributes.include?(attr_name) && old != new
-          changed_attributes[attr_name] = (old.duplicable? ? old.clone : old)
-        end
         @attributes[attr_name] = value
       end
 
