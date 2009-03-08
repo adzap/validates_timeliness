@@ -1,6 +1,6 @@
 module ValidatesTimeliness
 
-  def self.enable_datetime_select_extension!
+  def self.enable_datetime_select_invalid_value_extension!
     ::ActionView::Helpers::InstanceTag.send(:include, ValidatesTimeliness::ActionView::InstanceTag)
   end
 

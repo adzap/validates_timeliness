@@ -21,6 +21,11 @@ module ValidatesTimeliness
 
   class << self
 
+    def enable_datetime_select_extension!
+      enable_datetime_select_invalid_value_extension!
+      enable_multiparameter_attributes_extension!
+    end
+
     def load_error_messages
       if defined?(I18n)
         I18n.load_path += [ LOCALE_PATH ]

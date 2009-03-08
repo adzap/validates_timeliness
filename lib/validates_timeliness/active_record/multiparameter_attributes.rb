@@ -1,6 +1,10 @@
 module ValidatesTimeliness
-  module ActiveRecord
 
+  def self.enable_multiparameter_attributes_extension!
+    ::ActiveRecord::Base.send(:include, ValidatesTimeliness::ActiveRecord::MultiparameterAttributes)
+  end
+
+  module ActiveRecord
     module MultiparameterAttributes
       
       def self.included(base)
@@ -38,13 +42,13 @@ module ValidatesTimeliness
         values = values.map(&:to_s)
                 
         case type
-          when :date
-            extract_date_from_multiparameter_attributes(values)
-          when :time
-            extract_time_from_multiparameter_attributes(values)
-          when :datetime
-            date_values, time_values = values.slice!(0, 3), values
-            extract_date_from_multiparameter_attributes(date_values) + " " + extract_time_from_multiparameter_attributes(time_values)
+        when :date
+          extract_date_from_multiparameter_attributes(values)
+        when :time
+          extract_time_from_multiparameter_attributes(values)
+        when :datetime
+          date_values, time_values = values.slice!(0, 3), values
+          extract_date_from_multiparameter_attributes(date_values) + " " + extract_time_from_multiparameter_attributes(time_values)
         end
       end   
          
@@ -60,5 +64,3 @@ module ValidatesTimeliness
 
   end
 end
-
-ActiveRecord::Base.send(:include, ValidatesTimeliness::ActiveRecord::MultiparameterAttributes)
