@@ -113,8 +113,6 @@ temporal options.
 
   validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
 
-  validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
-
   validates_date :entry_date, :with_time => '17:00', :on_or_before => :competition_closing
  
 
