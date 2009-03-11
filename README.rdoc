@@ -127,7 +127,7 @@ be happy to know that is exactly the format you can use to define your own if
 you want. No complex regular expressions or duck punching (monkey patching) the
 plugin is needed.
 
-Time formats:
+==== Time formats:
   hh:nn:ss
   hh-nn-ss
   h:nn
@@ -142,7 +142,7 @@ Time formats:
 
 NOTE: Any time format without a meridian token (the 'ampm' token) is considered in 24 hour time.
 
-Date formats: 
+==== Date formats:
   yyyy/mm/dd
   yyyy-mm-dd
   yyyy.mm.dd
@@ -154,7 +154,7 @@ Date formats:
 
 NOTE: To use non-US date formats see US/EURO FORMATS section
 
-Datetime formats:
+==== Datetime formats:
   m/d/yy h:nn:ss   OR  d/m/yy hh:nn:ss
   m/d/yy h:nn      OR  d/m/yy h:nn
   m/d/yy h:nn_ampm OR  d/m/yy h:nn_ampm
