@@ -35,7 +35,7 @@ module ValidatesTimeliness
       
     def call(record, attr_name, value)
       value     = record.class.parse_date_time(value, type, false) if value.is_a?(String)
-      raw_value = raw_value(record, attr_name)
+      raw_value = raw_value(record, attr_name) || value
 
       return if (raw_value.nil? && configuration[:allow_nil]) || (raw_value.blank? && configuration[:allow_blank])
 
@@ -49,7 +49,7 @@ module ValidatesTimeliness
    private
 
     def raw_value(record, attr_name)
-      record.send("#{attr_name}_before_type_cast")
+      record.send("#{attr_name}_before_type_cast") rescue nil
     end
    
     def validate_restrictions(record, attr_name, value)
