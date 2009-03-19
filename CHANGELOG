@@ -1,3 +1,13 @@
+= 1.1.6 [2009-03-19]
+- Rail 2.3 support
+- Added :with_date and :with_time options. They allow an attribute to be combined with another attribute or value to make a datetime value for validation against the temporal restrictions
+- Added :equal_to option
+- Option key validation
+- Better behaviour with other plugins using alias_method_chain on read_attribute and define_attribute_methods
+- Added option to enable datetime_select extension for future use to optionally enable. Enabled by default until version 2.
+- Added :ignore_usec option for datetime restrictions to be compared without microsecond
+- some refactoring
+
 = 1.1.5 [2009-01-21]
 - Fixed regex for 'yy' format token which wasn't greedy enough for date formats ending with year when a datetime string parsed as date with a 4 digit year
 

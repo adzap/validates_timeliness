@@ -5,7 +5,7 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "validates_timeliness"
-GEM_VERSION = "1.1.5"
+GEM_VERSION = "1.1.6"
 AUTHOR = "Adam Meehan"
 EMAIL = "adam.meehan@gmail.com"
 HOMEPAGE = "http://github.com/adzap/validates_timeliness"
@@ -23,9 +23,6 @@ spec = Gem::Specification.new do |s|
   s.author = AUTHOR
   s.email = EMAIL
   s.homepage = HOMEPAGE
-  
-  # Uncomment this to add a dependency
-  # s.add_dependency "foo"
   
   s.require_path = 'lib'
   s.autorequire = GEM
