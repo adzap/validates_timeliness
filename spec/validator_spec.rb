@@ -346,6 +346,69 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe "instance with :equal_to restriction" do
+
+    describe "for datetime type" do
+      before do
+        configure_validator(:equal_to => Time.now)
+      end
+
+      it "should have error when value not equal to :equal_to restriction" do
+        validate_with(:birth_date_and_time, Time.now + 1)
+        should_have_error(:birth_date_and_time, :equal_to)
+      end
+
+      it "should have error when value is equal to :equal_to restriction for all values except microscond, and microsecond is not ignored" do
+        configure_validator(:equal_to => Time.utc(2000, 1, 1, 0, 0, 0, 0), :ignore_usec => false)
+        validate_with(:birth_date_and_time, Time.utc(2000, 1, 1, 0, 0, 0, 500))
+        should_have_error(:birth_date_and_time, :equal_to)
+      end
+
+      it "should be valid when value is equal to :equal_to restriction for all values except microscond, and microsecond is ignored" do
+        configure_validator(:equal_to => Time.utc(2000, 1, 1, 0, 0, 0, 0), :ignore_usec => true)
+        validate_with(:birth_date_and_time, Time.utc(2000, 1, 1, 0, 0, 0, 500))
+        should_have_no_error(:birth_date_and_time, :equal_to)
+      end
+
+      it "should be valid when value is equal to :equal_to restriction" do
+        validate_with(:birth_date_and_time, Time.now)
+        should_have_no_error(:birth_date_and_time, :equal_to)
+      end
+    end
+
+    describe "for date type" do
+      before do
+        configure_validator(:type => :date, :equal_to => Date.today)
+      end
+
+      it "should have error when value is not equal to :equal_to restriction" do
+        validate_with(:birth_date, Date.today + 1)
+        should_have_error(:birth_date, :equal_to)
+      end
+
+      it "should be valid when value is equal to :equal_to restriction" do
+        validate_with(:birth_date, Date.today)
+        should_have_no_error(:birth_date, :equal_to)
+      end
+    end
+
+    describe "for time type" do
+      before do
+        configure_validator(:type => :time, :equal_to => "09:00:00")
+      end
+
+      it "should have error when value is not equal to :equal_to restriction" do
+        validate_with(:birth_time, "09:00:01")
+        should_have_error(:birth_time, :equal_to)
+      end
+
+      it "should be valid when value is equal to :equal_to restriction" do
+        validate_with(:birth_time, "09:00:00")
+        should_have_no_error(:birth_time, :equal_to)
+      end
+    end
+  end
+
   describe "instance with :with_time option" do
 
     it "should validate date attribute as datetime combining value of :with_time against restrictions " do

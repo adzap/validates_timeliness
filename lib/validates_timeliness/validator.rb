@@ -12,6 +12,7 @@ module ValidatesTimeliness
     }
 
     RESTRICTION_METHODS = {
+      :equal_to     => :==,
       :before       => :<, 
       :after        => :>, 
       :on_or_before => :<=,
@@ -20,14 +21,15 @@ module ValidatesTimeliness
     }
 
     VALID_OPTIONS = [
-      :on, :if, :unless, :allow_nil, :empty, :allow_blank, :blank, :with_time, :with_date,
+      :on, :if, :unless, :allow_nil, :empty, :allow_blank, :blank,
+      :with_time, :with_date, :ignore_usec,
       :invalid_time_message, :invalid_date_message, :invalid_datetime_message
     ] + RESTRICTION_METHODS.keys.map {|option| [option, "#{option}_message".to_sym] }.flatten
 
     attr_reader :configuration, :type
 
     def initialize(configuration)
-      defaults = { :on => :save, :type => :datetime, :allow_nil => false, :allow_blank => false }
+      defaults = { :on => :save, :type => :datetime, :allow_nil => false, :allow_blank => false, :ignore_usec => false }
       @configuration = defaults.merge(configuration)
       @type = @configuration.delete(:type)
       validate_options(@configuration)
@@ -58,7 +60,7 @@ module ValidatesTimeliness
         combine_date_and_time(value, record)
       else
         restriction_type = type
-        self.class.type_cast_value(value, type)
+        self.class.type_cast_value(value, type, @configuration[:ignore_usec])
       end
       return if value.nil?
 
@@ -67,7 +69,7 @@ module ValidatesTimeliness
         begin
           restriction = self.class.evaluate_option_value(restriction, restriction_type, record)
           next if restriction.nil?
-          restriction = self.class.type_cast_value(restriction, restriction_type)
+          restriction = self.class.type_cast_value(restriction, restriction_type, @configuration[:ignore_usec])
 
           unless evaluate_restriction(restriction, value, method)
             add_error(record, attr_name, option, interpolation_values(option, restriction))
@@ -171,11 +173,11 @@ module ValidatesTimeliness
         end
       end
 
-      def type_cast_value(value, type)
+      def type_cast_value(value, type, ignore_usec=false)
         if value.is_a?(Array)
-          value.map {|v| type_cast_value(v, type) }
+          value.map {|v| type_cast_value(v, type, ignore_usec) }
         else
-          case type
+          value = case type
           when :time
             value.to_dummy_time
           when :date
@@ -188,6 +190,11 @@ module ValidatesTimeliness
             end
           else
             nil
+          end
+          if ignore_usec && value.is_a?(Time)
+            ::ActiveRecord::Base.send(:make_time, Array(value).reverse[4..9])
+          else
+            value
           end
         end
       end
