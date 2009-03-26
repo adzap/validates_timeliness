@@ -1,3 +1,6 @@
+= 1.1.7 [2009-03-26]
+- Minor change to multiparameter attributes which I had not properly implemented for chaining
+
 = 1.1.6 [2009-03-19]
 - Rail 2.3 support
 - Added :with_date and :with_time options. They allow an attribute to be combined with another attribute or value to make a datetime value for validation against the temporal restrictions
