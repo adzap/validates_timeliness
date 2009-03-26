@@ -56,7 +56,8 @@ module ValidatesTimeliness
       end
       
       def extract_time_from_multiparameter_attributes(values)
-        values.last(3).map { |s| s.rjust(2, "0") }.join(":")
+        values = values.size > 3 ? values[3..5] : values
+        values.map { |s| s.rjust(2, "0") }.join(":")
       end
       
     end
