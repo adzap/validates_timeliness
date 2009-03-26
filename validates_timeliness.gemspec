@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adam Meehan"]
   s.autorequire = %q{validates_timeliness}
-  s.date = %q{2009-03-19}
+  s.date = %q{2009-03-26}
   s.description = %q{Date and time validation plugin for Rails 2.x which allows custom formats}
   s.email = %q{adam.meehan@gmail.com}
   s.extra_rdoc_files = ["README.rdoc", "LICENSE", "TODO", "CHANGELOG"]
