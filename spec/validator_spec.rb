@@ -554,12 +554,18 @@ describe ValidatesTimeliness::Validator do
     describe "custom formats" do
 
       before :all do
-        @@formats = ValidatesTimeliness::Validator.error_value_formats
-        ValidatesTimeliness::Validator.error_value_formats = {
+        custom = {
           :time     => '%H:%M %p',
           :date     => '%d-%m-%Y',
           :datetime => '%d-%m-%Y %H:%M %p'
         }
+
+        if defined?(I18n)
+          I18n.backend.store_translations 'en', :validates_timeliness => { :error_value_formats => custom }
+        else
+          @@formats = ValidatesTimeliness::Validator.default_error_value_formats
+          ValidatesTimeliness::Validator.default_error_value_formats = custom
+        end
       end
 
       it "should format datetime value of restriction" do
@@ -581,7 +587,11 @@ describe ValidatesTimeliness::Validator do
       end
 
       after :all do
-        ValidatesTimeliness::Validator.error_value_formats = @@formats
+        if defined?(I18n)
+          I18n.reload!
+        else
+          ValidatesTimeliness::Validator.default_error_value_formats = @@formats
+        end
       end
     end
 

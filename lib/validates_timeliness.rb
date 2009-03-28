@@ -34,20 +34,14 @@ module ValidatesTimeliness
         I18n.load_path += [ LOCALE_PATH ]
         I18n.reload!
       else
-        messages = YAML::load(IO.read(LOCALE_PATH))
-        errors = messages['en']['activerecord']['errors']['messages'].inject({}) {|h,(k,v)| h[k.to_sym] = v.gsub(/\{\{\w*\}\}/, '%s');h }
+        defaults = YAML::load(IO.read(LOCALE_PATH))['en']
+        errors = defaults['activerecord']['errors']['messages'].inject({}) {|h,(k,v)| h[k.to_sym] = v.gsub(/\{\{\w*\}\}/, '%s');h }
         ::ActiveRecord::Errors.default_error_messages.update(errors)
+
+        ValidatesTimeliness::Validator.default_error_value_formats = defaults['validates_timeliness']['error_value_formats'].symbolize_keys
       end
     end
     
-    def default_error_messages
-      if Rails::VERSION::STRING < '2.2'
-        ::ActiveRecord::Errors.default_error_messages
-      else
-        I18n.translate('activerecord.errors.messages')
-      end
-    end
-
     def setup_for_rails
       self.default_timezone = ::ActiveRecord::Base.default_timezone
       self.use_time_zones = ::ActiveRecord::Base.time_zone_aware_attributes rescue false

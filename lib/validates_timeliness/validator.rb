@@ -2,14 +2,9 @@ module ValidatesTimeliness
 
   class Validator
     cattr_accessor :ignore_restriction_errors
-    cattr_accessor :error_value_formats
+    cattr_accessor :default_error_value_formats
 
     self.ignore_restriction_errors = false
-    self.error_value_formats = {
-      :time     => '%H:%M:%S',
-      :date     => '%Y-%m-%d',
-      :datetime => '%Y-%m-%d %H:%M:%S'
-    }
 
     RESTRICTION_METHODS = {
       :equal_to     => :==,
@@ -47,7 +42,11 @@ module ValidatesTimeliness
 
       validate_restrictions(record, attr_name, value)
     end
-    
+
+    def error_messages
+      @error_messages ||= self.class.default_error_messages.merge(custom_error_messages)
+    end
+
    private
 
     def raw_value(record, attr_name)
@@ -120,10 +119,6 @@ module ValidatesTimeliness
       end
     end
 
-    def error_messages
-      @error_messages ||= ValidatesTimeliness.default_error_messages.merge(custom_error_messages)
-    end
-    
     def custom_error_messages
       @custom_error_messages ||= configuration.inject({}) {|msgs, (k, v)|
         if md = /(.*)_message$/.match(k.to_s) 
@@ -132,7 +127,7 @@ module ValidatesTimeliness
         msgs
       }
     end
-    
+
     def combine_date_and_time(value, record)
       if type == :date
         date = value
@@ -155,6 +150,22 @@ module ValidatesTimeliness
 
     # class methods
     class << self
+
+      def default_error_messages
+        if Rails::VERSION::STRING < '2.2'
+          ::ActiveRecord::Errors.default_error_messages
+        else
+          I18n.translate('activerecord.errors.messages')
+        end
+      end
+
+      def error_value_formats
+        if defined?(I18n)
+          I18n.translate('validates_timeliness.error_value_formats')
+        else
+          default_error_value_formats
+        end
+      end
 
       def evaluate_option_value(value, type, record)
         case value

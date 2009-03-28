@@ -11,3 +11,8 @@ en:
         after: "must be after {{restriction}}"
         on_or_after: "must be on or after {{restriction}}"
         between: "must be between {{earliest}} and {{latest}}"
+  validates_timeliness:
+    error_value_formats:
+      date: '%Y-%m-%d'
+      time: '%H:%M:%S'
+      datetime: '%Y-%m-%d %H:%M:%S'
