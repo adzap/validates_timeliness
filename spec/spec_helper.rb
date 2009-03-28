@@ -46,6 +46,8 @@ end
 
 require 'validates_timeliness'
 
+ValidatesTimeliness.enable_datetime_select_extension!
+
 ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})
 

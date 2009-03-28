@@ -45,7 +45,6 @@ module ValidatesTimeliness
     def setup_for_rails
       self.default_timezone = ::ActiveRecord::Base.default_timezone
       self.use_time_zones = ::ActiveRecord::Base.time_zone_aware_attributes rescue false
-      enable_datetime_select_extension!
       load_error_messages
     end
   end
