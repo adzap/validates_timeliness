@@ -36,7 +36,7 @@ module ValidatesTimeliness
     end
       
     def call(record, attr_name, value)
-      value     = record.class.parse_date_time(value, type, false) if value.is_a?(String)
+      value     = ValidatesTimeliness::Parser.parse(value, type, false) if value.is_a?(String)
       raw_value = raw_value(record, attr_name) || value
 
       return if (raw_value.nil? && configuration[:allow_nil]) || (raw_value.blank? && configuration[:allow_blank])
@@ -143,7 +143,7 @@ module ValidatesTimeliness
       end
       date, time = self.class.evaluate_option_value(date, :date, record), self.class.evaluate_option_value(time, :time, record)
       return if date.nil? || time.nil?
-      record.class.send(:make_time, [date.year, date.month, date.day, time.hour, time.min, time.sec, time.usec]) 
+      ValidatesTimeliness::Parser.make_time([date.year, date.month, date.day, time.hour, time.min, time.sec, time.usec])
     end
 
     def validate_options(options)
@@ -158,7 +158,7 @@ module ValidatesTimeliness
 
       def evaluate_option_value(value, type, record)
         case value
-        when Time, Date, DateTime
+        when Time, Date
           value
         when Symbol
           evaluate_option_value(record.send(value), type, record)
@@ -169,7 +169,7 @@ module ValidatesTimeliness
         when Range
           evaluate_option_value([value.first, value.last], type, record)
         else
-          record.class.parse_date_time(value, type, false)
+          ValidatesTimeliness::Parser.parse(value, type, false)
         end
       end
 
@@ -192,7 +192,7 @@ module ValidatesTimeliness
             nil
           end
           if ignore_usec && value.is_a?(Time)
-            ::ActiveRecord::Base.send(:make_time, Array(value).reverse[4..9])
+            ValidatesTimeliness::Parser.make_time(Array(value).reverse[4..9])
           else
             value
           end

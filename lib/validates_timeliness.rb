@@ -1,4 +1,5 @@
 require 'validates_timeliness/formats'
+require 'validates_timeliness/parser'
 require 'validates_timeliness/validator'
 require 'validates_timeliness/validation_methods'
 require 'validates_timeliness/spec/rails/matchers/validate_timeliness' if ENV['RAILS_ENV'] == 'test'
@@ -14,8 +15,10 @@ require 'validates_timeliness/core_ext/date_time'
 module ValidatesTimeliness
   
   mattr_accessor :default_timezone
-
   self.default_timezone = :utc 
+
+  mattr_accessor :use_time_zones
+  self.use_time_zones = false
 
   LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/validates_timeliness/locale/en.yml')
 
@@ -46,10 +49,10 @@ module ValidatesTimeliness
     end
 
     def setup_for_rails
-      major, minor = Rails::VERSION::MAJOR, Rails::VERSION::MINOR
       self.default_timezone = ::ActiveRecord::Base.default_timezone
-      self.enable_datetime_select_extension!
-      self.load_error_messages
+      self.use_time_zones = ::ActiveRecord::Base.time_zone_aware_attributes rescue false
+      enable_datetime_select_extension!
+      load_error_messages
     end
   end
 end

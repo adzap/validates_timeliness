@@ -39,17 +39,17 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
   end
 
   it "should call parser on write for datetime attribute" do
-    @person.class.should_receive(:parse_date_time).once
+    ValidatesTimeliness::Parser.should_receive(:parse).once
     @person.birth_date_and_time = "2000-01-01 02:03:04"
   end
 
   it "should call parser on write for date attribute" do
-    @person.class.should_receive(:parse_date_time).once
+    ValidatesTimeliness::Parser.should_receive(:parse).once
     @person.birth_date = "2000-01-01"
   end
 
   it "should call parser on write for time attribute" do
-    @person.class.should_receive(:parse_date_time).once
+    ValidatesTimeliness::Parser.should_receive(:parse).once
     @person.birth_time = "12:00"
   end
 
