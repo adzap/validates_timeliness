@@ -38,7 +38,7 @@ module ValidatesTimeliness
         errors = defaults['activerecord']['errors']['messages'].inject({}) {|h,(k,v)| h[k.to_sym] = v.gsub(/\{\{\w*\}\}/, '%s');h }
         ::ActiveRecord::Errors.default_error_messages.update(errors)
 
-        ValidatesTimeliness::Validator.default_error_value_formats = defaults['validates_timeliness']['error_value_formats'].symbolize_keys
+        ValidatesTimeliness::Validator.error_value_formats = defaults['validates_timeliness']['error_value_formats'].symbolize_keys
       end
     end
     

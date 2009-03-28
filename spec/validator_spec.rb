@@ -563,8 +563,8 @@ describe ValidatesTimeliness::Validator do
         if defined?(I18n)
           I18n.backend.store_translations 'en', :validates_timeliness => { :error_value_formats => custom }
         else
-          @@formats = ValidatesTimeliness::Validator.default_error_value_formats
-          ValidatesTimeliness::Validator.default_error_value_formats = custom
+          @@formats = ValidatesTimeliness::Validator.error_value_formats
+          ValidatesTimeliness::Validator.error_value_formats = custom
         end
       end
 
@@ -590,7 +590,7 @@ describe ValidatesTimeliness::Validator do
         if defined?(I18n)
           I18n.reload!
         else
-          ValidatesTimeliness::Validator.default_error_value_formats = @@formats
+          ValidatesTimeliness::Validator.error_value_formats = @@formats
         end
       end
     end

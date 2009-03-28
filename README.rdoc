@@ -304,7 +304,7 @@ values inserted in the error messages for temporal restrictions like so
 
 For Rails 2.0/2.1:
 
-  ValidatesTimeliness::Validator.default_error_value_formats.update(
+  ValidatesTimeliness::Validator.error_value_formats.update(
     :time     => '%H:%M:%S',
     :date     => '%Y-%m-%d',
     :datetime => '%Y-%m-%d %H:%M:%S'

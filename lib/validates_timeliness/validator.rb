@@ -2,8 +2,6 @@ module ValidatesTimeliness
 
   class Validator
     cattr_accessor :ignore_restriction_errors
-    cattr_accessor :default_error_value_formats
-
     self.ignore_restriction_errors = false
 
     RESTRICTION_METHODS = {
@@ -163,8 +161,12 @@ module ValidatesTimeliness
         if defined?(I18n)
           I18n.translate('validates_timeliness.error_value_formats')
         else
-          default_error_value_formats
+          @@error_value_formats
         end
+      end
+
+      def error_value_formats=(formats)
+        @@error_value_formats = formats
       end
 
       def evaluate_option_value(value, type, record)
