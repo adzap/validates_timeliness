@@ -139,37 +139,37 @@ describe ValidatesTimeliness::Formats do
   describe "extracting values" do
     
     it "should return time array from date string" do
-      time_array = formats.parse('12:13:14', :time, true)
+      time_array = formats.parse('12:13:14', :time, :strict => true)
       time_array.should == [0,0,0,12,13,14,0]
     end
     
     it "should return date array from time string" do
-      time_array = formats.parse('2000-02-01', :date, true)
+      time_array = formats.parse('2000-02-01', :date, :strict => true)
       time_array.should == [2000,2,1,0,0,0,0]
     end
     
     it "should return datetime array from string value" do
-      time_array = formats.parse('2000-02-01 12:13:14', :datetime, true)
+      time_array = formats.parse('2000-02-01 12:13:14', :datetime, :strict => true)
       time_array.should == [2000,2,1,12,13,14,0]
     end
     
     it "should parse date string when type is datetime" do
-      time_array = formats.parse('2000-02-01', :datetime, false)
+      time_array = formats.parse('2000-02-01', :datetime, :strict => false)
       time_array.should == [2000,2,1,0,0,0,0]
     end
 
     it "should ignore time when extracting date and strict is false" do
-      time_array = formats.parse('2000-02-01 12:12', :date, false)
+      time_array = formats.parse('2000-02-01 12:12', :date, :strict => false)
       time_array.should == [2000,2,1,0,0,0,0]
     end
 
     it "should ignore time when extracting date from format with trailing year and strict is false" do
-      time_array = formats.parse('01-02-2000 12:12', :date, false)
+      time_array = formats.parse('01-02-2000 12:12', :date, :strict => false)
       time_array.should == [2000,2,1,0,0,0,0]
     end
     
     it "should ignore date when extracting time and strict is false" do
-      time_array = formats.parse('2000-02-01 12:12', :time, false)
+      time_array = formats.parse('2000-02-01 12:12', :time, :strict => false)
       time_array.should == [0,0,0,12,12,0,0]
     end
   end

@@ -161,12 +161,13 @@ module ValidatesTimeliness
       # pre or post match strings to exist if strict is false. Otherwise wrap
       # regexp in start and end anchors.
       # Returns 7 part time array.
-      def parse(string, type, strict=true)
+      def parse(string, type, options={})
         return string unless string.is_a?(String)
+        options.reverse_merge!(:strict => true)
 
         matches = nil
         exp, processor = expression_set(type, string).find do |regexp, proc|
-          full = /\A#{regexp}\Z/ if strict
+          full = /\A#{regexp}\Z/ if options[:strict]
           full ||= case type
           when :date     then /\A#{regexp}/
           when :time     then /#{regexp}\Z/

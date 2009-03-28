@@ -3,11 +3,13 @@ module ValidatesTimeliness
 
     class << self
 
-      def parse(raw_value, type, strict=true)
+      def parse(raw_value, type, options={})
         return nil if raw_value.blank?
         return raw_value if raw_value.acts_like?(:time) || raw_value.is_a?(Date)
         
-        time_array = ValidatesTimeliness::Formats.parse(raw_value, type, strict)
+        options.reverse_merge!(:strict => true)
+
+        time_array = ValidatesTimeliness::Formats.parse(raw_value, type, options)
         raise if time_array.nil?
         
         # Rails dummy time date part is defined as 2000-01-01

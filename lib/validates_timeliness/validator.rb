@@ -36,7 +36,7 @@ module ValidatesTimeliness
     end
       
     def call(record, attr_name, value)
-      value     = ValidatesTimeliness::Parser.parse(value, type, false) if value.is_a?(String)
+      value     = ValidatesTimeliness::Parser.parse(value, type, :strict => false) if value.is_a?(String)
       raw_value = raw_value(record, attr_name) || value
 
       return if (raw_value.nil? && configuration[:allow_nil]) || (raw_value.blank? && configuration[:allow_blank])
@@ -169,7 +169,7 @@ module ValidatesTimeliness
         when Range
           evaluate_option_value([value.first, value.last], type, record)
         else
-          ValidatesTimeliness::Parser.parse(value, type, false)
+          ValidatesTimeliness::Parser.parse(value, type, :strict => false)
         end
       end
 
