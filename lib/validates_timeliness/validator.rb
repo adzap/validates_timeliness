@@ -84,7 +84,7 @@ module ValidatesTimeliness
       restriction = [restriction] unless restriction.is_a?(Array)
 
       if defined?(I18n)
-        message = custom_error_messages[option] || I18n.translate('activerecord.errors.messages')[option]
+        message = custom_error_messages[option] || I18n.t('activerecord.errors.messages')[option]
         subs = message.scan(/\{\{([^\}]*)\}\}/)
         interpolations = {}
         subs.each_with_index {|s, i| interpolations[s[0].to_sym] = restriction[i].strftime(format) }
@@ -150,16 +150,16 @@ module ValidatesTimeliness
     class << self
 
       def default_error_messages
-        if Rails::VERSION::STRING < '2.2'
-          ::ActiveRecord::Errors.default_error_messages
+        if defined?(I18n)
+          I18n.t('activerecord.errors.messages')
         else
-          I18n.translate('activerecord.errors.messages')
+          ::ActiveRecord::Errors.default_error_messages
         end
       end
 
       def error_value_formats
         if defined?(I18n)
-          I18n.translate('validates_timeliness.error_value_formats')
+          I18n.t('validates_timeliness.error_value_formats')
         else
           @@error_value_formats
         end
