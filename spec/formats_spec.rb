@@ -31,6 +31,10 @@ describe ValidatesTimeliness::Formats do
     it "should generate proc which outputs time array with microseconds" do
       generate_proc('hh:nn:ss.u').call('01', '02', '03', '99').should == [0,0,0,1,2,3,990000]
     end
+
+    it "should generate proc which outputs datetime array with zone offset" do
+      generate_proc('yyyy-mm-dd hh:nn:ss.u zo').call('2001', '02', '03', '04', '05', '06', '99', '+10:00').should == [2001,2,3,4,5,6,990000,36000]
+    end
   end
   
   describe "validation regexps" do
@@ -131,6 +135,11 @@ describe ValidatesTimeliness::Formats do
     it "should ignore date when extracting time and strict is false" do
       time_array = formats.parse('2000-02-01 12:13', :time, :strict => false)
       time_array.should == [0,0,0,12,13,0,0]
+    end
+
+    it "should return zone offset when :include_offset options is true" do
+      time_array = formats.parse('2000-02-01T12:13:14-10:30', :datetime, :include_offset => true)
+      time_array.should == [2000,2,1,12,13,14,0,-37800]
     end
   end
   

@@ -124,13 +124,13 @@ module ValidatesTimeliness
       { 's'    => [ /s{1}/,  '(\d{1,2})', :sec ] },
       { 'u'    => [ /u{1,}/, '(\d{1,6})', :usec ] },
       { 'ampm' => [ /ampm/,  '((?:[aApP])\.?[mM]\.?)', :meridian ] },
-      { 'zo'   => [ /zo/,    '(?:[+-]\d{2}:?\d{2})'] },
+      { 'zo'   => [ /zo/,    '([+-]\d{2}:?\d{2})', :offset ] },
       { 'tz'   => [ /tz/,    '(?:[A-Z]{1,4})' ] }, 
       { '_'    => [ /_/,     '\s?' ] }
     ]
     
-    # Arguments whichs will be passed to the format proc if matched in the 
-    # time string. The key must should the key from the format tokens. The array 
+    # Arguments which will be passed to the format proc if matched in the 
+    # time string. The key must be the key from the format tokens. The array 
     # consists of the arry position of the arg, the arg name, and the code to 
     # place in the time array slot. The position can be nil which means the arg
     # won't be placed in the array.
@@ -146,6 +146,7 @@ module ValidatesTimeliness
       :min      => [4,   'n', 'n'],
       :sec      => [5,   's', 's'],
       :usec     => [6,   'u', 'microseconds(u)'],
+      :offset   => [7,   'z', 'offset_in_seconds(z)'],
       :meridian => [nil, 'md', nil]
     }
     
@@ -175,7 +176,8 @@ module ValidatesTimeliness
           end
           matches = full.match(string.strip)
         end
-        processor.call(*matches[1..7]) if matches
+        last = options[:include_offset] ? 8 : 7
+        processor.call(*matches[1..last]) if matches
       end   
       
       # Delete formats of specified type. Error raised if format not found.
@@ -207,8 +209,7 @@ module ValidatesTimeliness
         end
         compile_format_expressions
       end
-      
-      
+
       # Removes formats where the 1 or 2 digit month comes first, to eliminate
       # formats which are ambiguous with the European style of day then month. 
       # The mmm token is ignored as its not ambigous.
@@ -247,17 +248,12 @@ module ValidatesTimeliness
       # argument in the position indicated by the first element of the proc arg
       # array.
       #
-      # Examples:
-      #
-      #   'yyyy-mm-dd hh:nn'     => lambda {|y,m,d,h,n| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|i| i.to_i } }
-      #   'dd/mm/yyyy h:nn_ampm' => lambda {|d,m,y,h,n,md| md||=0; [unambiguous_year(y),month_index(m),d,full_hour(h,md),n,nil,nil].map {|i| i.to_i } }
-      #
       def format_proc(order)
         arg_map = format_proc_args
         args = order.invert.sort.map {|p| arg_map[p[1]][1] }
         arr = [nil] * 7
         order.keys.each {|k| i = arg_map[k][0]; arr[i] = arg_map[k][2] unless i.nil? }
-        proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|i| i.to_i } }"
+        proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|i| i.is_a?(Float) ? i : i.to_i } }"
         eval proc_string
       end
       
@@ -313,6 +309,13 @@ module ValidatesTimeliness
 
       def microseconds(usec)
         (".#{usec}".to_f * 1_000_000).to_i
+      end
+
+      def offset_in_seconds(offset)
+        sign = offset =~ /^-/ ? -1 : 1
+        parts = offset.scan(/\d\d/).map {|p| p.to_f }
+        parts[1] = parts[1].to_f / 60
+        (parts[0] + parts[1]) * sign * 3600
       end
     end
   end
