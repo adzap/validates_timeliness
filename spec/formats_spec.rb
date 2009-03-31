@@ -6,46 +6,6 @@ describe ValidatesTimeliness::Formats do
   before do
    @formats = ValidatesTimeliness::Formats
   end
-  
-  describe "expression generator" do
-    it "should generate regexp for time" do
-      generate_regexp_str('hh:nn:ss').should == '/(\d{2}):(\d{2}):(\d{2})/'
-    end
-    
-    it "should generate regexp for time with meridian" do
-      generate_regexp_str('hh:nn:ss ampm').should == '/(\d{2}):(\d{2}):(\d{2}) ((?:[aApP])\.?[mM]\.?)/'
-    end
-    
-    it "should generate regexp for time with meridian and optional space between" do
-      generate_regexp_str('hh:nn:ss_ampm').should == '/(\d{2}):(\d{2}):(\d{2})\s?((?:[aApP])\.?[mM]\.?)/'
-    end
-    
-    it "should generate regexp for time with single or double digits" do
-      generate_regexp_str('h:n:s').should == '/(\d{1,2}):(\d{1,2}):(\d{1,2})/'
-    end
-    
-    it "should generate regexp for date" do
-      generate_regexp_str('yyyy-mm-dd').should == '/(\d{4})-(\d{2})-(\d{2})/'
-    end
-    
-    it "should generate regexp for date with slashes" do
-      generate_regexp_str('dd/mm/yyyy').should == '/(\d{2})\/(\d{2})\/(\d{4})/'
-    end
-   
-    it "should generate regexp for date with dots" do
-      generate_regexp_str('dd.mm.yyyy').should == '/(\d{2})\.(\d{2})\.(\d{4})/'
-    end
-   
-    it "should generate regexp for Ruby time string" do
-      expected = '/(\w{3,9}) (\w{3,9}) (\d{2}):(\d{2}):(\d{2}) (?:[+-]\d{2}:?\d{2}) (\d{4})/'
-      generate_regexp_str('ddd mmm hh:nn:ss zo yyyy').should == expected
-    end
-    
-    it "should generate regexp for iso8601 datetime" do
-      expected = '/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:Z|(?:[+-]\d{2}:?\d{2}))/'
-      generate_regexp_str('yyyy-mm-ddThh:nn:ss(?:Z|zo)').should == expected
-    end
-  end
  
   describe "format proc generator" do
     it "should generate proc which outputs date array with values in correct order" do
