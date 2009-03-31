@@ -37,7 +37,7 @@ module ValidatesTimeliness
           return value_without_timeliness(object)
         end
         
-        time_array = ParseDate.parsedate(raw_value)
+        time_array = ValidatesTimeliness::Formats.parse(raw_value, :datetime)
         
         TimelinessDateTime.new(*time_array[0..5])
       end      
