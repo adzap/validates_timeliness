@@ -76,7 +76,7 @@ module ValidatesTimeliness
           time = self.class.parse_date_time(time, type)
         else
           time = read_attribute(attr_name)
-          @attributes[attr_name] = time && time_zone_aware ? time.in_time_zone : time
+          @attributes[attr_name] = (time && time_zone_aware ? time.in_time_zone : time) unless frozen?
         end
         @attributes_cache[attr_name] = time && time_zone_aware ? time.in_time_zone : time
       end

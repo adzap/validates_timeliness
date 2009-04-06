@@ -221,4 +221,14 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person.birth_date.should == tomorrow
   end
  
+  it "should skip storing value in attributes hash on read if record frozen" do
+    @person = Person.new
+    @person.birth_date = Date.today
+    @person.save!
+    @person.reload
+    @person.freeze
+    @person.frozen?.should be_true
+    lambda { @person.birth_date }.should_not raise_error
+    @person.birth_date.should == Date.today
+  end
 end
