@@ -20,8 +20,7 @@ module ValidatesTimeliness
         
         return date if type == :date
         
-        # Create time object which checks time part, and return time object
-        make_time(time_array)
+        make_time(time_array[0..7])
       rescue
         nil
       end
