@@ -46,7 +46,7 @@ module ValidatesTimeliness
       # implementation as it chains the write_attribute method which deletes
       # the attribute from the cache.
       def write_date_time_attribute(attr_name, value, type, time_zone_aware)
-        new = self.class.parse_date_time(value, type)
+        new = ValidatesTimeliness::Parser.parse(value, type)
 
         if new && type != :date
           new = new.to_time
@@ -73,7 +73,7 @@ module ValidatesTimeliness
 
         if @attributes_cache.has_key?(attr_name)
           time = read_attribute_before_type_cast(attr_name)
-          time = self.class.parse_date_time(time, type)
+          time = ValidatesTimeliness::Parser.parse(time, type)
         else
           time = read_attribute(attr_name)
           @attributes[attr_name] = (time && time_zone_aware ? time.in_time_zone : time) unless frozen?
@@ -83,8 +83,6 @@ module ValidatesTimeliness
 
       module ClassMethods
 
-        # Define attribute reader and writer method for date, time and
-        # datetime attributes to use plugin parser.
         def define_attribute_methods_with_timeliness
           return if generated_methods?
           columns_hash.each do |name, column|
@@ -105,7 +103,6 @@ module ValidatesTimeliness
           define_attribute_methods_without_timeliness
         end
 
-        # Define write method for date, time and datetime columns
         def define_write_method_for_dates_and_times(attr_name, type, time_zone_aware)
           method_body = <<-EOV
             def #{attr_name}=(value)

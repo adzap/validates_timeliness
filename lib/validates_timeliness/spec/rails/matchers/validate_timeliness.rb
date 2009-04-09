@@ -116,7 +116,7 @@ module Spec
         end
 
         def error_message_for(option)
-          msg = @validator.send(:error_messages)[option]
+          msg = @validator.error_messages[option]
           restriction = @validator.class.send(:evaluate_option_value, @validator.configuration[option], @type, @record)
 
           if restriction 
@@ -135,7 +135,7 @@ module Spec
         
         def format_value(value)
           return value if value.is_a?(String)
-          value.strftime(ValidatesTimeliness::Validator.error_value_formats[@type])
+          value.strftime(@validator.class.error_value_formats[@type])
         end
       end
 

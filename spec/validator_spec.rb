@@ -66,7 +66,7 @@ describe ValidatesTimeliness::Validator do
 
     it "should return array of Time objects when restriction is array of strings" do
       time1, time2 = "2000-01-02", "2000-01-01"
-      evaluate_option_value([time1, time2], :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
+      evaluate_option_value([time1, time2], :datetime).should == [parse(time2, :datetime), parse(time1, :datetime)]
     end
 
     it "should return array of Time objects when restriction is Range of Time objects" do
@@ -76,7 +76,7 @@ describe ValidatesTimeliness::Validator do
 
     it "should return array of Time objects when restriction is Range of time strings" do
       time1, time2 = "2000-01-02", "2000-01-01"
-      evaluate_option_value(time1..time2, :datetime).should == [Person.parse_date_time(time2, :datetime), Person.parse_date_time(time1, :datetime)]
+      evaluate_option_value(time1..time2, :datetime).should == [parse(time2, :datetime), parse(time1, :datetime)]
     end
     def evaluate_option_value(restriction, type)
       configure_validator(:type => type)
@@ -554,12 +554,18 @@ describe ValidatesTimeliness::Validator do
     describe "custom formats" do
 
       before :all do
-        @@formats = ValidatesTimeliness::Validator.error_value_formats
-        ValidatesTimeliness::Validator.error_value_formats = {
+        custom = {
           :time     => '%H:%M %p',
           :date     => '%d-%m-%Y',
           :datetime => '%d-%m-%Y %H:%M %p'
         }
+
+        if defined?(I18n)
+          I18n.backend.store_translations 'en', :validates_timeliness => { :error_value_formats => custom }
+        else
+          @@formats = ValidatesTimeliness::Validator.error_value_formats
+          ValidatesTimeliness::Validator.error_value_formats = custom
+        end
       end
 
       it "should format datetime value of restriction" do
@@ -581,10 +587,18 @@ describe ValidatesTimeliness::Validator do
       end
 
       after :all do
-        ValidatesTimeliness::Validator.error_value_formats = @@formats
+        if defined?(I18n)
+          I18n.reload!
+        else
+          ValidatesTimeliness::Validator.error_value_formats = @@formats
+        end
       end
     end
 
+  end
+
+  def parse(*args)
+    ValidatesTimeliness::Parser.parse(*args)
   end
 
   def configure_validator(options={})

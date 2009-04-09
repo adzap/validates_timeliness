@@ -266,6 +266,20 @@ corner cases a little harder to test. In general if you are using procs or
 model methods and you only care when they return  a value, then they should 
 return nil in all other situations. Restrictions are skipped if they are nil.
 
+
+=== DISPLAY INVALID VALUES IN DATE HELPERS:
+
+The plugin has some extensions to ActionView and ActiveRecord by allowing invalid
+date and time values to be redisplayed to the user as feedback, instead of
+a blank field which happens by default in Rails. Though the date helpers make this a
+pretty rare occurence, given the select dropdowns for each date/time component, but
+it may be something of interest.
+
+To activate it, put this in an initializer:
+
+  ValidatesTimeliness.enable_datetime_select_extension!
+
+
 === OTHER CUSTOMISATION:
 
 The error messages for each temporal restrictions can also be globally overridden by 
@@ -302,11 +316,21 @@ will be inserted.
 And for something a little more specific you can override the format of the interpolation
 values inserted in the error messages for temporal restrictions like so
 
+For Rails 2.0/2.1:
+
   ValidatesTimeliness::Validator.error_value_formats.update(
     :time     => '%H:%M:%S',
     :date     => '%Y-%m-%d',
     :datetime => '%Y-%m-%d %H:%M:%S'
   )
+
+Rails 2.2+ using the I18n system to define new defaults:
+
+  validates_timeliness:
+    error_value_formats:
+      date: '%Y-%m-%d'
+      time: '%H:%M:%S'
+      datetime: '%Y-%m-%d %H:%M:%S'
 
 Those are Ruby strftime formats not the plugin formats.
 

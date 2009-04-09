@@ -38,7 +38,7 @@ module ValidatesTimeliness
       end
       
       def time_array_to_string(values, type)
-        values = values.map {|v| v.to_s }
+        values.collect! {|v| v.to_s }
                 
         case type
         when :date
