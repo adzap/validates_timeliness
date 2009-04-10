@@ -161,20 +161,26 @@ module ValidatesTimeliness
       # Loop through format expressions for type and call proc on matches. Allow
       # pre or post match strings to exist if strict is false. Otherwise wrap
       # regexp in start and end anchors.
-      # Returns 7 part time array.
+      # Returns time array if matches a format, nil otherwise.
       def parse(string, type, options={})
         return string unless string.is_a?(String)
         options.reverse_merge!(:strict => true)
 
+        sets = if options[:format]
+          [ send("#{type}_expressions").assoc(options[:format]) ]
+        else
+          expression_set(type, string)
+        end
+
         matches = nil
-        exp, processor = expression_set(type, string).find do |regexp, proc|
+        processor = sets.each do |format, regexp, proc|
           full = /\A#{regexp}\Z/ if options[:strict]
           full ||= case type
           when :date     then /\A#{regexp}/
           when :time     then /#{regexp}\Z/
           when :datetime then /\A#{regexp}\Z/
           end
-          matches = full.match(string.strip)
+          break(proc) if matches = full.match(string.strip)
         end
         last = options[:include_offset] ? 8 : 7
         processor.call(*matches[1..last]) if matches
@@ -258,7 +264,7 @@ module ValidatesTimeliness
       end
       
       def compile_formats(formats)
-        formats.map { |format| regexp, format_proc = format_expression_generator(format) }
+        formats.map { |format| [ format, *format_expression_generator(format) ] }
       end
   
       # Pick expression set and combine date and datetimes for 

@@ -473,6 +473,20 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe "instance with format option" do
+    it "should validate attribute when value matches format" do
+      configure_validator(:type => :time, :format => 'hh:nn:ss')
+      validate_with(:birth_time, "12:00:00")
+      should_have_no_error(:birth_time, :invalid_time)
+    end
+
+    it "should not validate attribute when value does not match format" do
+      configure_validator(:type => :time, :format => 'hh:nn:ss')
+      validate_with(:birth_time, "12:00")
+      should_have_error(:birth_time, :invalid_time)
+    end
+  end
+
   describe "custom_error_messages" do
     it "should return hash of custom error messages from configuration with _message truncated from keys" do
       configure_validator(:type => :date, :invalid_date_message => 'thats no date')

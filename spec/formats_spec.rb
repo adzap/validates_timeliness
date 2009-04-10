@@ -100,7 +100,7 @@ describe ValidatesTimeliness::Formats do
     end
   end
   
-  describe "extracting values" do
+  describe "parse" do
     
     it "should return time array from date string" do
       time_array = formats.parse('12:13:14', :time, :strict => true)
@@ -143,11 +143,19 @@ describe ValidatesTimeliness::Formats do
     end
   end
   
-  describe "removing formats" do
-    before do
-      formats.compile_format_expressions
+  describe "parse with format option" do
+    it "should return values if string matches specified format" do
+      time_array = formats.parse('2000-02-01 12:13:14', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
+      time_array.should == [2000,2,1,12,13,14,0]
     end
-    
+
+    it "should return nil if string does not match specified format" do
+      time_array = formats.parse('2000-02-01 12:13', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
+      time_array.should be_nil
+    end
+  end
+
+  describe "removing formats" do
     it "should remove format from format array" do      
       formats.remove_formats(:time, 'h.nn_ampm')
       formats.time_formats.should_not include("h o'clock")
@@ -165,7 +173,7 @@ describe ValidatesTimeliness::Formats do
     
     after do
       formats.time_formats << 'h.nn_ampm'
-      # reload class instead
+      formats.compile_format_expressions
     end
   end
  
@@ -223,7 +231,7 @@ describe ValidatesTimeliness::Formats do
  
   def validate(time_string, type)
     valid = false
-    formats.send("#{type}_expressions").each do |(regexp, processor)|
+    formats.send("#{type}_expressions").each do |format, regexp, processor|
         valid = true and break if /\A#{regexp}\Z/ =~ time_string
     end
     valid

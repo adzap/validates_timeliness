@@ -14,8 +14,8 @@ module ValidatesTimeliness
     }
 
     VALID_OPTIONS = [
-      :on, :if, :unless, :allow_nil, :empty, :allow_blank, :blank,
-      :with_time, :with_date, :ignore_usec,
+      :on, :if, :unless, :allow_nil, :empty, :allow_blank,
+      :with_time, :with_date, :ignore_usec, :format,
       :invalid_time_message, :invalid_date_message, :invalid_datetime_message
     ] + RESTRICTION_METHODS.keys.map {|option| [option, "#{option}_message".to_sym] }.flatten
 
@@ -29,14 +29,17 @@ module ValidatesTimeliness
     end
       
     def call(record, attr_name, value)
-      value     = ValidatesTimeliness::Parser.parse(value, type, :strict => false) if value.is_a?(String)
       raw_value = raw_value(record, attr_name) || value
+
+      if value.is_a?(String) || @configuration[:format]
+        strict = !@configuration[:format].nil?
+        value = ValidatesTimeliness::Parser.parse(raw_value, type, :strict => strict, :format => @configuration[:format])
+      end
 
       return if (raw_value.nil? && configuration[:allow_nil]) || (raw_value.blank? && configuration[:allow_blank])
 
       add_error(record, attr_name, :blank) and return if raw_value.blank?
-       
-      add_error(record, attr_name, "invalid_#{type}".to_sym) and return unless value
+      add_error(record, attr_name, "invalid_#{type}".to_sym) and return if value.nil?
 
       validate_restrictions(record, attr_name, value)
     end
@@ -107,7 +110,6 @@ module ValidatesTimeliness
     
     def add_error(record, attr_name, message, interpolate=nil)
       if defined?(I18n)
-        # use i18n support in AR for message or use custom message passed to validation method
         custom = custom_error_messages[message]
         record.errors.add(attr_name, custom || message, interpolate || {})
       else
