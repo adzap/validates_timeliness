@@ -5,6 +5,7 @@ end
 
 class WithValidation < Person
   validates_date :birth_date, 
+    :equal_to     => '2000-01-01',
     :before       => '2000-01-10',
     :after        => '2000-01-01',
     :on_or_before => '2000-01-09',
@@ -12,6 +13,7 @@ class WithValidation < Person
     :between      => ['2000-01-01', '2000-01-03']
 
   validates_time :birth_time, 
+    :equal_to     => '09:00',
     :before       => '23:00',
     :after        => '09:00',
     :on_or_before => '22:00',
@@ -19,6 +21,7 @@ class WithValidation < Person
     :between      => ['09:00', '17:00']
 
   validates_datetime :birth_date_and_time, 
+    :equal_to     => '2000-01-01 09:00',
     :before       => '2000-01-10 23:00',
     :after        => '2000-01-01 09:00',
     :on_or_before => '2000-01-09 23:00',
@@ -61,6 +64,29 @@ describe "ValidateTimeliness matcher" do
     end    
   end
    
+  describe "with equal_to option" do
+    test_values = {
+      :date     => ['2000-01-01', '2000-01-02'],
+      :time     => ['09:00', '09:01'],
+      :datetime => ['2000-01-01 09:00', '2000-01-01 09:01']
+    }
+    
+    [:date, :time, :datetime].each do |type|
+
+      it "should report that #{type} is validated" do
+        with_validation.should self.send("validate_#{type}", attribute_for_type(type), :equal_to => test_values[type][0])
+      end
+      
+      it "should report that #{type} is not validated when option value is incorrect" do
+        with_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :equal_to => test_values[type][1])
+      end
+      
+      it "should report that #{type} is not validated with option" do
+        no_validation.should_not self.send("validate_#{type}", attribute_for_type(type), :equal_to => test_values[type][0])
+      end
+    end
+  end
+
   describe "with before option" do
     test_values = {
       :date     => ['2000-01-10', '2000-01-11'],

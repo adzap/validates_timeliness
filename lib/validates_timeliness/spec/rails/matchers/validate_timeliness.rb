@@ -10,6 +10,7 @@ module Spec
         }
 
         OPTION_TEST_SETTINGS = {
+          :equal_to     => { :method => :+, :modify_on => :invalid },
           :before       => { :method => :-, :modify_on => :valid },
           :after        => { :method => :+, :modify_on => :valid },
           :on_or_before => { :method => :+, :modify_on => :invalid },
@@ -27,9 +28,9 @@ module Spec
           
           valid = test_validity
 
+          valid = test_option(:equal_to) if @options[:equal_to] && valid
           valid = test_option(:before) if @options[:before] && valid
           valid = test_option(:after) if @options[:after] && valid
-          
           valid = test_option(:on_or_before) if @options[:on_or_before] && valid
           valid = test_option(:on_or_after) if @options[:on_or_after] && valid
 
