@@ -80,6 +80,7 @@ Special options:
   :with_time    - Validate a date attribute value combined with a time value against any temporal restrictions
   :with_date    - Validate a time attribute value combined with a date value against any temporal restrictions 
   :ignore_usec  - Ignores microsecond value on datetime restrictions
+  :format       - Limit validation to a single format for special cases. Takes plugin format value.
   
 Message options: - Use these to override the default error messages
   :invalid_date_message
