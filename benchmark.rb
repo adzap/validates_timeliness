@@ -4,73 +4,74 @@ require 'date'
 require 'parsedate'
 require 'benchmark'
 require 'rubygems'
-require 'active_support'
 require 'active_record'
-require 'action_controller'
-require 'rails/version'
 
 require 'validates_timeliness'
+
+def parse(*args)
+  ValidatesTimeliness::Parser.parse(*args) 
+end
 
 n = 10000
 Benchmark.bm do |x|
   x.report('timeliness - datetime') { 
     n.times do
-      ActiveRecord::Base.parse_date_time("2000-01-04 12:12:12", :datetime)
+      parse("2000-01-04 12:12:12", :datetime)
     end 
   }
 
   x.report('timeliness - date') { 
     n.times do
-      ActiveRecord::Base.parse_date_time("2000-01-04", :date)
+      parse("2000-01-04", :date)
     end 
   }
   
   x.report('timeliness - date as datetime') { 
     n.times do
-      ActiveRecord::Base.parse_date_time("2000-01-04", :datetime)
+      parse("2000-01-04", :datetime)
     end 
   }
 
   x.report('timeliness - time') { 
     n.times do
-      ActiveRecord::Base.parse_date_time("12:01:02", :time)
+      parse("12:01:02", :time)
     end 
   }
   
   x.report('timeliness - invalid format datetime') { 
     n.times do
-      ActiveRecord::Base.parse_date_time("20xx-01-04 12:12:12", :datetime)
+      parse("20xx-01-04 12:12:12", :datetime)
     end 
   }
 
   x.report('timeliness - invalid format date') { 
     n.times do
-      ActiveRecord::Base.parse_date_time("20xx-01-04", :date)
+      parse("20xx-01-04", :date)
     end 
   }
 
   x.report('timeliness - invalid format time') { 
     n.times do
-      ActiveRecord::Base.parse_date_time("12:xx:02", :time)
+      parse("12:xx:02", :time)
     end 
   }
   
 
   x.report('timeliness - invalid value datetime') { 
     n.times do
-      ActiveRecord::Base.parse_date_time("2000-01-32 12:12:12", :datetime)
+      parse("2000-01-32 12:12:12", :datetime)
     end 
   }
 
   x.report('timeliness - invalid value date') { 
     n.times do
-      ActiveRecord::Base.parse_date_time("2000-01-32", :date)
+      parse("2000-01-32", :date)
     end 
   }
 
   x.report('timeliness - invalid value time') {
     n.times do
-      ActiveRecord::Base.parse_date_time("12:61:02", :time)
+      parse("12:61:02", :time)
     end 
   }
   x.report('date/time') { 
@@ -96,4 +97,3 @@ Benchmark.bm do |x|
     end 
   }
 end
-
