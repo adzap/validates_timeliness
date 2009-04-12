@@ -31,9 +31,9 @@ module ValidatesTimeliness
     def call(record, attr_name, value)
       raw_value = raw_value(record, attr_name) || value
 
-      if value.is_a?(String) || @configuration[:format]
-        strict = !@configuration[:format].nil?
-        value = ValidatesTimeliness::Parser.parse(raw_value, type, :strict => strict, :format => @configuration[:format])
+      if value.is_a?(String) || configuration[:format]
+        strict = !configuration[:format].nil?
+        value = ValidatesTimeliness::Parser.parse(raw_value, type, :strict => strict, :format => configuration[:format])
       end
 
       return if (raw_value.nil? && configuration[:allow_nil]) || (raw_value.blank? && configuration[:allow_blank])
@@ -55,12 +55,12 @@ module ValidatesTimeliness
     end
    
     def validate_restrictions(record, attr_name, value)
-      value = if @configuration[:with_time] || @configuration[:with_date]
+      value = if configuration[:with_time] || configuration[:with_date]
         restriction_type = :datetime
         combine_date_and_time(value, record)
       else
         restriction_type = type
-        self.class.type_cast_value(value, type, @configuration[:ignore_usec])
+        self.class.type_cast_value(value, type, configuration[:ignore_usec])
       end
       return if value.nil?
 
@@ -69,7 +69,7 @@ module ValidatesTimeliness
         begin
           restriction = self.class.evaluate_option_value(restriction, restriction_type, record)
           next if restriction.nil?
-          restriction = self.class.type_cast_value(restriction, restriction_type, @configuration[:ignore_usec])
+          restriction = self.class.type_cast_value(restriction, restriction_type, configuration[:ignore_usec])
 
           unless evaluate_restriction(restriction, value, method)
             add_error(record, attr_name, option, interpolation_values(option, restriction))
@@ -131,9 +131,9 @@ module ValidatesTimeliness
     def combine_date_and_time(value, record)
       if type == :date
         date = value
-        time = @configuration[:with_time]
+        time = configuration[:with_time]
       else
-        date = @configuration[:with_date]
+        date = configuration[:with_date]
         time = value
       end
       date, time = self.class.evaluate_option_value(date, :date, record), self.class.evaluate_option_value(time, :time, record)
@@ -142,9 +142,9 @@ module ValidatesTimeliness
     end
 
     def validate_options(options)
-      invalid_for_type = ([:time, :date, :datetime] - [@type]).map {|k| "invalid_#{k}_message".to_sym }
-      invalid_for_type << :with_date unless @type == :time
-      invalid_for_type << :with_time unless @type == :date
+      invalid_for_type = ([:time, :date, :datetime] - [type]).map {|k| "invalid_#{k}_message".to_sym }
+      invalid_for_type << :with_date unless type == :time
+      invalid_for_type << :with_time unless type == :date
       options.assert_valid_keys(VALID_OPTIONS - invalid_for_type)
     end
 
