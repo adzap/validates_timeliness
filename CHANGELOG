@@ -1,3 +1,11 @@
+= 2.0.0 [2009-04-12]
+- Error value formats are now specified in the i18n locale file instead of updating plugin hash. See OTHER CUSTOMISATION section in README.
+- Date/time select helper extension is disabled by default. To enable see DISPLAY INVALID VALUES IN DATE HELPERS section in README to enable.
+- Added :format option to limit validation to a single format if desired
+- Matcher now supports :equal_to option
+- Formats.parse can take :include_offset option to include offset value from string in seconds, if string contains an offset. Offset not used in rest of plugin yet.
+- Refactored to remove as much plugin code from ActiveRecord as possible.
+
 = 1.1.7 [2009-03-26]
 - Minor change to multiparameter attributes which I had not properly implemented for chaining
 
