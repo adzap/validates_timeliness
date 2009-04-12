@@ -2,3 +2,4 @@
 - add replace_formats instead add_formats :before
 - array of values for all temporal options
 - use tz and zo value from time string?
+- filter valid formats rather than remove for hot swapping without recompilation
