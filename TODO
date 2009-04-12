@@ -1,3 +1,4 @@
-- :format option
 - valid formats could come from locale file
 - add replace_formats instead add_formats :before
+- array of values for all temporal options
+- use tz and zo value from time string?
