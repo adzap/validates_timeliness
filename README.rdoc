@@ -206,7 +206,7 @@ To see all defined formats look in lib/validates_timeliness/formats.rb.
 
 The perenial problem for non-US developers or applications not primarily for the
 US, is the US date format of m/d/yy. This is ambiguous with the European format
-of d/my/yy. By default the plugin uses the US formats as this is the Ruby default
+of d/m/yy. By default the plugin uses the US formats as this is the Ruby default
 when it does date interpretation, and is in keeping PoLS (principle of least
 surprise). 
 
