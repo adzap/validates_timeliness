@@ -46,7 +46,7 @@ module ValidatesTimeliness
     #      
     # Special Cases:
     #      yy = 2 or 4 digit year
-    #   yyyyy = exactly 4 digit year
+    #    yyyy = exactly 4 digit year
     #     mmm = month long name (e.g. 'Jul' or 'July')
     #     ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
     #       u = microseconds matches 1 to 6 digits
