@@ -1,3 +1,10 @@
+= github/master 
+- Dramatically simplified ActiveRecord monkey patching and hackery
+  - Removed read_attribute override, which was a bit brutal
+  - Removed attribute reader method override
+  - Removed dirty attribute handling, now just uses regular AR way
+- Added ambiguous year threshold setting in Formats class to customize the threshold for 2 digit years (See README)
+
 = 2.0.0 [2009-04-12]
 - Error value formats are now specified in the i18n locale file instead of updating plugin hash. See OTHER CUSTOMISATION section in README.
 - Date/time select helper extension is disabled by default. To enable see DISPLAY INVALID VALUES IN DATE HELPERS section in README to enable.
