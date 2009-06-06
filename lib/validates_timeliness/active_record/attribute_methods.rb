@@ -25,14 +25,14 @@ module ValidatesTimeliness
       def write_date_time_attribute(attr_name, value, type, time_zone_aware)
         @attributes_cache["_#{attr_name}_before_type_cast"] = value
 
-        new = ValidatesTimeliness::Parser.parse(value, type)
+        value = ValidatesTimeliness::Parser.parse(value, type)
 
-        if new && type != :date
-          new = new.to_time
-          new = new.in_time_zone if time_zone_aware
+        if value && type != :date
+          value = value.to_time
+          value = value.in_time_zone if time_zone_aware
         end
 
-        write_attribute(attr_name.to_sym, new)
+        write_attribute(attr_name.to_sym, value)
       end
 
       def read_attribute_before_type_cast_with_timeliness(attr_name)
