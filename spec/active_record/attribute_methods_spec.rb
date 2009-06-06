@@ -20,24 +20,6 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person.birth_date_and_time = "2000-01-01 12:00"
   end
 
-  it "should call read_date_time_attribute when date attribute is retrieved" do
-    @person.should_receive(:read_date_time_attribute)
-    @person.birth_date = "2000-01-01"
-    @person.birth_date
-  end
-
-  it "should call read_date_time_attribute when time attribute is retrieved" do
-    @person.should_receive(:read_date_time_attribute)
-    @person.birth_time = "12:00"
-    @person.birth_time
-  end
-
-  it "should call read_date_time_attribute when datetime attribute is retrieved" do
-    @person.should_receive(:read_date_time_attribute)
-    @person.birth_date_and_time = "2000-01-01 12:00"
-    @person.birth_date_and_time
-  end
-
   it "should call parser on write for datetime attribute" do
     ValidatesTimeliness::Parser.should_receive(:parse).once
     @person.birth_date_and_time = "2000-01-01 02:03:04"
@@ -103,7 +85,20 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person.birth_date_and_time_before_type_cast.should be_nil
   end
   
-  unless RAILS_VER < '2.1'
+  if RAILS_VER < '2.1'
+
+    it "should return time object from database in default timezone" do
+      ActiveRecord::Base.default_timezone = :utc
+      time_string = "2000-01-01 09:00:00"
+      @person = Person.new
+      @person.birth_date_and_time = time_string
+      @person.save
+      @person.reload
+      @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z').should == time_string + ' GMT'
+    end
+
+  else
+
     it "should return stored time string as Time with correct timezone" do
       Time.zone = 'Melbourne'
       time_string = "2000-06-01 02:03:04"
@@ -121,84 +116,6 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
       @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z %z').should == time_string + ' EST +1000'
     end
     
-    describe "dirty attributes" do
-    
-      it "should return true for attribute changed? when value updated" do
-        time_string = "2000-01-01 02:03:04"
-        @person.birth_date_and_time = time_string
-        @person.birth_date_and_time_changed?.should be_true
-      end
-    
-      it "should show changes when time attribute changed from nil to Time object" do
-        time_string = "2000-01-01 02:03:04"
-        @person.birth_date_and_time = time_string
-        time = @person.birth_date_and_time
-        @person.changes.should == {"birth_date_and_time" => [nil, time]}
-      end
-      
-      it "should show changes when time attribute changed from Time object to nil" do
-        time_string = "2020-01-01 02:03:04"
-        @person.birth_date_and_time = time_string
-        @person.save false
-        @person.reload
-        time = @person.birth_date_and_time
-        @person.birth_date_and_time = nil
-        @person.changes.should == {"birth_date_and_time" => [time, nil]}
-      end
-      
-      it "should show no changes when assigned same value as Time object" do
-        time_string = "2020-01-01 02:03:04"
-        @person.birth_date_and_time = time_string
-        @person.save false
-        @person.reload
-        time = @person.birth_date_and_time
-        @person.birth_date_and_time = time
-        @person.changes.should == {}
-      end
-      
-      it "should show no changes when assigned same value as time string" do
-        time_string = "2020-01-01 02:03:04"
-        @person.birth_date_and_time = time_string
-        @person.save false
-        @person.reload
-        @person.birth_date_and_time = time_string
-        @person.changes.should == {}
-      end
-      
-    end
-  else
-    
-    it "should return time object from database in default timezone" do        
-      ActiveRecord::Base.default_timezone = :utc
-      time_string = "2000-01-01 09:00:00"
-      @person = Person.new
-      @person.birth_date_and_time = time_string
-      @person.save
-      @person.reload
-      @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z').should == time_string + ' GMT'
-    end
-      
-  end
-  
-  it "should return same time object on repeat reads on existing object" do
-    Time.zone = 'Melbourne' unless RAILS_VER < '2.1'
-    time_string = "2000-01-01 09:00:00"
-    @person = Person.new
-    @person.birth_date_and_time = time_string
-    @person.save!
-    @person.reload
-    time = @person.birth_date_and_time
-    @person.birth_date_and_time.should == time
-  end
-  
-  it "should return same date object on repeat reads on existing object" do
-    date_string = Date.today
-    @person = Person.new
-    @person.birth_date = date_string
-    @person.save!
-    @person.reload
-    date = @person.birth_date
-    @person.birth_date.should == date
   end
   
   it "should return correct date value after new value assigned" do
@@ -220,15 +137,5 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person.reload
     @person.birth_date.should == tomorrow
   end
- 
-  it "should skip storing value in attributes hash on read if record frozen" do
-    @person = Person.new
-    @person.birth_date = Date.today
-    @person.save!
-    @person.reload
-    @person.freeze
-    @person.frozen?.should be_true
-    lambda { @person.birth_date }.should_not raise_error
-    @person.birth_date.should == Date.today
-  end
+
 end
