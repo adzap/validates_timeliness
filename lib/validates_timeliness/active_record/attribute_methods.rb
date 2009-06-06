@@ -15,7 +15,6 @@ module ValidatesTimeliness
       def self.included(base)
         base.extend ClassMethods
         base.class_eval do
-          alias_method_chain :reload, :timeliness
           alias_method_chain :read_attribute_before_type_cast, :timeliness
           class << self
             alias_method_chain :define_attribute_methods, :timeliness
@@ -24,7 +23,7 @@ module ValidatesTimeliness
       end
 
       def write_date_time_attribute(attr_name, value, type, time_zone_aware)
-        @attributes["_#{attr_name}_before_type_cast"] = value
+        @attributes_cache["_#{attr_name}_before_type_cast"] = value
 
         new = ValidatesTimeliness::Parser.parse(value, type)
 
@@ -37,13 +36,8 @@ module ValidatesTimeliness
       end
 
       def read_attribute_before_type_cast_with_timeliness(attr_name)
-        return @attributes["_#{attr_name}_before_type_cast"] if @attributes.has_key?("_#{attr_name}_before_type_cast")
+        return @attributes_cache["_#{attr_name}_before_type_cast"] if @attributes_cache.has_key?("_#{attr_name}_before_type_cast")
         read_attribute_before_type_cast_without_timeliness(attr_name)
-      end
-
-      def reload_with_timeliness
-        @attributes.keys.grep(/^_.*_before_type_cast$/).each { |key| @attributes.delete(key) }
-        reload_without_timeliness
       end
 
       module ClassMethods
