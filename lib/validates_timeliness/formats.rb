@@ -96,6 +96,7 @@ module ValidatesTimeliness
     @@datetime_formats = [
       'yyyy-mm-dd hh:nn:ss',
       'yyyy-mm-dd h:nn',
+      'yyyy-mm-dd h:nn_ampm',
       'yyyy-mm-dd hh:nn:ss.u',
       'm/d/yy h:nn:ss',
       'm/d/yy h:nn_ampm',
