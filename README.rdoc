@@ -250,6 +250,19 @@ Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves
 you adding a new one and deleting an old one to get it to work.
 
 
+=== AMBIGUOUS YEAR THRESHOLD
+
+When dealing with 2 digit year values, by default a year is interpreted as being
+in the last century at or above 30. You can customize this however
+
+  ValidatesTimeliness::Formats.ambiguous_year_threshold = 20
+
+Now you get:
+
+  year of 19 is considered 2019
+  year of 20 is considered 1920
+
+
 === TEMPORAL RESTRICTION ERRORS:
 
 When using the validation temporal restrictions there are times when the restriction

@@ -21,6 +21,17 @@ module ValidatesTimeliness
                    :format_tokens,
                    :format_proc_args
     
+
+    # Set the threshold value for a two digit year to be considered last century
+    # Default: 30
+    #
+    #   Example:
+    #     year = '29' is considered 2029
+    #     year = '30' is considered 1930
+    # 
+    cattr_accessor :ambiguous_year_threshold
+    self.ambiguous_year_threshold = 30
+
     # Format tokens:   
     #       y = year
     #       m = month
@@ -226,6 +237,49 @@ module ValidatesTimeliness
         compile_format_expressions
       end
     
+      def full_hour(hour, meridian)
+        hour = hour.to_i
+        return hour if meridian.nil?
+        if meridian.delete('.').downcase == 'am'
+          hour == 12 ? 0 : hour
+        else
+          hour == 12 ? hour : hour + 12
+        end
+      end
+
+      def unambiguous_year(year)
+        if year.length <= 2
+          century = Time.now.year.to_s[0..1].to_i
+          century -= 1 if year.to_i >= ambiguous_year_threshold
+          year = "#{century}#{year.rjust(2,'0')}"
+        end
+        year.to_i
+      end
+
+      def month_index(month)
+        return month.to_i if month.to_i.nonzero?
+        abbr_month_names.index(month.capitalize) || month_names.index(month.capitalize)
+      end
+
+      def month_names
+        defined?(I18n) ? I18n.t('date.month_names') : Date::MONTHNAMES
+      end
+
+      def abbr_month_names
+        defined?(I18n) ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
+      end
+
+      def microseconds(usec)
+        (".#{usec}".to_f * 1_000_000).to_i
+      end
+
+      def offset_in_seconds(offset)
+        sign = offset =~ /^-/ ? -1 : 1
+        parts = offset.scan(/\d\d/).map {|p| p.to_f }
+        parts[1] = parts[1].to_f / 60
+        (parts[0] + parts[1]) * sign * 3600
+      end
+
     private
       
       # Compile formats into validation regexps and format procs    
@@ -285,44 +339,6 @@ module ValidatesTimeliness
         end
       end
  
-      def full_hour(hour, meridian)
-        hour = hour.to_i
-        return hour if meridian.nil?
-        if meridian.delete('.').downcase == 'am'
-          hour == 12 ? 0 : hour
-        else
-          hour == 12 ? hour : hour + 12
-        end
-      end
-      
-      def unambiguous_year(year, threshold=30)
-        year = "#{year.to_i < threshold ? '20' : '19'}#{year}" if year.length == 2
-        year.to_i
-      end
-      
-      def month_index(month)
-        return month.to_i if month.to_i.nonzero?
-        abbr_month_names.index(month.capitalize) || month_names.index(month.capitalize)
-      end
-
-      def month_names
-        defined?(I18n) ? I18n.t('date.month_names') : Date::MONTHNAMES
-      end
-
-      def abbr_month_names
-        defined?(I18n) ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
-      end
-
-      def microseconds(usec)
-        (".#{usec}".to_f * 1_000_000).to_i
-      end
-
-      def offset_in_seconds(offset)
-        sign = offset =~ /^-/ ? -1 : 1
-        parts = offset.scan(/\d\d/).map {|p| p.to_f }
-        parts[1] = parts[1].to_f / 60
-        (parts[0] + parts[1]) * sign * 3600
-      end
     end
   end
 end

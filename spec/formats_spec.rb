@@ -155,6 +155,28 @@ describe ValidatesTimeliness::Formats do
     end
   end
 
+  describe "parsing date with ambiguous year" do
+    it "should return year in current century if year below threshold" do
+      time_array = formats.parse('01-02-29', :date)
+      time_array.should == [2029,2,1,0,0,0,0]
+    end
+
+    it "should return year in last century if year at or above threshold" do
+      time_array = formats.parse('01-02-30', :date)
+      time_array.should == [1930,2,1,0,0,0,0]
+    end
+
+    it "should allow custom threshold" do
+      default = ValidatesTimeliness::Formats.ambiguous_year_threshold
+      ValidatesTimeliness::Formats.ambiguous_year_threshold = 40
+      time_array = formats.parse('01-02-39', :date)
+      time_array.should == [2039,2,1,0,0,0,0]
+      time_array = formats.parse('01-02-40', :date)
+      time_array.should == [1940,2,1,0,0,0,0]
+      ValidatesTimeliness::Formats.ambiguous_year_threshold = default
+    end
+  end
+
   describe "removing formats" do
     it "should remove format from format array" do      
       formats.remove_formats(:time, 'h.nn_ampm')
