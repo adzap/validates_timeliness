@@ -31,7 +31,7 @@ module ValidatesTimeliness
 
     def load_error_messages
       if defined?(I18n)
-        I18n.load_path += [ LOCALE_PATH ]
+        I18n.load_path.unshift(LOCALE_PATH)
         I18n.reload!
       else
         defaults = YAML::load(IO.read(LOCALE_PATH))['en']

@@ -506,12 +506,6 @@ describe ValidatesTimeliness::Validator do
         configure_validator(:type => :date, :before => before)
         validator.send(:interpolation_values, :before, before.to_date).should == {:restriction => before}
       end
-
-      it "should return empty hash if no interpolation keys are in message" do
-        before = '1900-01-01'
-        configure_validator(:type => :date, :before => before, :before_message => 'too late')
-        validator.send(:interpolation_values, :before, before.to_date).should be_empty
-      end
     else
       it "should return array of interpolation values" do
         before = '1900-01-01'

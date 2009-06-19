@@ -94,7 +94,7 @@ module ValidatesTimeliness
       restriction = [restriction] unless restriction.is_a?(Array)
 
       if defined?(I18n)
-        message = custom_error_messages[option] || I18n.t('activerecord.errors.messages')[option]
+        message = I18n.t('activerecord.errors.messages')[option]
         subs = message.scan(/\{\{([^\}]*)\}\}/)
         interpolations = {}
         subs.each_with_index {|s, i| interpolations[s[0].to_sym] = restriction[i].strftime(format) }
@@ -118,7 +118,7 @@ module ValidatesTimeliness
     def add_error(record, attr_name, message, interpolate=nil)
       if defined?(I18n)
         custom = custom_error_messages[message]
-        record.errors.add(attr_name, custom || message, interpolate || {})
+        record.errors.add(attr_name, message, { :default => custom }.merge(interpolate || {}))
       else
         message = error_messages[message] if message.is_a?(Symbol)
         message = message % interpolate
