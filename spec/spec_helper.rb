@@ -5,7 +5,7 @@ $:.unshift(File.dirname(__FILE__) + '/resources')
 RAILS_ENV = ENV['RAILS_ENV'] = 'test'
 
 require 'rubygems'
-require 'spec'
+require 'spec/autorun'
 
 vendored_rails = File.dirname(__FILE__) + '/../../../../vendor/rails'
 
