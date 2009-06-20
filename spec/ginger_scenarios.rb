@@ -12,7 +12,7 @@ Ginger.configure do |config|
   rails_versions = ['2.0.2', '2.1.2', '2.2.2', '2.3.2']
 
   rails_versions.each do |v|
-    g = Ginger::Scenario.new
+    g = Ginger::Scenario.new("Rails #{v}")
     g['rails'] = v
     config.scenarios << g.dup
   end

@@ -10,9 +10,9 @@ module ValidatesTimeliness
       def self.included(base)
         base.alias_method_chain :execute_callstack_for_multiparameter_attributes, :timeliness
       end    
-    
-      # Overrides AR method to store multiparameter time and dates as string
-      # allowing validation later.
+
+      # Assign dates and times as formatted strings to force the use of the plugin parser
+      # and store a before_type_cast value for attribute
       def execute_callstack_for_multiparameter_attributes_with_timeliness(callstack)
         errors = []
         callstack.each do |name, values|
@@ -46,18 +46,17 @@ module ValidatesTimeliness
         when :time
           extract_time_from_multiparameter_attributes(values)
         when :datetime
-          date_values, time_values = values.slice!(0, 3), values
-          extract_date_from_multiparameter_attributes(date_values) + " " + extract_time_from_multiparameter_attributes(time_values)
+          extract_date_from_multiparameter_attributes(values) + " " + extract_time_from_multiparameter_attributes(values)
         end
       end   
          
       def extract_date_from_multiparameter_attributes(values)
-        [values[0], *values.slice(1, 2).map { |s| s.rjust(2, "0") }].join("-")
+        year = ValidatesTimeliness::Formats.unambiguous_year(values[0].rjust(2, "0"))
+        [year, *values.slice(1, 2).map { |s| s.rjust(2, "0") }].join("-")
       end
       
       def extract_time_from_multiparameter_attributes(values)
-        values = values.size > 3 ? values[3..5] : values
-        values.map { |s| s.rjust(2, "0") }.join(":")
+        values[3..5].map { |s| s.rjust(2, "0") }.join(":")
       end
       
     end

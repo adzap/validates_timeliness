@@ -314,7 +314,12 @@ module ValidatesTimeliness
         args = order.invert.sort.map {|p| arg_map[p[1]][1] }
         arr = [nil] * 7
         order.keys.each {|k| i = arg_map[k][0]; arr[i] = arg_map[k][2] unless i.nil? }
-        proc_string = "lambda {|#{args.join(',')}| md||=nil; [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|i| i.is_a?(Float) ? i : i.to_i } }"
+        proc_string = <<-EOL
+          lambda {|#{args.join(',')}| 
+              md ||= nil
+              [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|i| i.is_a?(Float) ? i : i.to_i }
+          }
+        EOL
         eval proc_string
       end
       

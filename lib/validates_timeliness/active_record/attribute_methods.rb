@@ -6,12 +6,12 @@ module ValidatesTimeliness
 
   module ActiveRecord
 
+    # Overrides write method for date, time and datetime columns
+    # to use plugin parser. Also adds mechanism to store value
+    # before type cast.
+    #
     module AttributeMethods
 
-      # Overrides write method for date, time and datetime columns
-      # to use plugin parser. Also adds mechanism to store value
-      # before type cast.
-      #
       def self.included(base)
         base.extend ClassMethods
         base.class_eval do
@@ -44,8 +44,9 @@ module ValidatesTimeliness
 
         def define_attribute_methods_with_timeliness
           return if generated_methods?
-          columns_hash.each do |name, column|
+          timeliness_methods = []
 
+          columns_hash.each do |name, column|
             if [:date, :time, :datetime].include?(column.type)
               time_zone_aware = create_time_zone_conversion_attribute?(name, column) rescue false
 
@@ -54,10 +55,12 @@ module ValidatesTimeliness
                   write_date_time_attribute('#{name}', value, #{column.type.inspect}, #{time_zone_aware})
                 end
               EOV
+              timeliness_methods << name
             end
-
           end
+
           define_attribute_methods_without_timeliness
+          @generated_methods += timeliness_methods
         end
 
       end

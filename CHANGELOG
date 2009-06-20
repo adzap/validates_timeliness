@@ -1,9 +1,8 @@
-= github/master 
-- Dramatically simplified ActiveRecord monkey patching and hackery
-  - Removed read_attribute override, which was a bit brutal
-  - Removed attribute reader method override
-  - Removed dirty attribute handling, now just uses regular AR way
+= 2.1.0 [2009-06-20]
 - Added ambiguous year threshold setting in Formats class to customize the threshold for 2 digit years (See README)
+- Fixed interpolation values in custom error message for Rails 2.2+
+- Fixed custom I18n local override of en locale
+- Dramatically simplified ActiveRecord monkey patching and hackery
 
 = 2.0.0 [2009-04-12]
 - Error value formats are now specified in the i18n locale file instead of updating plugin hash. See OTHER CUSTOMISATION section in README.
