@@ -28,13 +28,12 @@ module Spec
           
           valid = test_validity
 
-          valid = test_option(:equal_to) if @options[:equal_to] && valid
-          valid = test_option(:before) if @options[:before] && valid
-          valid = test_option(:after) if @options[:after] && valid
-          valid = test_option(:on_or_before) if @options[:on_or_before] && valid
-          valid = test_option(:on_or_after) if @options[:on_or_after] && valid
-
-          valid = test_between if @options[:between] && valid
+          valid = test_option(:equal_to)     if valid && @options[:equal_to]
+          valid = test_option(:before)       if valid && @options[:before]
+          valid = test_option(:after)        if valid && @options[:after]
+          valid = test_option(:on_or_before) if valid && @options[:on_or_before]
+          valid = test_option(:on_or_after)  if valid && @options[:on_or_after]
+          valid = test_between               if valid && @options[:between]
 
           return valid
         end

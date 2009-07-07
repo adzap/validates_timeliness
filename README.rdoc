@@ -355,9 +355,15 @@ To sweeten the deal that little bit more, you have an Rspec matcher available fo
 you model specs. Now you can easily test the validations you have just written 
 with the plugin or better yet *before* you write them! You just use the 
 validation options you want as you would with the validation method. Those 
-options are then verified and reported if they fail. Use it like so:
+options are then verified and reported if they fail.
 
-   @person.should validate_date(:birth_date, :before => Time.now, :before_message => 'should be before today')
+First require it in your spec_helper.rb
+
+  require 'validates_timeliness/matcher'
+
+Use it like so:
+
+  @person.should validate_date(:birth_date, :before => Time.now, :before_message => 'should be before today')
 
 
 The matcher names are just the singular of the validation methods.
