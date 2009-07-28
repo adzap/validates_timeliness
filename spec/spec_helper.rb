@@ -45,6 +45,7 @@ if RAILS_VER >= '2.1'
 end
 
 require 'validates_timeliness'
+require 'validates_timeliness/matcher'
 
 ValidatesTimeliness.enable_datetime_select_extension!
 
