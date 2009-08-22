@@ -185,7 +185,8 @@ module ValidatesTimeliness
         when Symbol
           evaluate_option_value(record.send(value), type, record)
         when Proc
-          evaluate_option_value(value.call(record), type, record)
+          result = value.arity > 0 ? value.call(record) : value.call
+          evaluate_option_value(result, type, record)
         when Array
           value.map {|r| evaluate_option_value(r, type, record) }.sort
         when Range
