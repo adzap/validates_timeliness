@@ -107,7 +107,7 @@ temporal options.
 
 == EXAMPLES:
 
-  validates_date :date_of_birth :before => Proc.new { 18.years.ago },
+  validates_date :date_of_birth :before => lambda { 18.years.ago },
                                 :before_message => "must be at least 18 years old"
   
   validates_time :breakfast_time, :on_or_after => '6:00am',
@@ -115,7 +115,7 @@ temporal options.
                                   :before => :second_breakfast_time,
                                   :allow_nil => true
 
-  validates_datetime :appointment_date, :before => Proc.new { 1.week.from_now }
+  validates_datetime :appointment_date, :before => lambda { 1.week.from_now }
 
   validates_date :entry_date, :with_time => '17:00', :on_or_before => :competition_closing
  
