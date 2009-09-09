@@ -39,7 +39,7 @@ module ValidatesTimeliness
             DateTime.civil(*(time_array << zone_offset))
           end
         end
-      rescue ArgumentError
+      rescue ArgumentError, TypeError
         nil
       end
 
