@@ -36,7 +36,8 @@ module ValidatesTimeliness
       end
 
       def read_attribute_before_type_cast_with_timeliness(attr_name)
-        return @attributes_cache["_#{attr_name}_before_type_cast"] if @attributes_cache.has_key?("_#{attr_name}_before_type_cast")
+        cached_attr = "_#{attr_name}_before_type_cast"
+        return @attributes_cache[cached_attr] if @attributes_cache.has_key?(cached_attr)
         read_attribute_before_type_cast_without_timeliness(attr_name)
       end
 
@@ -50,11 +51,9 @@ module ValidatesTimeliness
             if [:date, :time, :datetime].include?(column.type)
               time_zone_aware = create_time_zone_conversion_attribute?(name, column) rescue false
 
-              class_eval <<-EOV
-                def #{name}=(value)
-                  write_date_time_attribute('#{name}', value, #{column.type.inspect}, #{time_zone_aware})
-                end
-              EOV
+              define_method("#{name}=") do |value|
+                write_date_time_attribute(name, value, column.type, time_zone_aware)
+              end
               timeliness_methods << name
             end
           end
