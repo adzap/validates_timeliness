@@ -123,9 +123,14 @@ module Spec
             restriction = [restriction] unless restriction.is_a?(Array)
             restriction.map! {|r| @validator.class.send(:type_cast_value, r, @type) }
             interpolate = @validator.send(:interpolation_values, option, restriction )
+
             # get I18n message if defined and has interpolation keys in msg
             if defined?(I18n) && !@validator.send(:custom_error_messages).include?(option)
-              msg = @record.errors.generate_message(@expected, option, interpolate)
+              msg = if defined?(ActiveRecord::Error)
+                ActiveRecord::Error.new(@record, @expected, option, interpolate).message
+              else
+                @record.errors.generate_message(@expected, option, interpolate)
+              end
             else
               msg = msg % interpolate
             end
