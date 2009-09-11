@@ -423,20 +423,31 @@ describe ValidatesTimeliness::Validator do
       should_have_no_error(:birth_date, :on_or_before)
     end
 
+    it "should should ignore usec value on combined value if :ignore_usec option is true" do
+      configure_validator(:type => :date, :with_time => Time.mktime(2000,1,1,12,30,0,500), :equal_to => Time.mktime(2000,1,1,12,30), :ignore_usec => true)
+      validate_with(:birth_date, "2000-01-01")
+      should_have_no_error(:birth_date, :equal_to)
+    end
   end
 
   describe "instance with :with_date option" do
 
     it "should validate time attribute as datetime combining value of :with_date against restrictions " do
       configure_validator(:type => :time, :with_date => '2009-01-01', :on_or_before => Time.mktime(2000,1,1,12,30))
-      validate_with(:birth_date, "12:30")
-      should_have_error(:birth_date, :on_or_before)
+      validate_with(:birth_time, "12:30")
+      should_have_error(:birth_time, :on_or_before)
     end
 
     it "should skip restriction validation if :with_date value is nil" do
       configure_validator(:type => :time, :with_date => nil, :on_or_before => Time.mktime(2000,1,1,12,30))
-      validate_with(:birth_date, "12:30")
-      should_have_no_error(:birth_date, :on_or_before)
+      validate_with(:birth_time, "12:30")
+      should_have_no_error(:birth_time, :on_or_before)
+    end
+
+    it "should should ignore usec value on combined value if :ignore_usec option is true" do
+      configure_validator(:type => :time, :with_date => Date.new(2000,1,1), :on_or_before => Time.mktime(2000,1,1,12,30), :ignore_usec => true)
+      validate_with(:birth_time, Time.mktime(2000,1,1,12,30,0,50))
+      should_have_no_error(:birth_time, :on_or_before)
     end
   end
 

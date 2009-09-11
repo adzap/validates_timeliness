@@ -62,13 +62,15 @@ module ValidatesTimeliness
     end
    
     def validate_restrictions(record, attr_name, value)
-      value = if configuration[:with_time] || configuration[:with_date]
+      restriction_type = type
+
+      if configuration[:with_time] || configuration[:with_date]
         restriction_type = :datetime
-        combine_date_and_time(value, record)
-      else
-        restriction_type = type
-        self.class.type_cast_value(value, type, configuration[:ignore_usec])
+        value = combine_date_and_time(value, record)
       end
+
+      value = self.class.type_cast_value(value, restriction_type, configuration[:ignore_usec])
+
       return if value.nil?
 
       RESTRICTION_METHODS.each do |option, method|
