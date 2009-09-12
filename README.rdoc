@@ -1,7 +1,7 @@
 = validates_timeliness
 
 * Source:  http://github.com/adzap/validates_timeliness
-* Bugs:    http://adzap.lighthouseapp.com/projects/14111-validates_timeliness
+* Bugs:    http://github.com/adzap/validates_timeliness/issues
 
 == DESCRIPTION:
 
