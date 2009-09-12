@@ -263,6 +263,18 @@ Now you get:
   year of 20 is considered 1920
 
 
+=== DUMMY DATE FOR TIME TYPES
+
+Given that Ruby has no support for a time-only type, all time type columns are evaluated
+as a regular Time class objects with a dummy date value set. Rails defines the dummy date as
+2000-01-01. So a time of '12:30' is evaluated as a Time value of '2000-01-01 12:30'. If you
+need to customize this for some reason you can do so as follows
+
+  ValidatesTimeliness::Formats.dummy_date_for_time_type = [2009, 1, 1]
+
+The value should be an array of 3 values being year, month and day in that order.
+
+
 === TEMPORAL RESTRICTION ERRORS:
 
 When using the validation temporal restrictions there are times when the restriction

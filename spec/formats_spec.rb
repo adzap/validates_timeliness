@@ -1,11 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe ValidatesTimeliness::Formats do
-  attr_reader :formats
-  
-  before do
-   @formats = ValidatesTimeliness::Formats
-  end
  
   describe "format proc generator" do
     it "should generate proc which outputs date array with values in correct order" do
@@ -104,7 +99,7 @@ describe ValidatesTimeliness::Formats do
     
     it "should return time array from date string" do
       time_array = formats.parse('12:13:14', :time, :strict => true)
-      time_array.should == [0,0,0,12,13,14,0]
+      time_array.should == [2000,1,1,12,13,14,0]
     end
     
     it "should return date array from time string" do
@@ -134,7 +129,7 @@ describe ValidatesTimeliness::Formats do
     
     it "should ignore date when extracting time and strict is false" do
       time_array = formats.parse('2000-02-01 12:13', :time, :strict => false)
-      time_array.should == [0,0,0,12,13,0,0]
+      time_array.should == [2000,1,1,12,13,0,0]
     end
 
     it "should return zone offset when :include_offset options is true" do
@@ -174,6 +169,22 @@ describe ValidatesTimeliness::Formats do
       time_array = formats.parse('01-02-40', :date)
       time_array.should == [1940,2,1,0,0,0,0]
       ValidatesTimeliness::Formats.ambiguous_year_threshold = default
+    end
+  end
+
+  describe "parse with custom dummy date values" do
+    before(:all) do
+      @old_dummy_date = formats.dummy_date_for_time_type
+      formats.dummy_date_for_time_type = [2009,1,1]
+    end
+
+    it "should return time array with custom dummy date" do
+      time_array = formats.parse('12:13:14', :time, :strict => true)
+      time_array.should == [2009,1,1,12,13,14,0]
+    end
+
+    after(:all) do
+      formats.dummy_date_for_time_type = @old_dummy_date
     end
   end
 
@@ -219,7 +230,7 @@ describe ValidatesTimeliness::Formats do
       formats.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
       validate("59:23:58", :time).should be_true
       time_array = formats.parse('59:23:58', :time)
-      time_array.should == [0,0,0,23,58,59,0]
+      time_array.should == [2000,1,1,23,58,59,0]
     end
 
     it "should raise error if format exists" do
@@ -251,6 +262,11 @@ describe ValidatesTimeliness::Formats do
     end
   end
  
+  
+  def formats
+    ValidatesTimeliness::Formats
+  end
+
   def validate(time_string, type)
     valid = false
     formats.send("#{type}_expressions").each do |format, regexp, processor|

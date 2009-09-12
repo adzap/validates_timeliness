@@ -23,6 +23,7 @@ module ValidatesTimeliness
     
 
     # Set the threshold value for a two digit year to be considered last century
+    #
     # Default: 30
     #
     #   Example:
@@ -31,6 +32,14 @@ module ValidatesTimeliness
     # 
     cattr_accessor :ambiguous_year_threshold
     self.ambiguous_year_threshold = 30
+
+    # Set the dummy date part for a time type value. Should be an array of 3 values
+    # being year, month and day in that order.
+    #
+    # Default: [ 2000, 1, 1 ] same as ActiveRecord
+    # 
+    cattr_accessor :dummy_date_for_time_type
+    self.dummy_date_for_time_type = [ 2000, 1, 1 ]
 
     # Format tokens:   
     #       y = year
@@ -196,7 +205,11 @@ module ValidatesTimeliness
           break(proc) if matches = full.match(string.strip)
         end
         last = options[:include_offset] ? 8 : 7
-        processor.call(*matches[1..last]) if matches
+        if matches
+          values = processor.call(*matches[1..last]) 
+          values[0..2] = dummy_date_for_time_type if type == :time
+          return values
+        end
       end   
       
       # Delete formats of specified type. Error raised if format not found.

@@ -10,22 +10,17 @@ module ValidatesTimeliness
         time_array = ValidatesTimeliness::Formats.parse(raw_value, type, options.reverse_merge(:strict => true))
         return nil if time_array.nil?
         
-        if type == :time
-          # Rails dummy time date part is defined as 2000-01-01
-          time_array[0..2] = 2000, 1, 1
-        else
-          # Enforce date part validity which Time class does not
-          return nil unless Date.valid_civil?(*time_array[0..2])
-        end
-        
         if type == :date
-          Date.new(*time_array[0..2]) 
+          Date.new(*time_array[0..2]) rescue nil
         else
           make_time(time_array[0..7])
         end
       end
 
       def make_time(time_array)
+        # Enforce date part validity which Time class does not
+        return nil unless Date.valid_civil?(*time_array[0..2])
+
         if Time.respond_to?(:zone) && ValidatesTimeliness.use_time_zones
           Time.zone.local(*time_array)
         else
