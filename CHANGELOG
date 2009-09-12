@@ -1,3 +1,10 @@
+= 2.2.0 [2009-09-12]
+- Ruby 1.9 support!
+- Customise dummy date values for time types. See DUMMY DATE FOR TIME TYPES.
+- Fixed matcher conflict with Shoulda. Load plugin matcher manually now see matcher section in README 
+- Fixed :ignore_usec when used with :with_time or :with_date
+- Some clean up and refactoring
+
 = 2.1.0 [2009-06-20]
 - Added ambiguous year threshold setting in Formats class to customize the threshold for 2 digit years (See README)
 - Fixed interpolation values in custom error message for Rails 2.2+
