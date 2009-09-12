@@ -22,9 +22,9 @@ think should be a valid date or time string.
 * Restores ability to see raw value entered for date/time attributes with
   _before_type_cast modifier, which was lost in Rails 2.1.
 
-* Respects new timezone features of Rails 2.1.
+* Supports Rails timezone handling
 
-* Supports Rails 2.2 I18n for the error messages
+* Supports Rails I18n for the error messages
 
 * Rspec matcher for testing model validation of dates and times
 
