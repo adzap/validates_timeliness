@@ -37,15 +37,8 @@ module ValidatesTimeliness
 
       return if (raw_value.nil? && configuration[:allow_nil]) || (raw_value.blank? && configuration[:allow_blank])
 
-      if raw_value.blank?
-        add_error(record, attr_name, :blank)
-        return
-      end
-
-      if value.nil?
-        add_error(record, attr_name, "invalid_#{type}".to_sym)
-        return
-      end
+      return add_error(record, attr_name, :blank) if raw_value.blank?
+      return add_error(record, attr_name, "invalid_#{type}".to_sym) if value.nil?
 
       validate_restrictions(record, attr_name, value)
     end
