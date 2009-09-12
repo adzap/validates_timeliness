@@ -54,23 +54,20 @@ module ValidatesTimeliness
     end
    
     def validate_restrictions(record, attr_name, value)
-      restriction_type = type
-
       if configuration[:with_time] || configuration[:with_date]
-        restriction_type = :datetime
         value = combine_date_and_time(value, record)
       end
 
-      value = self.class.type_cast_value(value, restriction_type, configuration[:ignore_usec])
+      value = self.class.type_cast_value(value, implied_type, configuration[:ignore_usec])
 
       return if value.nil?
 
       RESTRICTION_METHODS.each do |option, method|
         next unless restriction = configuration[option]
         begin
-          restriction = self.class.evaluate_option_value(restriction, restriction_type, record)
+          restriction = self.class.evaluate_option_value(restriction, implied_type, record)
           next if restriction.nil?
-          restriction = self.class.type_cast_value(restriction, restriction_type, configuration[:ignore_usec])
+          restriction = self.class.type_cast_value(restriction, implied_type, configuration[:ignore_usec])
 
           unless evaluate_restriction(restriction, value, method)
             add_error(record, attr_name, option, interpolation_values(option, restriction))
@@ -147,6 +144,10 @@ module ValidatesTimeliness
       invalid_for_type << :with_date unless type == :time
       invalid_for_type << :with_time unless type == :date
       options.assert_valid_keys(VALID_OPTIONS - invalid_for_type)
+    end
+
+    def implied_type
+      @implied_type ||= configuration[:with_date] || configuration[:with_time] ? :datetime : type 
     end
 
     # class methods
