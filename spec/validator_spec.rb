@@ -358,18 +358,6 @@ describe ValidatesTimeliness::Validator do
         should_have_error(:birth_date_and_time, :equal_to)
       end
 
-      it "should have error when value is equal to :equal_to restriction for all values except microscond, and microsecond is not ignored" do
-        configure_validator(:equal_to => Time.utc(2000, 1, 1, 0, 0, 0, 0), :ignore_usec => false)
-        validate_with(:birth_date_and_time, Time.utc(2000, 1, 1, 0, 0, 0, 500))
-        should_have_error(:birth_date_and_time, :equal_to)
-      end
-
-      it "should be valid when value is equal to :equal_to restriction for all values except microscond, and microsecond is ignored" do
-        configure_validator(:equal_to => Time.utc(2000, 1, 1, 0, 0, 0, 0), :ignore_usec => true)
-        validate_with(:birth_date_and_time, Time.utc(2000, 1, 1, 0, 0, 0, 500))
-        should_have_no_error(:birth_date_and_time, :equal_to)
-      end
-
       it "should be valid when value is equal to :equal_to restriction" do
         validate_with(:birth_date_and_time, Time.now)
         should_have_no_error(:birth_date_and_time, :equal_to)
@@ -407,6 +395,16 @@ describe ValidatesTimeliness::Validator do
         should_have_no_error(:birth_time, :equal_to)
       end
     end
+  end
+
+  describe "instance with :ignore_usec option" do
+
+    it "should ignore usec on time values when evaluated" do
+      configure_validator(:equal_to => Time.utc(2000, 1, 1, 0, 0, 0, 0), :ignore_usec => true)
+      validate_with(:birth_date_and_time, Time.utc(2000, 1, 1, 0, 0, 0, 500))
+      should_have_no_error(:birth_date_and_time, :equal_to)
+    end
+
   end
 
   describe "instance with :with_time option" do
