@@ -197,11 +197,11 @@ module ValidatesTimeliness
         else
           value = case type
           when :time
-            value.to_dummy_time
+            dummy_time(value)
           when :date
             value.to_date
           when :datetime
-            if value.is_a?(DateTime) || value.is_a?(Time)
+            if value.is_a?(Time) || value.is_a?(DateTime)
               value.to_time
             else
               value.to_time(ValidatesTimeliness.default_timezone)
@@ -215,6 +215,16 @@ module ValidatesTimeliness
             value
           end
         end
+      end
+
+      def dummy_time(value)
+        if value.is_a?(Time) || value.is_a?(DateTime)
+          time = [value.hour, value.min, value.sec]
+        else
+          time = [0,0,0]
+        end
+        dummy_date = ValidatesTimeliness::Formats.dummy_date_for_time_type
+        Time.send(ValidatesTimeliness.default_timezone, *(dummy_date + time))
       end
 
     end

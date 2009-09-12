@@ -7,10 +7,6 @@ require 'validates_timeliness/active_record/attribute_methods'
 require 'validates_timeliness/active_record/multiparameter_attributes'
 require 'validates_timeliness/action_view/instance_tag'
 
-require 'validates_timeliness/core_ext/time'
-require 'validates_timeliness/core_ext/date'
-require 'validates_timeliness/core_ext/date_time'
-
 module ValidatesTimeliness
   
   mattr_accessor :default_timezone
