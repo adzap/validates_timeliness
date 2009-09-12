@@ -3,9 +3,10 @@ require 'rake/gempackagetask'
 require 'rubygems/specification'
 require 'date'
 require 'spec/rake/spectask'
+require 'lib/validates_timeliness/version'
 
 GEM = "validates_timeliness"
-GEM_VERSION = "2.1.0"
+GEM_VERSION = ValidatesTimeliness::VERSION
 AUTHOR = "Adam Meehan"
 EMAIL = "adam.meehan@gmail.com"
 HOMEPAGE = "http://github.com/adzap/validates_timeliness"
