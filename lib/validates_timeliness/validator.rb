@@ -32,8 +32,7 @@ module ValidatesTimeliness
       raw_value = raw_value(record, attr_name) || value
 
       if value.is_a?(String) || configuration[:format]
-        strict = !configuration[:format].nil?
-        value = ValidatesTimeliness::Parser.parse(raw_value, type, :strict => strict, :format => configuration[:format])
+        value = ValidatesTimeliness::Parser.parse(raw_value, type, :strict => false, :format => configuration[:format])
       end
 
       return if (raw_value.nil? && configuration[:allow_nil]) || (raw_value.blank? && configuration[:allow_blank])

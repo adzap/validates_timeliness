@@ -179,6 +179,7 @@ module ValidatesTimeliness
         options.reverse_merge!(:strict => true)
 
         sets = if options[:format]
+          options[:strict] = true
           [ send("#{type}_expressions").assoc(options[:format]) ]
         else
           expression_set(type, string)
