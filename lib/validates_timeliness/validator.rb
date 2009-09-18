@@ -224,7 +224,7 @@ module ValidatesTimeliness
           time = [0,0,0]
         end
         dummy_date = ValidatesTimeliness::Formats.dummy_date_for_time_type
-        Time.send(ValidatesTimeliness.default_timezone, *(dummy_date + time))
+        ValidatesTimeliness::Parser.make_time(dummy_date + time)
       end
 
     end
