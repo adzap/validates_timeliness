@@ -1,3 +1,6 @@
+= 2.2.2 [2009-09-19]
+- Fixed dummy_time using make_time to respect timezone. Fixes 1.9.1 bug. 
+
 = 2.2.1 [2009-09-12]
 - Fixed dummy date part for time types in Validator.type_cast_value
 - No more core extensions! Removed dummy_time methods.
