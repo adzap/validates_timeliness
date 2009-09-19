@@ -59,7 +59,8 @@ module ValidatesTimeliness
           end
 
           define_attribute_methods_without_timeliness
-          @generated_methods += timeliness_methods
+          # add generated methods which is a Set object hence no += method
+          timeliness_methods.each {|attr| generated_methods << attr }
         end
 
       end
