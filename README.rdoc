@@ -63,7 +63,7 @@ The validation methods take the usual options plus some specific ones to restric
 the valid range of dates or times allowed
 
 Temporal options (or restrictions):
-  :as_at        - Attribute must be equal to value to be valid
+  :is_at        - Attribute must be equal to value to be valid
   :before       - Attribute must be before this value to be valid
   :on_or_before - Attribute must be equal to or before this value to be valid
   :after        - Attribute must be after this value to be valid
