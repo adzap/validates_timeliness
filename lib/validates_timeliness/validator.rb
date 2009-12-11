@@ -46,7 +46,7 @@ module ValidatesTimeliness
     end
 
     def error_messages
-      @error_messages ||= self.class.default_error_messages.merge(custom_error_messages)
+      @error_messages ||= ::ActiveRecord::Errors.default_error_messages.merge(custom_error_messages)
     end
 
    private
@@ -87,10 +87,9 @@ module ValidatesTimeliness
       restriction = [restriction] unless restriction.is_a?(Array)
 
       if defined?(I18n)
-        message = I18n.t('activerecord.errors.messages')[option]
-        subs = message.scan(/\{\{([^\}]*)\}\}/)
         interpolations = {}
-        subs.each_with_index {|s, i| interpolations[s[0].to_sym] = restriction[i].strftime(format) }
+        keys = restriction.size == 1 ? [:restriction] : [:earliest, :latest]
+        keys.each_with_index {|key, i| interpolations[key] = restriction[i].strftime(format) }
         interpolations
       else
         restriction.map {|r| r.strftime(format) }
@@ -153,14 +152,6 @@ module ValidatesTimeliness
 
     # class methods
     class << self
-
-      def default_error_messages
-        if defined?(I18n)
-          I18n.t('activerecord.errors.messages')
-        else
-          ::ActiveRecord::Errors.default_error_messages
-        end
-      end
 
       def error_value_format_for(type)
         if defined?(I18n)

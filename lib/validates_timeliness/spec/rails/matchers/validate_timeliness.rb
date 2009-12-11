@@ -115,29 +115,28 @@ module Spec
           pass
         end
 
-        def error_message_for(option)
-          msg = @validator.error_messages[option]
-          restriction = @validator.class.send(:evaluate_option_value, @validator.configuration[option], @type, @record)
+        def error_message_for(message)
+          restriction = @validator.class.send(:evaluate_option_value, @validator.configuration[message], @type, @record)
 
-          if restriction 
-            restriction = [restriction] unless restriction.is_a?(Array)
-            restriction.map! {|r| @validator.class.send(:type_cast_value, r, @type) }
-            interpolate = @validator.send(:interpolation_values, option, restriction )
+          if restriction
+            restriction = @validator.class.send(:type_cast_value, restriction, @type)
+            interpolate = @validator.send(:interpolation_values, message, restriction)
+          end
 
-            # get I18n message if defined and has interpolation keys in msg
-            if defined?(I18n) && !@validator.send(:custom_error_messages).include?(option)
-              msg = if defined?(ActiveRecord::Error)
-                ActiveRecord::Error.new(@record, @expected, option, interpolate).message
-              else
-                @record.errors.generate_message(@expected, option, interpolate)
-              end
+          if defined?(I18n)
+            interpolate ||= {}
+            options = interpolate.merge(:default => @validator.send(:custom_error_messages)[message])
+            if defined?(ActiveRecord::Error)
+              ActiveRecord::Error.new(@record, @expected, message, options).message
             else
-              msg = msg % interpolate
+              @record.errors.generate_message(@expected, message, options)
             end
-          end 
-          msg
+          else
+            interpolate ||= nil
+            @validator.error_messages[message] % interpolate
+          end
         end
-        
+
         def format_value(value)
           return value if value.is_a?(String)
           value.strftime(@validator.class.error_value_formats[@type])
