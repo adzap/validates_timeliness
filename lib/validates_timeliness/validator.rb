@@ -113,8 +113,7 @@ module ValidatesTimeliness
         record.errors.add(attr_name, message, { :default => custom }.merge(interpolate || {}))
       else
         message = error_messages[message] if message.is_a?(Symbol)
-        message = message % interpolate
-        record.errors.add(attr_name, message)
+        record.errors.add(attr_name, message % interpolate)
       end
     end
 
