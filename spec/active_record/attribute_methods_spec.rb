@@ -94,7 +94,7 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
       @person.birth_date_and_time = time_string
       @person.save
       @person.reload
-      @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z').should == time_string + ' GMT'
+      @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z').should == time_string + ' UTC'
     end
 
   else
