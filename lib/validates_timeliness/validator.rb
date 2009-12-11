@@ -14,17 +14,18 @@ module ValidatesTimeliness
       :between      => lambda {|v, r| (r.first..r.last).include?(v) }
     }
 
-    VALID_OPTIONS = [
+    VALID_OPTION_KEYS = [
       :on, :if, :unless, :allow_nil, :empty, :allow_blank,
       :with_time, :with_date, :ignore_usec, :format,
       :invalid_time_message, :invalid_date_message, :invalid_datetime_message
     ] + RESTRICTION_METHODS.keys.map {|option| [option, "#{option}_message".to_sym] }.flatten
 
+    DEFAULT_OPTIONS = { :on => :save, :type => :datetime, :allow_nil => false, :allow_blank => false, :ignore_usec => false }
+
     attr_reader :configuration, :type
 
     def initialize(configuration)
-      defaults = { :on => :save, :type => :datetime, :allow_nil => false, :allow_blank => false, :ignore_usec => false }
-      @configuration = defaults.merge(configuration)
+      @configuration = DEFAULT_OPTIONS.merge(configuration)
       @type = @configuration.delete(:type)
       validate_options(@configuration)
     end
@@ -143,7 +144,7 @@ module ValidatesTimeliness
       invalid_for_type = ([:time, :date, :datetime] - [type]).map {|k| "invalid_#{k}_message".to_sym }
       invalid_for_type << :with_date unless type == :time
       invalid_for_type << :with_time unless type == :date
-      options.assert_valid_keys(VALID_OPTIONS - invalid_for_type)
+      options.assert_valid_keys(VALID_OPTION_KEYS - invalid_for_type)
     end
 
     def implied_type

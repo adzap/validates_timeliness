@@ -18,7 +18,7 @@ describe ValidatesTimeliness::Validator do
 
   describe "option keys validation" do
     before do
-      keys = ValidatesTimeliness::Validator::VALID_OPTIONS - [:invalid_date_message, :invalid_time_message, :with_date, :with_time]
+      keys = ValidatesTimeliness::Validator::VALID_OPTION_KEYS - [:invalid_date_message, :invalid_time_message, :with_date, :with_time]
       @valid_options = keys.inject({}) {|hash, opt| hash[opt] = nil; hash }
     end
 
