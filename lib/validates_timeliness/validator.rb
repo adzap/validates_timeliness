@@ -164,7 +164,8 @@ module ValidatesTimeliness
 
       def error_value_format_for(type)
         if defined?(I18n)
-          I18n.t(type, :default => error_value_formats[type], :scope => 'validates_timeliness.error_value_formats')
+          # work around for syntax check in vendored I18n for Rails <= 2.3.3
+          I18n.t('validates_timeliness.error_value_formats')[type] || error_value_formats[type]
         else
           error_value_formats[type]
         end
