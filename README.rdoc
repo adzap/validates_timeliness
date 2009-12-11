@@ -7,7 +7,7 @@
 
 Validate dates, times and datetimes for Rails 2.x. Plays nicely with new Rails 2.1
 features such as automatic timezone handling and dirty attributes. Allows you to
-add custom formats or remove defaults easily. This allows you to control what you 
+add custom formats or remove defaults easily. This allows you to control what you
 think should be a valid date or time string.
 
 
@@ -46,19 +46,19 @@ As gem
 
 == USAGE:
 
-To validate a model with a date, time or datetime attribute you just use the 
+To validate a model with a date, time or datetime attribute you just use the
 validation method
 
   class Person < ActiveRecord::Base
     validates_date :date_of_birth
 
   end
-  
+
 The list of validation methods available are as follows:
   validates_date     - validate value as date
   validates_time     - validate value as time only i.e. '12:20pm'
   validates_datetime - validate value as a full date and time
-  
+
 The validation methods take the usual options plus some specific ones to restrict
 the valid range of dates or times allowed
 
@@ -78,10 +78,10 @@ Regular validation options:
 
 Special options:
   :with_time    - Validate a date attribute value combined with a time value against any temporal restrictions
-  :with_date    - Validate a time attribute value combined with a date value against any temporal restrictions 
+  :with_date    - Validate a time attribute value combined with a date value against any temporal restrictions
   :ignore_usec  - Ignores microsecond value on datetime restrictions
   :format       - Limit validation to a single format for special cases. Takes plugin format value.
-  
+
 Message options: - Use these to override the default error messages
   :invalid_date_message
   :invalid_time_message
@@ -99,7 +99,7 @@ The temporal restrictions, with_date and with_time can take 4 different value ty
 * Proc or lambda object which may take an optional parameter being the record object
 * A symbol matching the method name in the model
 
-When an attribute value is compared to temporal restrictions, they are compared as 
+When an attribute value is compared to temporal restrictions, they are compared as
 the same type as the validation method type. So using validates_date means all
 values are compared as dates. This is except in the case of with_time and with_date
 options which effectively force the value to validated as a datetime against the
@@ -109,7 +109,7 @@ temporal options.
 
   validates_date :date_of_birth :before => lambda { 18.years.ago },
                                 :before_message => "must be at least 18 years old"
-  
+
   validates_time :breakfast_time, :on_or_after => '6:00am',
                                   :on_or_after_message => 'must be after opening time',
                                   :before => :second_breakfast_time,
@@ -118,16 +118,16 @@ temporal options.
   validates_datetime :appointment_date, :before => lambda { 1.week.from_now }
 
   validates_date :entry_date, :with_time => '17:00', :on_or_before => :competition_closing
- 
+
 
 === DATE/TIME FORMATS:
 
-So what formats does the plugin allow. Well there are default formats which can 
-be added to easily using the plugins format rules. Also formats can be easily 
-removed without hacking the plugin at all. 
+So what formats does the plugin allow. Well there are default formats which can
+be added to easily using the plugins format rules. Also formats can be easily
+removed without hacking the plugin at all.
 
-Below are the default formats. If you think they are easy to read then you will 
-be happy to know that is exactly the format you can use to define your own if 
+Below are the default formats. If you think they are easy to read then you will
+be happy to know that is exactly the format you can use to define your own if
 you want. No complex regular expressions or duck punching (monkey patching) the
 plugin is needed.
 
@@ -171,7 +171,7 @@ NOTE: To use non-US date formats see US/EURO FORMATS section
 
 Here is what each format token means:
 
-  Format tokens:   
+  Format tokens:
        y = year
        m = month
        d = day
@@ -184,10 +184,10 @@ Here is what each format token means:
       tz = Timezone abbreviation (e.g. UTC, GMT, PST, EST)
       zo = Timezone offset (e.g. +10:00, -08:00, +1000)
 
-  Repeating tokens:        
+  Repeating tokens:
        x = 1 or 2 digits for unit (e.g. 'h' means an hour can be '9' or '09')
       xx = 2 digits exactly for unit (e.g. 'hh' means an hour can only be '09')
-      
+
   Special Cases:
       yy = 2 or 4 digit year
     yyyy = exactly 4 digit year
@@ -195,9 +195,9 @@ Here is what each format token means:
      ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
        u = microseconds matches 1 to 3 digits
 
-All other characters are considered literal. For the technically minded 
-(well you are developers), these formats are compiled into regular expressions 
-at runtime so don't add any extra overhead than using regular expressions 
+All other characters are considered literal. For the technically minded
+(well you are developers), these formats are compiled into regular expressions
+at runtime so don't add any extra overhead than using regular expressions
 directly. So, no, it won't make your app slow!
 
 To see all defined formats look in lib/validates_timeliness/formats.rb.
@@ -208,18 +208,18 @@ The perenial problem for non-US developers or applications not primarily for the
 US, is the US date format of m/d/yy. This is ambiguous with the European format
 of d/m/yy. By default the plugin uses the US formats as this is the Ruby default
 when it does date interpretation, and is in keeping PoLS (principle of least
-surprise). 
+surprise).
 
 To switch to using the European (or Rest of The World) formats put this in an
 initializer or environment.rb
 
-  ValidatesTimeliness::Formats.remove_us_formats  
+  ValidatesTimeliness::Formats.remove_us_formats
 
 Now '01/02/2000' will be parsed as 1st February 2000, instead of 2nd January 2000.
 
 === CUSTOMISING FORMATS:
 
-I hear you say "Thats greats but I don't want X format to be valid". Well to 
+I hear you say "Thats greats but I don't want X format to be valid". Well to
 remove a format stick this in an initializer file
 
   ValidatesTimeliness::Formats.remove_formats(:date, 'm\d\yy')
@@ -233,15 +233,15 @@ Ahh, then add it yourself. Again stick this in an initializer file
 
 Now "10 o'clock" will be a valid value. So easy, no more whingeing!
 
-You can embed regular expressions in the format but no gurantees that it will 
-remain intact. If you avoid the use of any token characters and regexp dots or 
-backslashes as special characters in the regexp, it may well work as expected. 
-For special characters use POSIX character classes for safety. See the ISO 8601 
+You can embed regular expressions in the format but no gurantees that it will
+remain intact. If you avoid the use of any token characters and regexp dots or
+backslashes as special characters in the regexp, it may well work as expected.
+For special characters use POSIX character classes for safety. See the ISO 8601
 datetime for an example of an embedded regular expression.
 
-Because formats are evaluated in order, adding a format which may be ambiguous 
+Because formats are evaluated in order, adding a format which may be ambiguous
 with an existing format, will mean your format is ignored. If you need to make
-your new format higher precedence than an existing format, you can include the 
+your new format higher precedence than an existing format, you can include the
 before option like so
 
   ValidatesTimeliness::Formats.add_formats(:time, 'ss:nn:hh', :before => 'hh:nn:ss')
@@ -279,7 +279,7 @@ The value should be an array of 3 values being year, month and day in that order
 
 When using the validation temporal restrictions there are times when the restriction
 value itself may be invalid. Normally this will add an error to the model such as
-'restriction :before value was invalid'. These can be annoying if you are using 
+'restriction :before value was invalid'. These can be annoying if you are using
 procs or methods as restrictions and don't care if they don't evaluate properly
 and you want the validation to complete. In these situations you turn them off.
 
@@ -288,8 +288,8 @@ To turn them off:
   ValidatesTimeliness::Validator.ignore_restriction_errors = true
 
 A word of warning though, as this may hide issues with the model and make those
-corner cases a little harder to test. In general if you are using procs or 
-model methods and you only care when they return  a value, then they should 
+corner cases a little harder to test. In general if you are using procs or
+model methods and you only care when they return  a value, then they should
 return nil in all other situations. Restrictions are skipped if they are nil.
 
 
@@ -308,7 +308,7 @@ To activate it, put this in an initializer:
 
 === OTHER CUSTOMISATION:
 
-The error messages for each temporal restrictions can also be globally overridden by 
+The error messages for each temporal restrictions can also be globally overridden by
 updating the default AR error messages like so
 
 For Rails 2.0/2.1:
@@ -332,8 +332,14 @@ Rails 2.2+ using the I18n system to define new defaults:
     activerecord:
       errors:
         messages:
-          on_or_before: "must be equal to or before {{restriction}}"
-          on_or_after:  "must be equal to or after {{restriction}}"
+          invalid_date: "is not a valid date"
+          invalid_time: "is not a valid time"
+          invalid_datetime: "is not a valid datetime"
+          equal_to: "must be equal to {{restriction}}"
+          before: "must be before {{restriction}}"
+          on_or_before: "must be on or before {{restriction}}"
+          after: "must be after {{restriction}}"
+          on_or_after: "must be on or after {{restriction}}"
           between: "must be between {{earliest}} and {{latest}}"
 
 The {{restriction}} signifies where the interpolation value for the restriction
@@ -364,9 +370,9 @@ Those are Ruby strftime formats not the plugin formats.
 === RSPEC MATCHER:
 
 To sweeten the deal that little bit more, you have an Rspec matcher available for
-you model specs. Now you can easily test the validations you have just written 
-with the plugin or better yet *before* you write them! You just use the 
-validation options you want as you would with the validation method. Those 
+you model specs. Now you can easily test the validations you have just written
+with the plugin or better yet *before* you write them! You just use the
+validation options you want as you would with the validation method. Those
 options are then verified and reported if they fail.
 
 First require it in your spec_helper.rb
