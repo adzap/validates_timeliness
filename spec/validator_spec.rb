@@ -305,7 +305,7 @@ describe ValidatesTimeliness::Validator do
         validate_with(:birth_date, 1.day.from_now.to_date)
         should_have_no_error(:birth_date, :between)
       end
-      
+
       it "should allow a range for between restriction" do
         configure_validator(:type => :date, :between => (1.day.ago.to_date)..(1.day.from_now.to_date))
         validate_with(:birth_date, 1.day.from_now.to_date)
@@ -566,6 +566,24 @@ describe ValidatesTimeliness::Validator do
         validate_with(:birth_time, '11:59')
         person.errors.on(:birth_time).should match(/after \d{2}:\d{2}:\d{2}\Z/)
       end
+
+      if defined?(I18n)
+
+        describe "I18n" do
+          it "should use global default if locale format missing" do
+            I18n.backend.store_translations 'zz', :activerecord => {:errors => {:messages => { :after => 'after {{restriction}}' }}}
+            I18n.locale = :zz
+            configure_validator(:type => :datetime, :after => 1.day.from_now)
+            validate_with(:birth_date_and_time, Time.now)
+            person.errors.on(:birth_date_and_time).should match(/after \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\Z/)
+          end
+
+          after do
+            I18n.locale = :en
+          end
+        end
+
+      end
     end
 
     describe "custom formats" do
@@ -644,7 +662,7 @@ describe ValidatesTimeliness::Validator do
 
   def error_messages
     return @error_messages if defined?(@error_messages)
-    messages = validator.send(:error_messages)
+    messages = defined?(I18n) ? I18n.t('activerecord.errors.messages') : validator.send(:error_messages)
     @error_messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(/ (\%s|\{\{\w*\}\}).*/, ''); h }
   end
 end

@@ -1,16 +1,17 @@
 module ValidatesTimeliness
 
   class Validator
+    cattr_accessor :error_value_formats
     cattr_accessor :ignore_restriction_errors
     self.ignore_restriction_errors = false
 
     RESTRICTION_METHODS = {
       :equal_to     => :==,
-      :before       => :<, 
-      :after        => :>, 
+      :before       => :<,
+      :after        => :>,
       :on_or_before => :<=,
       :on_or_after  => :>=,
-      :between      => lambda {|v, r| (r.first..r.last).include?(v) } 
+      :between      => lambda {|v, r| (r.first..r.last).include?(v) }
     }
 
     VALID_OPTIONS = [
@@ -27,7 +28,7 @@ module ValidatesTimeliness
       @type = @configuration.delete(:type)
       validate_options(@configuration)
     end
-      
+
     def call(record, attr_name, value)
       raw_value = raw_value(record, attr_name) || value
 
@@ -52,7 +53,7 @@ module ValidatesTimeliness
     def raw_value(record, attr_name)
       record.send("#{attr_name}_before_type_cast") rescue nil
     end
-   
+
     def validate_restrictions(record, attr_name, value)
       if configuration[:with_time] || configuration[:with_date]
         value = combine_date_and_time(value, record)
@@ -81,7 +82,7 @@ module ValidatesTimeliness
     end
 
     def interpolation_values(option, restriction)
-      format = self.class.error_value_formats[type]
+      format = self.class.error_value_format_for(type)
       restriction = [restriction] unless restriction.is_a?(Array)
 
       if defined?(I18n)
@@ -105,7 +106,7 @@ module ValidatesTimeliness
         comparator.call(value, restriction)
       end
     end
-    
+
     def add_error(record, attr_name, message, interpolate=nil)
       if defined?(I18n)
         custom = custom_error_messages[message]
@@ -119,7 +120,7 @@ module ValidatesTimeliness
 
     def custom_error_messages
       @custom_error_messages ||= configuration.inject({}) {|msgs, (k, v)|
-        if md = /(.*)_message$/.match(k.to_s) 
+        if md = /(.*)_message$/.match(k.to_s)
           msgs[md[1].to_sym] = v
         end
         msgs
@@ -147,7 +148,7 @@ module ValidatesTimeliness
     end
 
     def implied_type
-      @implied_type ||= configuration[:with_date] || configuration[:with_time] ? :datetime : type 
+      @implied_type ||= configuration[:with_date] || configuration[:with_time] ? :datetime : type
     end
 
     # class methods
@@ -161,16 +162,12 @@ module ValidatesTimeliness
         end
       end
 
-      def error_value_formats
+      def error_value_format_for(type)
         if defined?(I18n)
-          I18n.t('validates_timeliness.error_value_formats')
+          I18n.t(type, :default => error_value_formats[type], :scope => 'validates_timeliness.error_value_formats')
         else
-          @@error_value_formats
+          error_value_formats[type]
         end
-      end
-
-      def error_value_formats=(formats)
-        @@error_value_formats = formats
       end
 
       def evaluate_option_value(value, type, record)
