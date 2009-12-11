@@ -496,6 +496,34 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
+  if defined?(I18n)
+
+    describe "localized error messages" do
+      before(:all) do
+        I18n.backend.store_translations 'zz', :activerecord => {:errors => {:messages => { :after => 'retfa {{restriction}}' }}}
+        I18n.locale = :zz
+      end
+
+      it "should be used if defined" do
+        configure_validator(:type => :date, :after => Date.today)
+        validate_with(:birth_date, 1.day.ago)
+        person.errors.on(:birth_date).should match(/retfa/)
+      end
+
+      it "should use I18n translation missing message when not defined" do
+        configure_validator(:type => :date, :on_or_after => Date.today)
+        validate_with(:birth_date, 1.day.ago)
+        person.errors.on(:birth_date).should match(/translation missing/)
+      end
+
+      after(:all) do
+        I18n.locale = :en
+      end
+
+    end
+
+  end
+
   describe "custom_error_messages" do
     it "should return hash of custom error messages from configuration with _message truncated from keys" do
       configure_validator(:type => :date, :invalid_date_message => 'thats no date')
