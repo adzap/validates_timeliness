@@ -40,7 +40,7 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person.birth_date_and_time = time_string
     @person.birth_date_and_time_before_type_cast.should == time_string
   end
-  
+
   it "should return Time object for attribute_before_type_cast when written as Time" do
     @person.birth_date_and_time = Time.mktime(2000, 1, 1, 2, 3, 4)
     @person.birth_date_and_time_before_type_cast.should be_kind_of(Time)
@@ -59,24 +59,24 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
   it "should return Time object for datetime attribute read method when assigned string" do
     @person.birth_date_and_time = "2000-01-01 02:03:04"
     @person.birth_date_and_time.should be_kind_of(Time)
-  end    
- 
+  end
+
   it "should return Date object for date attribute read method when assigned Date object" do
     @person.birth_date = Date.today
     @person.birth_date.should be_kind_of(Date)
-  end  
- 
+  end
+
   it "should return Date object for date attribute read method when assigned string" do
     @person.birth_date = '2000-01-01'
     @person.birth_date.should be_kind_of(Date)
-  end 
- 
+  end
+
   it "should return nil when time is invalid" do
     @person.birth_date_and_time = "2000-01-32 02:03:04"
     @person.birth_date_and_time.should be_nil
   end
 
-  it "should not save invalid date value to database" do        
+  it "should not save invalid date value to database" do
     time_string = "2000-01-32 02:03:04"
     @person = Person.new
     @person.birth_date_and_time = time_string
@@ -84,7 +84,7 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person.reload
     @person.birth_date_and_time_before_type_cast.should be_nil
   end
-  
+
   if RAILS_VER < '2.1'
 
     it "should return time object from database in default timezone" do
@@ -106,7 +106,7 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
       @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z %z').should == time_string + ' EST +1000'
     end
 
-    it "should return time object from database in correct timezone" do        
+    it "should return time object from database in correct timezone" do
       Time.zone = 'Melbourne'
       time_string = "2000-06-01 09:00:00"
       @person = Person.new
@@ -115,19 +115,19 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
       @person.reload
       @person.birth_date_and_time.strftime('%Y-%m-%d %H:%M:%S %Z %z').should == time_string + ' EST +1000'
     end
-    
+
   end
-  
+
   it "should return correct date value after new value assigned" do
     today = Date.today
-    tomorrow = Date.today + 1.day    
+    tomorrow = Date.today + 1.day
     @person = Person.new
     @person.birth_date = today
     @person.birth_date.should == today
     @person.birth_date = tomorrow
     @person.birth_date.should == tomorrow
   end
- 
+
   it "should update date attribute on existing object" do
     today = Date.today
     tomorrow = Date.today + 1.day

@@ -6,7 +6,7 @@ module ValidatesTimeliness
     self.ignore_restriction_errors = false
 
     RESTRICTION_METHODS = {
-      :equal_to     => :==,
+      :is_at        => :==,
       :before       => :<,
       :after        => :>,
       :on_or_before => :<=,
