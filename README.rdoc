@@ -165,7 +165,8 @@ NOTE: To use non-US date formats see US/EURO FORMATS section
   yyyy-mm-dd hh:nn:ss
   yyyy-mm-dd h:nn
   ddd mmm d hh:nn:ss zo yyyy # Ruby time string
-  yyyy-mm-ddThh:nn:ss(?:Z|zo) # ISO 8601
+  yyyy-mm-ddThh:nn:ssZ  # ISO 8601 without zone offset
+  yyyy-mm-ddThh:nn:sszo # ISO 8601 with zone offset
 
 NOTE: To use non-US date formats see US/EURO FORMATS section
 

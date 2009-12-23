@@ -1,12 +1,12 @@
 require 'date'
 
 module ValidatesTimeliness
-  
-  # A date and time format regular expression generator. Allows you to 
-  # construct a date, time or datetime format using predefined tokens in 
+
+  # A date and time format regular expression generator. Allows you to
+  # construct a date, time or datetime format using predefined tokens in
   # a string. This makes it much easier to catalogue and customize the formats
   # rather than dealing directly with regular expressions. The formats are then
-  # compiled into regular expressions for use validating date or time strings. 
+  # compiled into regular expressions for use validating date or time strings.
   #
   # Formats can be added or removed to customize the set of valid date or time
   # string values.
@@ -20,7 +20,7 @@ module ValidatesTimeliness
                    :datetime_expressions,
                    :format_tokens,
                    :format_proc_args
-    
+
 
     # Set the threshold value for a two digit year to be considered last century
     #
@@ -29,7 +29,7 @@ module ValidatesTimeliness
     #   Example:
     #     year = '29' is considered 2029
     #     year = '30' is considered 1930
-    # 
+    #
     cattr_accessor :ambiguous_year_threshold
     self.ambiguous_year_threshold = 30
 
@@ -37,11 +37,11 @@ module ValidatesTimeliness
     # being year, month and day in that order.
     #
     # Default: [ 2000, 1, 1 ] same as ActiveRecord
-    # 
+    #
     cattr_accessor :dummy_date_for_time_type
     self.dummy_date_for_time_type = [ 2000, 1, 1 ]
 
-    # Format tokens:   
+    # Format tokens:
     #       y = year
     #       m = month
     #       d = day
@@ -56,14 +56,14 @@ module ValidatesTimeliness
     #
     #   All other characters are considered literal. You can embed regexp in the
     #   format but no gurantees that it will remain intact. If you avoid the use
-    #   of any token characters and regexp dots or backslashes as special characters 
-    #   in the regexp, it may well work as expected. For special characters use 
+    #   of any token characters and regexp dots or backslashes as special characters
+    #   in the regexp, it may well work as expected. For special characters use
     #   POSIX character clsses for safety.
     #
-    # Repeating tokens:        
+    # Repeating tokens:
     #       x = 1 or 2 digits for unit (e.g. 'h' means an hour can be '9' or '09')
     #      xx = 2 digits exactly for unit (e.g. 'hh' means an hour can only be '09')
-    #      
+    #
     # Special Cases:
     #      yy = 2 or 4 digit year
     #    yyyy = exactly 4 digit year
@@ -71,10 +71,10 @@ module ValidatesTimeliness
     #     ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
     #       u = microseconds matches 1 to 6 digits
     #
-    #   Any other invalid combination of repeating tokens will be swallowed up 
+    #   Any other invalid combination of repeating tokens will be swallowed up
     #   by the next lowest length valid repeating token (e.g. yyy will be
     #   replaced with yy)
-    
+
     @@time_formats = [
       'hh:nn:ss',
       'hh-nn-ss',
@@ -88,7 +88,7 @@ module ValidatesTimeliness
       'h-nn_ampm',
       'h_ampm'
     ]
-    
+
     @@date_formats = [
       'yyyy-mm-dd',
       'yyyy/mm/dd',
@@ -101,7 +101,7 @@ module ValidatesTimeliness
       'd.m.yy',
       'd mmm yy'
     ]
-    
+
     @@datetime_formats = [
       'yyyy-mm-dd hh:nn:ss',
       'yyyy-mm-dd h:nn',
@@ -115,14 +115,15 @@ module ValidatesTimeliness
       'd/m/yy h:nn',
       'ddd, dd mmm yyyy hh:nn:ss (zo|tz)', # RFC 822
       'ddd mmm d hh:nn:ss zo yyyy', # Ruby time string
-      'yyyy-mm-ddThh:nn:ss(?:Z|zo)' # iso 8601
+      'yyyy-mm-ddThh:nn:ssZ', # iso 8601 without zone offset
+      'yyyy-mm-ddThh:nn:sszo' # iso 8601 with zone offset
     ]
-    
-    
-    # All tokens available for format construction. The token array is made of 
+
+
+    # All tokens available for format construction. The token array is made of
     # token regexp, validation regexp and key for format proc mapping if any.
     # If the token needs no format proc arg then the validation regexp should
-    # not have a capturing group, as all captured groups are passed to the 
+    # not have a capturing group, as all captured groups are passed to the
     # format proc.
     #
     # The token regexp should only use a capture group if 'look-behind' anchor
@@ -146,17 +147,17 @@ module ValidatesTimeliness
       { 'u'    => [ /u{1,}/, '(\d{1,6})', :usec ] },
       { 'ampm' => [ /ampm/,  '((?:[aApP])\.?[mM]\.?)', :meridian ] },
       { 'zo'   => [ /zo/,    '([+-]\d{2}:?\d{2})', :offset ] },
-      { 'tz'   => [ /tz/,    '(?:[A-Z]{1,4})' ] }, 
+      { 'tz'   => [ /tz/,    '(?:[A-Z]{1,4})' ] },
       { '_'    => [ /_/,     '\s?' ] }
     ]
-    
-    # Arguments which will be passed to the format proc if matched in the 
-    # time string. The key must be the key from the format tokens. The array 
-    # consists of the arry position of the arg, the arg name, and the code to 
+
+    # Arguments which will be passed to the format proc if matched in the
+    # time string. The key must be the key from the format tokens. The array
+    # consists of the arry position of the arg, the arg name, and the code to
     # place in the time array slot. The position can be nil which means the arg
     # won't be placed in the array.
     #
-    # The code can be used to manipulate the arg value if required, otherwise 
+    # The code can be used to manipulate the arg value if required, otherwise
     # should just be the arg name.
     #
     @@format_proc_args = {
@@ -170,15 +171,15 @@ module ValidatesTimeliness
       :offset   => [7,   'z', 'offset_in_seconds(z)'],
       :meridian => [nil, 'md', nil]
     }
-    
+
     class << self
-    
+
       def compile_format_expressions
         @@time_expressions     = compile_formats(@@time_formats)
         @@date_expressions     = compile_formats(@@date_formats)
         @@datetime_expressions = compile_formats(@@datetime_formats)
       end
-      
+
       # Loop through format expressions for type and call proc on matches. Allow
       # pre or post match strings to exist if strict is false. Otherwise wrap
       # regexp in start and end anchors.
@@ -206,12 +207,12 @@ module ValidatesTimeliness
         end
         last = options[:include_offset] ? 8 : 7
         if matches
-          values = processor.call(*matches[1..last]) 
+          values = processor.call(*matches[1..last])
           values[0..2] = dummy_date_for_time_type if type == :time
           return values
         end
-      end   
-      
+      end
+
       # Delete formats of specified type. Error raised if format not found.
       def remove_formats(type, *remove_formats)
         remove_formats.each do |format|
@@ -221,10 +222,10 @@ module ValidatesTimeliness
         end
         compile_format_expressions
       end
-      
+
       # Adds new formats. Must specify format type and can specify a :before
-      # option to nominate which format the new formats should be inserted in 
-      # front on to take higher precedence. 
+      # option to nominate which format the new formats should be inserted in
+      # front on to take higher precedence.
       # Error is raised if format already exists or if :before format is not found.
       def add_formats(type, *add_formats)
         formats = self.send("#{type}_formats")
@@ -232,7 +233,7 @@ module ValidatesTimeliness
         options = add_formats.pop if add_formats.last.is_a?(Hash)
         before = options[:before]
         raise "Format for :before option #{format} was not found." if before && !formats.include?(before)
-        
+
         add_formats.each do |format|
           raise "Format #{format} is already included in #{type} formats" if formats.include?(format)
 
@@ -243,7 +244,7 @@ module ValidatesTimeliness
       end
 
       # Removes formats where the 1 or 2 digit month comes first, to eliminate
-      # formats which are ambiguous with the European style of day then month. 
+      # formats which are ambiguous with the European style of day then month.
       # The mmm token is ignored as its not ambigous.
       def remove_us_formats
         us_format_regexp = /\Am{1,2}[^m]/
@@ -251,7 +252,7 @@ module ValidatesTimeliness
         datetime_formats.reject! { |format| us_format_regexp =~ format }
         compile_format_expressions
       end
-    
+
       def full_hour(hour, meridian)
         hour = hour.to_i
         return hour if meridian.nil?
@@ -296,18 +297,18 @@ module ValidatesTimeliness
       end
 
     private
-      
-      # Compile formats into validation regexps and format procs    
+
+      # Compile formats into validation regexps and format procs
       def format_expression_generator(string_format)
-        regexp = string_format.dup      
+        regexp = string_format.dup
         order  = {}
         regexp.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes
-        
+
         format_tokens.each do |token|
           token_name = token.keys.first
           token_regexp, regexp_str, arg_key = *token.values.first
-          
-          # hack for lack of look-behinds. If has a capture group then is 
+
+          # hack for lack of look-behinds. If has a capture group then is
           # considered an anchor to put straight back in the regexp string.
           regexp.gsub!(token_regexp) {|m| "#{$1}" + regexp_str }
           order[arg_key] = $~.begin(0) if $~ && !arg_key.nil?
@@ -317,8 +318,8 @@ module ValidatesTimeliness
       rescue
         raise "The following format regular expression failed to compile: #{regexp}\n from format #{string_format}."
       end
-      
-      # Generates a proc which when executed maps the regexp capture groups to a 
+
+      # Generates a proc which when executed maps the regexp capture groups to a
       # proc argument based on order captured. A time array is built using the proc
       # argument in the position indicated by the first element of the proc arg
       # array.
@@ -329,19 +330,19 @@ module ValidatesTimeliness
         arr = [nil] * 7
         order.keys.each {|k| i = arg_map[k][0]; arr[i] = arg_map[k][2] unless i.nil? }
         proc_string = <<-EOL
-          lambda {|#{args.join(',')}| 
+          lambda {|#{args.join(',')}|
               md ||= nil
               [#{arr.map {|i| i.nil? ? 'nil' : i }.join(',')}].map {|i| i.is_a?(Float) ? i : i.to_i }
           }
         EOL
         eval proc_string
       end
-      
+
       def compile_formats(formats)
         formats.map { |format| [ format, *format_expression_generator(format) ] }
       end
-  
-      # Pick expression set and combine date and datetimes for 
+
+      # Pick expression set and combine date and datetimes for
       # datetime attributes to allow date string as datetime
       def expression_set(type, string)
         case type
@@ -358,7 +359,7 @@ module ValidatesTimeliness
           end
         end
       end
- 
+
     end
   end
 end
