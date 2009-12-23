@@ -5,7 +5,7 @@ describe ValidatesTimeliness::Formats do
   describe "format proc generator" do
     it "should generate proc which outputs date array with values in correct order" do
       generate_proc('yyyy-mm-dd').call('2000', '1', '2').should == [2000,1,2,0,0,0,0]
-    end
+   end
 
     it "should generate proc which outputs date array from format with different order" do
       generate_proc('dd/mm/yyyy').call('2', '1', '2000').should == [2000,1,2,0,0,0,0]
@@ -289,15 +289,15 @@ describe ValidatesTimeliness::Formats do
 
   def generate_regexp(format)
     # wrap in line start and end anchors to emulate extract values method
-    /\A#{formats.send(:format_expression_generator, format)[0]}\Z/
+    /\A#{formats.send(:generate_format_expression, format)[0]}\Z/
   end
 
   def generate_regexp_str(format)
-    formats.send(:format_expression_generator, format)[0].inspect
+    formats.send(:generate_format_expression, format)[0].inspect
   end
 
   def generate_proc(format)
-    formats.send(:format_expression_generator, format)[1]
+    formats.send(:generate_format_expression, format)[1]
   end
 
   def delete_format(type, format)

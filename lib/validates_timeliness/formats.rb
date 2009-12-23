@@ -2,11 +2,9 @@ require 'date'
 
 module ValidatesTimeliness
 
-  # A date and time format regular expression generator. Allows you to
-  # construct a date, time or datetime format using predefined tokens in
-  # a string. This makes it much easier to catalogue and customize the formats
-  # rather than dealing directly with regular expressions. The formats are then
-  # compiled into regular expressions for use validating date or time strings.
+  # A date and time parsing library which allows you to add custom formats using
+  # simple predefined tokens. This makes it much easier to catalogue and customize
+  # the formats rather than dealing directly with regular expressions.
   #
   # Formats can be added or removed to customize the set of valid date or time
   # string values.
@@ -298,8 +296,8 @@ module ValidatesTimeliness
 
     private
 
-      # Compile formats into validation regexps and format procs
-      def format_expression_generator(string_format)
+      # Generate regular expression and processor from format string
+      def generate_format_expression(string_format)
         regexp = string_format.dup
         order  = {}
         regexp.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes
@@ -339,7 +337,7 @@ module ValidatesTimeliness
       end
 
       def compile_formats(formats)
-        formats.map { |format| [ format, *format_expression_generator(format) ] }
+        formats.map { |format| [ format, *generate_format_expression(format) ] }
       end
 
       # Pick expression set and combine date and datetimes for
