@@ -5,7 +5,9 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     @person = Person.new
   end
 
-  it "should call write_date_time_attribute when date attribute assigned value" do
+  it "should define and call write method on first assign" do
+    Person.class_eval { @generated_methods = Set.new }
+    Person.send(:undef_method, :birth_date=)
     @person.should_receive(:write_date_time_attribute)
     @person.birth_date = "2000-01-01"
   end

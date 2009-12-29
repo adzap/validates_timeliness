@@ -51,10 +51,11 @@ module ValidatesTimeliness
             if [:date, :time, :datetime].include?(column.type)
               time_zone_aware = create_time_zone_conversion_attribute?(name, column) rescue false
 
-              define_method("#{name}=") do |value|
+              method_name = "#{name}="
+              define_method(method_name) do |value|
                 write_date_time_attribute(name, value, column.type, time_zone_aware)
               end
-              timeliness_methods << name
+              timeliness_methods << method_name
             end
           end
 
