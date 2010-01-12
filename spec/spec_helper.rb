@@ -13,7 +13,7 @@ if vendored = File.exists?(vendored_rails)
   Dir.glob(vendored_rails + "/**/lib").each { |dir| $:.unshift dir }
 else
   begin
-   require 'ginger' 
+   require 'ginger'
   rescue LoadError
   end
   if ENV['VERSION']
@@ -46,6 +46,8 @@ end
 
 require 'validates_timeliness'
 require 'validates_timeliness/matcher'
+
+ValidatesTimeliness.enable_datetime_select_extension!
 
 ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})

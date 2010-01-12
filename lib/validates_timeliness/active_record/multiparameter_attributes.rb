@@ -22,24 +22,23 @@ module ValidatesTimeliness
       end
 
       def extract_date_from_multiparameter_attributes(values)
-        year = ValidatesTimeliness::Formats.unambiguous_year(values[0].rjust(2, "0"))
-        [year, *values.slice(1, 2).map { |s| s.rjust(2, "0") }].join("-")
+        year = values[0].blank? ? nil : ValidatesTimeliness::Formats.unambiguous_year(values[0].rjust(2, "0"))
+        [year, *values.slice(1, 2).map { |s| s.blank? ? nil : s.rjust(2, "0") }].join("-")
       end
 
       def extract_time_from_multiparameter_attributes(values)
-        values[3..5].map { |s| s.rjust(2, "0") }.join(":")
+        values[3..5].map { |s| s.blank? ? nil : s.rjust(2, "0") }.join(":")
       end
 
     end
 
     module MultiparameterAttributes
-      
+
       def self.included(base)
         base.alias_method_chain :execute_callstack_for_multiparameter_attributes, :timeliness
-      end    
+      end
 
       # Assign dates and times as formatted strings to force the use of the plugin parser
-      # and store a before_type_cast value for attribute
       def execute_callstack_for_multiparameter_attributes_with_timeliness(callstack)
         errors = []
         callstack.each do |name, values|
@@ -47,7 +46,7 @@ module ValidatesTimeliness
           if column && [:date, :time, :datetime].include?(column.type)
             begin
               callstack.delete(name)
-              if values.empty?
+              if values.empty? || values.all?(&:nil?)
                 send("#{name}=", nil)
               else
                 value = ValidatesTimeliness::ActiveRecord.time_array_to_string(values, column.type)
@@ -63,7 +62,7 @@ module ValidatesTimeliness
         end
         execute_callstack_for_multiparameter_attributes_without_timeliness(callstack)
       end
-      
+
     end
 
   end
