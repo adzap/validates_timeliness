@@ -32,13 +32,30 @@ describe 'ValidatesTimeliness::ActionView::InstanceTag' do
     end
   end
 
-  it "should display datetime_select when datetime value is nil" do
+  it "should not set values in datetime_select when datetime value is nil" do
     @person.birth_date_and_time = nil
     output = datetime_select(:person, :birth_date_and_time, :include_blank => true, :include_seconds => true)
-    output.should have_tag('select', 6)
+    output.should have_tag('select[id=person_birth_date_and_time_1i]') do
+      without_tag('option[selected=selected]')
+    end
+    output.should have_tag('select[id=person_birth_date_and_time_2i]') do
+      without_tag('option[selected=selected]')
+    end
+    output.should have_tag('select[id=person_birth_date_and_time_3i]') do
+      without_tag('option[selected=selected]')
+    end
+    output.should have_tag('select[id=person_birth_date_and_time_4i]') do
+      without_tag('option[selected=selected]')
+    end
+    output.should have_tag('select[id=person_birth_date_and_time_5i]') do
+      without_tag('option[selected=selected]')
+    end
+    output.should have_tag('select[id=person_birth_date_and_time_6i]') do
+      without_tag('option[selected=selected]')
+    end
   end
 
-  it "should display datetime_select with no values selected for missing parts" do
+  it "should not set value in datetime_select where datetime string has empty value" do
     @person.birth_date_and_time = '2000-- ::'
     output = datetime_select(:person, :birth_date_and_time, :include_blank => true, :include_seconds => true)
     output.should have_tag('select[id=person_birth_date_and_time_1i]') do
