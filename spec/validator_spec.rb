@@ -12,11 +12,15 @@ describe ValidatesTimeliness::Validator do
     Time.now = nil
   end
 
-  before :each do
-    @person = Person.new
+  def person
+    @person ||= Person.new
   end
 
   describe "option keys validation" do
+    before(:all) do
+      ActiveSupport::Deprecation.silenced = true
+    end
+
     before do
       keys = ValidatesTimeliness::Validator::VALID_OPTION_KEYS - [:invalid_date_message, :invalid_time_message, :with_date, :with_time]
       @valid_options = keys.inject({}) {|hash, opt| hash[opt] = nil; hash }
@@ -29,6 +33,15 @@ describe ValidatesTimeliness::Validator do
 
     it "should not raise error if option keys are valid" do
       lambda { Person.validates_datetime(@valid_options) }.should_not raise_error(ArgumentError)
+    end
+
+    it "should display deprecation notice for :equal_to" do
+      ::ActiveSupport::Deprecation.should_receive(:warn)
+      Person.validates_datetime :equal_to => Time.now
+    end
+
+    after(:all) do
+      ActiveSupport::Deprecation.silenced = false
     end
   end
 
