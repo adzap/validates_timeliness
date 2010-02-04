@@ -5,10 +5,10 @@
 
 == DESCRIPTION:
 
-Validate dates, times and datetimes for Rails 2.x. Plays nicely with new Rails 2.1
-features such as automatic timezone handling and dirty attributes. Allows you to
-add custom formats or remove defaults easily. This allows you to control what you
-think should be a valid date or time string.
+Validate dates, times and datetimes for Rails 2.x. Plays nicely with Rails
+automatic timezone handling. Allows you to add custom formats or remove defaults
+easily. This allows you to control what you think should be a valid date or
+time string.
 
 
 == FEATURES:
@@ -306,6 +306,7 @@ To activate it, put this in an initializer:
 
   ValidatesTimeliness.enable_datetime_select_extension!
 
+This will be removed from v3 as it adds too little to maintain.
 
 === OTHER CUSTOMISATION:
 
@@ -399,4 +400,4 @@ The matcher names are just the singular of the validation methods.
 
 == LICENSE:
 
-Copyright (c) 2008 Adam Meehan, released under the MIT license
+Copyright (c) 2008-2010 Adam Meehan, released under the MIT license
