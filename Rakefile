@@ -7,10 +7,6 @@ require 'lib/validates_timeliness/version'
 
 GEM = "validates_timeliness"
 GEM_VERSION = ValidatesTimeliness::VERSION
-AUTHOR = "Adam Meehan"
-EMAIL = "adam.meehan@gmail.com"
-HOMEPAGE = "http://github.com/adzap/validates_timeliness"
-SUMMARY = "Date and time validation plugin for Rails 2.x which allows custom formats"
 
 spec = Gem::Specification.new do |s|
   s.name = GEM
@@ -19,11 +15,11 @@ spec = Gem::Specification.new do |s|
   s.rubyforge_project = "validatestime"
   s.has_rdoc = true
   s.extra_rdoc_files = ["README.rdoc", "LICENSE", "TODO", "CHANGELOG"]
-  s.summary = SUMMARY
+  s.summary = "Date and time validation plugin for Rails 2.x which allows custom formats"
   s.description = s.summary
-  s.author = AUTHOR
-  s.email = EMAIL
-  s.homepage = HOMEPAGE
+  s.author = "Adam Meehan"
+  s.email = "adam.meehan@gmail.com"
+  s.homepage = "http://github.com/adzap/validates_timeliness"
 
   s.require_path = 'lib'
   s.autorequire = GEM
