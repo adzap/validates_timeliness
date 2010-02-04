@@ -3,3 +3,6 @@
 - array of values for all temporal options
 - use tz and zo value from time string?
 - filter valid formats rather than remove for hot swapping without recompilation
+- config generator
+- move all config into top namespace
+- remove action_view stuff
