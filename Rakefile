@@ -24,7 +24,7 @@ spec = Gem::Specification.new do |s|
   s.author = AUTHOR
   s.email = EMAIL
   s.homepage = HOMEPAGE
-  
+
   s.require_path = 'lib'
   s.autorequire = GEM
   s.files = %w(LICENSE README.rdoc Rakefile TODO CHANGELOG) + Dir.glob("{lib,spec}/**/*")

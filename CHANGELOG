@@ -1,5 +1,14 @@
+= 2.3.0 [2010-02-04]
+- Backwards incompatible change to :equal_to option. Fixed error message clash with :equal_to option which exists in Rails already. Option is now :is_at.
+- Fixed I18n support so it returns missing translation message instead of error
+- Fixed attribute method bug. Write method was bypassed when method was first generated and used Rails default parser.
+- Fixed date/time selects when using enable_datetime_select_extension! when some values empty
+- Fixed ISO8601 datetime format which is now split into two formats
+- Changed I18n error value format to fallback to global default if missing in locale
+- Refactored date/time select invalid value extension to use param values. Functionality will be extracted from plugin for v3.
+
 = 2.2.2 [2009-09-19]
-- Fixed dummy_time using make_time to respect timezone. Fixes 1.9.1 bug. 
+- Fixed dummy_time using make_time to respect timezone. Fixes 1.9.1 bug.
 
 = 2.2.1 [2009-09-12]
 - Fixed dummy date part for time types in Validator.type_cast_value
@@ -8,7 +17,7 @@
 = 2.2.0 [2009-09-12]
 - Ruby 1.9 support!
 - Customise dummy date values for time types. See DUMMY DATE FOR TIME TYPES.
-- Fixed matcher conflict with Shoulda. Load plugin matcher manually now see matcher section in README 
+- Fixed matcher conflict with Shoulda. Load plugin matcher manually now see matcher section in README
 - Fixed :ignore_usec when used with :with_time or :with_date
 - Some clean up and refactoring
 
@@ -65,7 +74,7 @@
 - Added Rails 2.2 i18n support. Plugin error messages can specified in locale files. See README.
 - ignore_datetime_restriction_errors setting has been moved from AR to ValidatesTimeliness::Validator.ignore_restriction_errors
 - date_time_error_value_formats setting has been moved from AR to ValidatesTimeliness::Validator.error_value_formats
-- Namespaced modules and specs 
+- Namespaced modules and specs
 - Clean up of specs
 - fixed a few bugs
   - accessor methods not generating properly due method name stored as symbol in generated_attributes which fails on lookup
