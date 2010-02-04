@@ -513,7 +513,11 @@ describe ValidatesTimeliness::Validator do
 
     describe "localized error messages" do
       before(:all) do
-        I18n.backend.store_translations 'zz', :activerecord => {:errors => {:messages => { :after => 'retfa {{restriction}}' }}}
+        translations = {
+          :activerecord => {:errors => {:messages => { :after => 'retfa {{restriction}}' }}},
+          :validates_timeliness => {:error_value_formats => {}}
+        }
+        I18n.backend.store_translations 'zz', translations
         I18n.locale = :zz
       end
 
