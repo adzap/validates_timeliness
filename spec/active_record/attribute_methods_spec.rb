@@ -80,7 +80,6 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
 
   it "should not save invalid date value to database" do
     time_string = "2000-01-32 02:03:04"
-    @person = Person.new
     @person.birth_date_and_time = time_string
     @person.save
     @person.reload
@@ -92,7 +91,6 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     it "should return time object from database in default timezone" do
       ActiveRecord::Base.default_timezone = :utc
       time_string = "2000-01-01 09:00:00"
-      @person = Person.new
       @person.birth_date_and_time = time_string
       @person.save
       @person.reload
@@ -111,7 +109,6 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     it "should return time object from database in correct timezone" do
       Time.zone = 'Melbourne'
       time_string = "2000-06-01 09:00:00"
-      @person = Person.new
       @person.birth_date_and_time = time_string
       @person.save
       @person.reload
@@ -123,7 +120,6 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
   it "should return correct date value after new value assigned" do
     today = Date.today
     tomorrow = Date.today + 1.day
-    @person = Person.new
     @person.birth_date = today
     @person.birth_date.should == today
     @person.birth_date = tomorrow
@@ -133,11 +129,11 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
   it "should update date attribute on existing object" do
     today = Date.today
     tomorrow = Date.today + 1.day
-    @person = Person.create(:birth_date => today)
-    @person.birth_date = tomorrow
-    @person.save!
-    @person.reload
-    @person.birth_date.should == tomorrow
+    person = Person.create(:birth_date => today)
+    person.birth_date = tomorrow
+    person.save!
+    person.reload
+    person.birth_date.should == tomorrow
   end
 
 end
