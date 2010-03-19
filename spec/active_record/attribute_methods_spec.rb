@@ -137,4 +137,21 @@ describe ValidatesTimeliness::ActiveRecord::AttributeMethods do
     person.birth_date.should == tomorrow
   end
 
+  describe "attribute writer" do
+
+    it "should be able to be overridden in class" do
+      Person.class_eval { attr_accessor :birth_date }
+      person = Person.new
+      person.birth_date = 'overriden'
+      person.birth_date.should == 'overriden'
+    end
+
+    after do
+      Person.class_eval do
+        undef_method(:birth_date)
+        undef_method(:birth_date=)
+      end
+    end
+  end
+
 end

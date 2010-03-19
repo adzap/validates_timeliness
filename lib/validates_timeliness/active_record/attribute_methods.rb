@@ -24,7 +24,6 @@ module ValidatesTimeliness
 
       def write_date_time_attribute(attr_name, value, type, time_zone_aware)
         @attributes_cache["_#{attr_name}_before_type_cast"] = value
-
         value = ValidatesTimeliness::Parser.parse(value, type)
 
         if value && type != :date
@@ -49,15 +48,21 @@ module ValidatesTimeliness
 
           columns_hash.each do |name, column|
             if [:date, :time, :datetime].include?(column.type)
-              time_zone_aware = create_time_zone_conversion_attribute?(name, column) rescue false
-
               method_name = "#{name}="
+              next if instance_method_already_implemented?(method_name)
+
+              time_zone_aware = create_time_zone_conversion_attribute?(name, column) rescue false
               define_method(method_name) do |value|
-                write_date_time_attribute(name, value, column.type, time_zone_aware)
+                 write_date_time_attribute(name, value, column.type, time_zone_aware)
               end
               timeliness_methods << method_name
             end
           end
+
+          # Hack to get around instance_method_already_implemented? caching the
+          # methods in the ivar. It then appears to subsequent calls that the
+          # methods defined here, have not been and get defined again.
+          @_defined_class_methods = nil
 
           define_attribute_methods_without_timeliness
           # add generated methods which is a Set object hence no += method
