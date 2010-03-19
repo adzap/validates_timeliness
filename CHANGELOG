@@ -1,3 +1,6 @@
+= 2.3.1 [2010-03-19]
+- Fixed bug where custom attribute writer method for date/times were being overriden
+
 = 2.3.0 [2010-02-04]
 - Backwards incompatible change to :equal_to option. Fixed error message clash with :equal_to option which exists in Rails already. Option is now :is_at.
 - Fixed I18n support so it returns missing translation message instead of error
