@@ -31,10 +31,6 @@ time string.
 
 == INSTALLATION:
 
-As plugin (from master)
-
-  ./script/plugin install git://github.com/adzap/validates_timeliness.git
-
 As gem
 
   sudo gem install validates_timeliness
@@ -43,6 +39,9 @@ As gem
 
   config.gem 'validates_timeliness'
 
+As plugin (from master)
+
+  ./script/plugin install git://github.com/adzap/validates_timeliness.git
 
 == USAGE:
 
