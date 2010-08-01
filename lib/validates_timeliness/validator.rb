@@ -39,9 +39,15 @@ module ValidatesTimeliness
       value = type_cast(value)
 
       (RESTRICTIONS.keys & options.keys).each do |restriction|
-        restriction_value = type_cast(evaluate_option_value(options[restriction], record))
-        unless value.send(RESTRICTIONS[restriction], restriction_value)
-          return record.errors.add(attr_name, restriction, :restriction => restriction_value)
+        begin
+          restriction_value = type_cast(evaluate_option_value(options[restriction], record))
+          unless value.send(RESTRICTIONS[restriction], restriction_value)
+            return record.errors.add(attr_name, restriction, :restriction => restriction_value)
+          end
+        rescue => e
+          unless ValidatesTimeliness.ignore_restriction_errors
+            record.errors[attr_name] = "Error occurred validating #{attr_name} for #{restriction.inspect} restriction:\n#{e.message}" 
+          end
         end
       end
     end

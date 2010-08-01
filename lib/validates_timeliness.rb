@@ -18,6 +18,9 @@ module ValidatesTimeliness
   mattr_accessor :dummy_date_for_time_type
   @@dummy_date_for_time_type = [ 2000, 1, 1 ]
 
+  # Ignore errors when restriction options are evaluated
+  mattr_accessor :ignore_restriction_errors
+  @@ignore_restriction_errors = false
 end
 
 require 'validates_timeliness/conversion'

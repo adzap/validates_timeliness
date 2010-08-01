@@ -66,4 +66,28 @@ describe ValidatesTimeliness::Validator do
       end
     end
   end
+
+  describe "restriction value errors" do
+    let(:person) { Person.new(:birth_date => Date.today) }
+
+    before do
+      Person.validates_time :birth_date, :is_at => lambda { raise }
+    end
+
+    it "should be added when ignore_restriction_errors is false" do
+      ValidatesTimeliness.ignore_restriction_errors = false
+      person.valid?
+      person.errors[:birth_date].first.should match("Error occurred validating birth_date for :is_at restriction")
+    end
+
+    it "should not be added when ignore_restriction_errors is true" do
+      ValidatesTimeliness.ignore_restriction_errors = true
+      person.valid?
+      person.errors[:birth_date].should be_empty
+    end
+
+    after :all do
+      ValidatesTimeliness.ignore_restriction_errors = false
+    end
+  end
 end
