@@ -19,6 +19,7 @@ module ValidatesTimeliness
     def initialize(options)
       @allow_nil, @allow_blank = options.delete(:allow_nil), options.delete(:allow_blank)
       @type = options.delete(:type)
+      @check_restrictions = RESTRICTIONS.keys & options.keys
 
       if range = options.delete(:between)
         raise ArgumentError, ":between must be a Range or an Array" unless range.is_a?(Range) || range.is_a?(Array)
@@ -38,11 +39,11 @@ module ValidatesTimeliness
 
       value = type_cast(value)
 
-      (RESTRICTIONS.keys & options.keys).each do |restriction|
+      @check_restrictions.each do |restriction|
         begin
           restriction_value = type_cast(evaluate_option_value(options[restriction], record))
           unless value.send(RESTRICTIONS[restriction], restriction_value)
-            return record.errors.add(attr_name, restriction, :restriction => restriction_value)
+            return record.errors.add(attr_name, restriction, :restriction => format_error_value(restriction_value))
           end
         rescue => e
           unless ValidatesTimeliness.ignore_restriction_errors
@@ -60,8 +61,13 @@ module ValidatesTimeliness
     def type_cast(value)
       type_cast_value(value, @type)
     end
+
+    def format_error_value(value)
+      format = I18n.t(@type, :scope => 'validates_timeliness.error_value_formats')
+      value.strftime(format)
+    end
   end
 end
 
-# Compatibility with ActiveModel validates method which tries match option keys to their validator class
+# Compatibility with ActiveModel validates method which matches option keys to their validator class
 TimelinessValidator = ValidatesTimeliness::Validator

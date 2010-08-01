@@ -90,4 +90,25 @@ describe ValidatesTimeliness::Validator do
       ValidatesTimeliness.ignore_restriction_errors = false
     end
   end
+
+  describe "#format_error_value" do
+    let(:validator) { ValidatesTimeliness::Validator.new(:attributes => [:birth_date], :type => :date) }
+
+    describe "default" do
+      it 'should format date error value as yyyy-mm-dd' do
+        validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_date], :type => :date)
+        validator.format_error_value(Date.new(2010,1,1)).should == '2010-01-01'
+      end
+
+      it 'should format time error value as hh:nn:ss' do
+        validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_time], :type => :time)
+        validator.format_error_value(Time.mktime(2010,1,1,12,34,56)).should == '12:34:56'
+      end
+
+      it 'should format datetime error value as yyyy-mm-dd hh:nn:ss' do
+        validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_datetime], :type => :datetime)
+        validator.format_error_value(Time.mktime(2010,1,1,12,34,56)).should == '2010-01-01 12:34:56'
+      end
+    end
+  end
 end
