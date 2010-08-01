@@ -14,6 +14,10 @@ require 'active_support/core_ext/date_time/zones'
 
 module ValidatesTimeliness
 
+  # Add validation helpers to these classes
+  mattr_accessor :extend_classes
+  @@extend_classes = []
+
   # Set the dummy date part for a time type values.
   mattr_accessor :dummy_date_for_time_type
   @@dummy_date_for_time_type = [ 2000, 1, 1 ]
@@ -21,6 +25,12 @@ module ValidatesTimeliness
   # Ignore errors when restriction options are evaluated
   mattr_accessor :ignore_restriction_errors
   @@ignore_restriction_errors = false
+
+  # Setup method for plugin configuration
+  def self.setup
+    yield self
+    extend_classes.each {|klass| klass.send(:include, ValidatesTimeliness::HelperMethods) }
+  end
 end
 
 require 'validates_timeliness/conversion'

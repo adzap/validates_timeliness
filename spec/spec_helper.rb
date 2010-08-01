@@ -6,16 +6,14 @@ require 'rspec/autorun'
 
 require 'active_model'
 require 'active_model/validations'
-# require 'active_record'
-# require 'action_controller'
-# require 'action_view'
-# require 'action_mailer'
-# require 'rspec/rails'
-
+require 'active_record'
 require 'timecop'
-require 'model_helpers'
 
 require 'validates_timeliness'
+
+ValidatesTimeliness.setup do |c|
+  c.extend_classes = [ ActiveModel::Validations, ActiveRecord::Base ]
+end
 
 Time.zone = 'Australia/Melbourne'
 
@@ -34,6 +32,8 @@ class Person
     end
   end
 end
+
+require 'model_helpers'
 
 Rspec.configure do |c|
   c.mock_with :rspec
