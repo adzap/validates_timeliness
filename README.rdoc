@@ -1,0 +1,142 @@
+= validates_timeliness
+
+* Source:  http://github.com/adzap/validates_timeliness
+* Bugs:    http://github.com/adzap/validates_timeliness/issues
+
+== DESCRIPTION:
+
+Validate dates, times and datetimes for Rails 3.x and ActiveModel.
+
+== FEATURES:
+
+* Adds ActiveModel validation for dates, times and datetimes
+
+* Should work with any ORM using ActiveModel
+
+* Supports timezone handling
+
+* Supports I18n for the error messages
+
+== INSTALLATION:
+
+As plugin (from master)
+
+  rails plugin install git://github.com/adzap/validates_timeliness.git -r rails3
+
+As gem (not working as yet)
+
+  gem install validates_timeliness
+
+  # in Gemfile
+
+  gem 'validates_timeliness'
+
+
+Then run
+  
+  rails generate validates_timeliness:install
+
+This creates the template for the configuration initializer. You need to uncomment the extend_classes setting like so
+
+  ValidatesTimeliness.setup do |config|
+
+    config.extend_classes = [ ActiveRecord::Base ]
+
+  end
+
+This adds the validation helper methods to ActiveRecord. Replace it with the ORM of your choosing.
+As long as it supports ActiveModel it should work.
+
+
+== USAGE:
+
+To validate a model with a date, time or datetime attribute you just use the
+validation method
+
+  class Person < ActiveRecord::Base
+    validates_date :date_of_birth
+  end
+
+The list of validation methods available are as follows:
+  validates_date     - validate value as date
+  validates_time     - validate value as time only i.e. '12:20pm'
+  validates_datetime - validate value as a full date and time
+
+The validation methods take the usual options plus some specific ones to restrict
+the valid range of dates or times allowed
+
+Temporal options (or restrictions):
+  :is_at        - Attribute must be equal to value to be valid
+  :before       - Attribute must be before this value to be valid
+  :on_or_before - Attribute must be equal to or before this value to be valid
+  :after        - Attribute must be after this value to be valid
+  :on_or_after  - Attribute must be equal to or after this value to be valid
+  :between      - Attribute must be between the values to be valid. Range or Array of 2 values. 
+                  Uses :on_or_after and :on_of_before for error messages on lower and upper bounds respectively.
+
+Regular validation options:
+  :allow_nil    - Allow a nil value to be valid
+  :allow_blank  - Allows a nil or empty string value to be valid
+  :if           - Execute validation when :if evaluates true
+  :unless       - Execute validation when :unless evaluates false
+
+
+== ERROR MESSAGES
+
+Using the I18n system to define new defaults:
+
+  en:
+    errors:
+      messages:
+        invalid_date: "is not a valid date"
+        invalid_time: "is not a valid time"
+        invalid_datetime: "is not a valid datetime"
+        is_at: "must be at %{restriction}"
+        before: "must be before %{restriction}"
+        on_or_before: "must be on or before %{restriction}"
+        after: "must be after %{restriction}"
+        on_or_after: "must be on or after %{restriction}"
+
+The %{restriction}} signifies where the interpolation value for the restriction will be inserted.
+
+
+== CONFIGURATION
+
+=== DUMMY DATE FOR TIME TYPES
+
+Given that Ruby has no support for a time-only type, all time type columns are evaluated
+as a regular Time class objects with a dummy date value set. Rails defines the dummy date as
+2000-01-01. So a time of '12:30' is evaluated as a Time value of '2000-01-01 12:30'. If you
+need to customize this for some reason you can do so as follows
+
+  # in the setup block
+  config.dummy_date_for_time_type = [2009, 1, 1]
+
+The value should be an array of 3 values being year, month and day in that order.
+
+
+=== TEMPORAL RESTRICTION ERRORS:
+
+When using the validation temporal restrictions there are times when the restriction
+value itself may be invalid. Normally this will add an error to the model such as
+'restriction :before value was invalid'. These can be annoying if you are using
+procs or methods as restrictions and don't care if they don't evaluate properly
+and you want the validation to complete. In these situations you turn them off.
+
+To turn them off:
+
+  # in the setup block
+  config.ignore_restriction_errors = true
+
+A word of warning though, as this may hide issues with the model and make those
+corner cases a little harder to test. In general if you are using procs or
+model methods and you only care when they return  a value, then they should
+return nil in all other situations. Restrictions are skipped if they are nil.
+
+
+...
+
+
+== LICENSE:
+
+Copyright (c) 2008-2010 Adam Meehan, released under the MIT license
