@@ -4,7 +4,7 @@ module ValidatesTimeliness
   class Validator < ActiveModel::EachValidator
     include Conversion
 
-    CHECKS = {
+    RESTRICTIONS = {
       :is_at        => :==,
       :before       => :<,
       :after        => :>,
@@ -38,10 +38,10 @@ module ValidatesTimeliness
 
       value = type_cast(value)
 
-      (CHECKS.keys & options.keys).each do |check|
-        check_value = type_cast(options[check])
-        unless value.send(CHECKS[check], check_value)
-          return record.errors.add(attr_name, check, :restriction => check_value)
+      (RESTRICTIONS.keys & options.keys).each do |restriction|
+        restriction_value = type_cast(evaluate_option_value(options[restriction], record))
+        unless value.send(RESTRICTIONS[restriction], restriction_value)
+          return record.errors.add(attr_name, restriction, :restriction => restriction_value)
         end
       end
     end
