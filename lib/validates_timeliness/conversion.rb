@@ -19,8 +19,23 @@ module ValidatesTimeliness
       else
         [0,0,0]
       end
-      dummy_date = ValidatesTimeliness.dummy_date_for_time_type
-      Time.local(*(dummy_date + time))
+      Time.local(*(ValidatesTimeliness.dummy_date_for_time_type + time))
+    end
+
+    def evaluate_option_value(value, record)
+      case value
+      when Time, Date
+        value
+      when String
+        value.to_time(:local)
+      when Symbol
+        evaluate_option_value(record.send(value), record)
+      when Proc
+        result = value.arity > 0 ? value.call(record) : value.call
+        evaluate_option_value(result, record)
+      else
+        value
+      end
     end
 
   end

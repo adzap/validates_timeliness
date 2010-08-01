@@ -99,4 +99,56 @@ describe ValidatesTimeliness::Conversion do
       end
     end
   end
+
+  describe "#evaluate_option_value" do
+    let(:person) { Person.new }
+
+    it 'should return Date object as is' do
+      value = Date.new(2010,1,1)
+      evaluate_option_value(value, person).should == value
+    end
+
+    it 'should return Time object as is' do
+      value = Time.mktime(2010,1,1)
+      evaluate_option_value(value, person).should == value
+    end
+
+    it 'should return DateTime object as is' do
+      value = DateTime.new(2010,1,1,0,0,0)
+      evaluate_option_value(value, person).should == value
+    end
+
+    it 'should return local Time value from string time value' do
+      value = '2010-01-01 12:00:00'
+      evaluate_option_value(value, person).should == Time.mktime(2010,1,1,12,0,0)
+    end
+
+    it 'should return Time value returned from proc with 0 arity' do
+      value = Time.mktime(2010,1,1)
+      evaluate_option_value(lambda { value }, person).should == value
+    end
+
+    it 'should return Time value returned by record attribute call in proc arity of 1' do
+      value = Time.mktime(2010,1,1)
+      person.birth_time = value
+      evaluate_option_value(lambda {|r| r.birth_time }, person).should == value
+    end
+
+    it 'should return Time value from proc which returns string time' do
+      value = '2010-01-01 12:00:00'
+      evaluate_option_value(lambda { value }, person).should == Time.mktime(2010,1,1,12,0,0)
+    end
+
+    it 'should return Time value for attribute method symbol which returns Time' do
+      value = Time.mktime(2010,1,1)
+      person.birth_time = value
+      evaluate_option_value(:birth_time, person).should == value
+    end
+
+    it 'should return Time value for attribute method symbol which returns string time value' do
+      value = '2010-01-01 12:00:00'
+      person.birth_time = value
+      evaluate_option_value(:birth_time, person).should == Time.mktime(2010,1,1,12,0,0)
+    end
+  end
 end
