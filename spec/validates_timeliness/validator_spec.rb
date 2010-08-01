@@ -16,33 +16,33 @@ describe ValidatesTimeliness::Validator do
     it 'should use plugin validator class' do
       Person.validates :birth_date, :timeliness => {:is_at => Date.new(2010,1,1), :type => :date}
       Person.validators.should have(1).kind_of(TimelinessValidator)
-      valid!(:birth_date, Date.new(2010,1,1))
       invalid!(:birth_date, Date.new(2010,1,2))
+      valid!(:birth_date, Date.new(2010,1,1))
     end
   end
 
   describe ":allow_nil option" do
     it 'should not allow nil by default' do
-      Person.validates_datetime :birth_date
-      invalid!(:birth_date, NIL)
+      Person.validates_date :birth_date
+      invalid!(:birth_date, NIL, 'is not a valid date')
       valid!(:birth_date, Date.today)
     end
 
     it 'should allow nil when true' do
-      Person.validates_datetime :birth_date, :allow_nil => true
+      Person.validates_date :birth_date, :allow_nil => true
       valid!(:birth_date, NIL)
     end
   end
 
   describe ":allow_blank option" do
     it 'should not allow blank by default' do
-      Person.validates_datetime :birth_date
-      invalid!(:birth_date, '')
+      Person.validates_date :birth_date
+      invalid!(:birth_date, '', 'is not a valid date')
       valid!(:birth_date, Date.today)
     end
 
     it 'should allow blank when true' do
-      Person.validates_datetime :birth_date, :allow_blank => true
+      Person.validates_date :birth_date, :allow_blank => true
       valid!(:birth_date, '')
     end
   end
