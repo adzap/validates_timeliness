@@ -22,7 +22,7 @@ module ValidatesTimeliness
 
       if range = options.delete(:between)
         raise ArgumentError, ":between must be a Range or an Array" unless range.is_a?(Range) || range.is_a?(Array)
-        options[:on_or_after], options[:on_or_before] = range.begin, range.end
+        options[:on_or_after], options[:on_or_before] = range.first, range.last
       end
       super
     end
