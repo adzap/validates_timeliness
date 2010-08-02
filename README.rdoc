@@ -61,6 +61,7 @@ The list of validation methods available are as follows:
   validates_date     - validate value as date
   validates_time     - validate value as time only i.e. '12:20pm'
   validates_datetime - validate value as a full date and time
+  validates          - use the :timeliness key and set the type in the hash.
 
 The validation methods take the usual options plus some specific ones to restrict
 the valid range of dates or times allowed
@@ -132,6 +133,19 @@ A word of warning though, as this may hide issues with the model and make those
 corner cases a little harder to test. In general if you are using procs or
 model methods and you only care when they return  a value, then they should
 return nil in all other situations. Restrictions are skipped if they are nil.
+
+=== DISPLAY INVALID VALUES IN DATE/TIME SELECT HELPERS:
+
+The plugin has some extensions to ActionView for allowing invalid
+date and time values to be redisplayed to the user as feedback, instead of
+a blank field which happens by default in Rails. Though the date helpers make this a
+pretty rare occurence, given the select dropdowns for each date/time component, but
+it may be something of interest.
+
+To activate it, put this in an initializer:
+
+  # in the setup block
+  config.enable_date_time_select_extension!
 
 
 ...
