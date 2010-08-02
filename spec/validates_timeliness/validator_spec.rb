@@ -19,6 +19,11 @@ describe ValidatesTimeliness::Validator do
       invalid!(:birth_date, Date.new(2010,1,2))
       valid!(:birth_date, Date.new(2010,1,1))
     end
+
+    it 'should use default to :datetime type' do
+      Person.validates :birth_datetime, :timeliness => {:is_at => Time.mktime(2010,1,1)}
+      Person.validators.first.instance_variable_get(:@type).should == :datetime
+    end
   end
 
   describe ":allow_nil option" do
