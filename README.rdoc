@@ -82,7 +82,9 @@ Regular validation options:
   :unless       - Execute validation when :unless evaluates false
 
 
-== ERROR MESSAGES
+== CONFIGURATION
+
+=== ERROR MESSAGES
 
 Using the I18n system to define new defaults:
 
@@ -98,10 +100,8 @@ Using the I18n system to define new defaults:
         after: "must be after %{restriction}"
         on_or_after: "must be on or after %{restriction}"
 
-The %{restriction}} signifies where the interpolation value for the restriction will be inserted.
+The %{restriction} signifies where the interpolation value for the restriction will be inserted.
 
-
-== CONFIGURATION
 
 === DUMMY DATE FOR TIME TYPES
 
