@@ -1,10 +1,13 @@
-ValidatesTimeliness.setup do |c|
+ValidatesTimeliness.setup do |config|
   # Add validation helpers to these classes
-  # c.extend_classes = [ ActiveRecord::Base ]
+  # config.extend_classes = [ ActiveRecord::Base ]
   #
   # Set the dummy date part for a time type values.
-  # c.dummy_date_for_time_type = [ 2000, 1, 1 ]
+  # config.dummy_date_for_time_type = [ 2000, 1, 1 ]
   #
   # Ignore errors when restriction options are evaluated
-  # c.ignore_restriction_errors = false
+  # config.ignore_restriction_errors = false
+  #
+  # Re-display invalid values in date/time selects
+  # config.enable_date_time_select_extension!
 end
