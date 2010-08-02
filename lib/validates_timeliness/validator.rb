@@ -55,7 +55,7 @@ module ValidatesTimeliness
 
     def attribute_raw_value(record, attr_name)
       before_type_cast = "#{attr_name}_before_type_cast"
-      record.send("#{attr_name}_before_type_cast") if record.respond_to?(before_type_cast)
+      record.send(before_type_cast) if record.respond_to?(before_type_cast)
     end
 
     def type_cast(value)
