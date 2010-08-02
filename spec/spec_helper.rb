@@ -7,12 +7,16 @@ require 'rspec/autorun'
 require 'active_model'
 require 'active_model/validations'
 require 'active_record'
+require 'action_view'
 require 'timecop'
+require 'rspec_tag_matchers'
+require 'model_helpers'
 
 require 'validates_timeliness'
 
 ValidatesTimeliness.setup do |c|
   c.extend_classes = [ ActiveModel::Validations, ActiveRecord::Base ]
+  c.enable_date_time_select_extension!
 end
 
 Time.zone = 'Australia/Melbourne'
@@ -33,10 +37,24 @@ class Person
   end
 end
 
-require 'model_helpers'
+ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})
+ActiveRecord::Migration.verbose = false
+ActiveRecord::Schema.define(:version => 1) do
+  create_table :employees, :force => true do |t|
+    t.string   :first_name
+    t.string   :last_name
+    t.datetime :birth_date
+    t.datetime :birth_time
+    t.datetime :birth_datetime
+  end
+end
+
+class Employee < ActiveRecord::Base
+end
 
 Rspec.configure do |c|
   c.mock_with :rspec
+  c.include(RspecTagMatchers)
   c.before do
     Person.reset_callbacks(:validate)
     Person._validators.clear
