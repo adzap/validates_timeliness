@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ValidatesTimeliness::Extensions::MultiparameterParser do
+describe ValidatesTimeliness::Extensions::MultiparameterHandler do
   let(:employee) { Employee.new }
 
   it 'should return string value for invalid dates' do

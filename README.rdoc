@@ -141,7 +141,7 @@ To turn them on/off:
 
 === DISPLAY INVALID VALUES IN DATE/TIME SELECT HELPERS:
 
-The plugin has some extensions to ActionView for allowing invalid
+The plugin offers an extension for ActionView to allowing invalid
 date and time values to be redisplayed to the user as feedback, instead of
 a blank field which happens by default in Rails. Though the date helpers make this a
 pretty rare occurrence, given the select dropdowns for each date/time component, but
@@ -151,6 +151,19 @@ To activate it, put this in an initializer:
 
   # in the setup block
   config.enable_date_time_select_extension!
+
+
+=== STRICT DATE/TIME VALUES FOR SELECT HELPERS
+
+When using date/time select helpers, the component values are handled by ActiveRecord using
+the Time class to instantiate them into a time value. But this mean that some invalid dates,
+such as 31st June, are shifted forward and treated as valid. To handle these cases in a strict
+way you can enable the plugin handler to treat them as invalid dates.
+
+To activate it, put this in an initializer:
+
+  # in the setup block
+  config.enable_multiparameter_handler!
 
 
 ...

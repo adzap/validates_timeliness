@@ -1,6 +1,6 @@
 module ValidatesTimeliness
   module Extensions
-    module MultiparameterParser
+    module MultiparameterHandler
       extend ActiveSupport::Concern
 
       included do
