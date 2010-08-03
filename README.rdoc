@@ -17,6 +17,8 @@ Validate dates, times and datetimes for Rails 3.x and ActiveModel.
 
 * Supports I18n for the error messages
 
+* Adds before_type_cast method on validated attributes 
+
 == INSTALLATION:
 
 As plugin (from master)
@@ -55,7 +57,14 @@ validation method
 
   class Person < ActiveRecord::Base
     validates_date :date_of_birth
+    # or
+    validates :date_of_birth, :timeliness => {:type => date}
   end
+
+  # or even on a specific record, per ActiveModel API.
+
+  @person.validates_date :date_of_birth
+
 
 The list of validation methods available are as follows:
   validates_date     - validate value as date
@@ -139,7 +148,7 @@ return nil in all other situations. Restrictions are skipped if they are nil.
 The plugin has some extensions to ActionView for allowing invalid
 date and time values to be redisplayed to the user as feedback, instead of
 a blank field which happens by default in Rails. Though the date helpers make this a
-pretty rare occurence, given the select dropdowns for each date/time component, but
+pretty rare occurrence, given the select dropdowns for each date/time component, but
 it may be something of interest.
 
 To activate it, put this in an initializer:
