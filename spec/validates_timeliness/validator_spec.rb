@@ -22,7 +22,7 @@ describe ValidatesTimeliness::Validator do
 
     it 'should use default to :datetime type' do
       Person.validates :birth_datetime, :timeliness => {:is_at => Time.mktime(2010,1,1)}
-      Person.validators.first.instance_variable_get(:@type).should == :datetime
+      Person.validators.first.type.should == :datetime
     end
   end
 

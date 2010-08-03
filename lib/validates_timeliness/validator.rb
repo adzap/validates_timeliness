@@ -4,6 +4,8 @@ module ValidatesTimeliness
   class Validator < ActiveModel::EachValidator
     include Conversion
 
+    attr_reader :type
+
     RESTRICTIONS = {
       :is_at        => :==,
       :before       => :<,
