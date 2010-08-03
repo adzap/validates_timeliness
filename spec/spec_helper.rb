@@ -21,7 +21,7 @@ end
 
 Time.zone = 'Australia/Melbourne'
 
-LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/../lib/validates_timeliness/locale/en.yml')
+LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/../lib/generators/validates_timeliness/templates/en.yml')
 I18n.load_path.unshift(LOCALE_PATH)
 
 class Person

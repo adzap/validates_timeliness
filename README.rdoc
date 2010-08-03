@@ -38,7 +38,7 @@ Then run
   
   rails generate validates_timeliness:install
 
-This creates the template for the configuration initializer. You need to uncomment the extend_classes setting like so
+This creates configuration initializer and locale files. In the initializer, you need to uncomment the extend_classes setting like so
 
   ValidatesTimeliness.setup do |config|
 

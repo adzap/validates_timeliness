@@ -9,6 +9,9 @@ module ValidatesTimeliness
         copy_file 'validates_timeliness.rb', 'config/initializers/validates_timeliness.rb'
       end
 
+      def copy_locale_file
+        copy_file 'en.yml', 'config/locales/validates_timeliness.en.yml'
+      end
     end
   end
 end

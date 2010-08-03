@@ -42,5 +42,3 @@ require 'validates_timeliness/helper_methods'
 require 'validates_timeliness/attribute_methods'
 require 'validates_timeliness/extensions'
 require 'validates_timeliness/version'
-
-I18n.load_path << File.expand_path(File.dirname(__FILE__) + '/validates_timeliness/locale/en.yml')
