@@ -61,5 +61,7 @@ Rspec.configure do |c|
   c.before do
     Person.reset_callbacks(:validate)
     Person._validators.clear
+    Employee.reset_callbacks(:validate)
+    Employee._validators.clear
   end
 end
