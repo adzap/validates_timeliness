@@ -17,6 +17,7 @@ require 'validates_timeliness'
 ValidatesTimeliness.setup do |c|
   c.extend_classes = [ ActiveModel::Validations, ActiveRecord::Base ]
   c.enable_date_time_select_extension!
+  c.enable_multiparameter_parser!
 end
 
 Time.zone = 'Australia/Melbourne'
