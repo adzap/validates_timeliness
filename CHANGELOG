@@ -6,6 +6,9 @@
 	e.g. conf.extend_classes = [ ActiveRecord::Base ]
 - Changed :between option so it is split into :on_or_after and :on_or_before option values. The error message for either failing check will be used instead of a between error message.  
 - Provides :timeliness option key for validates class method. Be sure to pass :type option as well e.g. :type => :date.
+- Allows validation methods to be called on record instances as per ActiveModel API
+- Performs raw value caching (before_type_cast) on validated attributes only. It used to be all date, time and datetime attributes.
+
 
 = 2.3.1 [2010-03-19]
 - Fixed bug where custom attribute writer method for date/times were being overriden
