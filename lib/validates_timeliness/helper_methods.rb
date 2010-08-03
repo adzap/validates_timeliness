@@ -2,7 +2,12 @@ module ValidatesTimeliness
   module HelperMethods
     extend ActiveSupport::Concern
 
-    module ClassMethods
+    included do
+      include ValidationMethods
+      extend ValidationMethods
+    end
+
+    module ValidationMethods
       def validates_date(*attr_names)
         validates_with Validator, _merge_attributes(attr_names).merge(:type => :date)
       end
