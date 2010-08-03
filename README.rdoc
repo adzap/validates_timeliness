@@ -163,7 +163,7 @@ way you can enable the plugin handler to treat them as invalid dates.
 To activate it, put this in an initializer:
 
   # in the setup block
-  config.enable_multiparameter_handler!
+  config.enable_multiparameter_extension!
 
 
 ...

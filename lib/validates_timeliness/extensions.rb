@@ -8,7 +8,7 @@ module ValidatesTimeliness
     ::ActionView::Helpers::InstanceTag.send(:include, ValidatesTimeliness::Extensions::DateTimeSelect)
   end
 
-  def self.enable_multiparameter_handler!
+  def self.enable_multiparameter_extension!
     ::ActiveRecord::Base.send(:include, ValidatesTimeliness::Extensions::MultiparameterHandler)
   end
 end

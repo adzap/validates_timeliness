@@ -12,5 +12,5 @@ ValidatesTimeliness.setup do |config|
   # config.enable_date_time_select_extension!
   #
   # Handle multiparameter date/time values strictly
-  # config.enable_multiparameter_handler!
+  # config.enable_multiparameter_extension!
 end
