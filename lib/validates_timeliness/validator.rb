@@ -35,9 +35,9 @@ module ValidatesTimeliness
       raw_value = attribute_raw_value(record, attr_name) || value
       return if (@allow_nil && raw_value.nil?) || (@allow_blank && raw_value.blank?)
 
-      return record.errors.add(attr_name, :"invalid_#{@type}") if value.blank?
-
       value = type_cast(value)
+
+      return record.errors.add(attr_name, :"invalid_#{@type}") if value.blank?
 
       @check_restrictions.each do |restriction|
         begin

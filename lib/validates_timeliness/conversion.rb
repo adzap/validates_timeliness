@@ -10,6 +10,8 @@ module ValidatesTimeliness
       when :datetime
         value.to_time.in_time_zone
       end
+    rescue
+      nil
     end
 
     def dummy_time(value)

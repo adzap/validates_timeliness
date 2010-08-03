@@ -26,6 +26,20 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
+  it 'should not be valid for value which not valid date or time value' do
+    Person.validates_date :birth_date
+    invalid!(:birth_date, "Not a date", 'is not a valid date')
+  end
+
+  it 'should not be valid attribute is type cast to nil but raw value is non-nil invalid value' do
+    Person.validates_date :birth_date, :allow_nil => true
+    record = Person.new
+    record.stub!(:birth_date).and_return(nil)
+    record.stub!(:birth_date_before_type_cast).and_return("Not a date")
+    record.should_not be_valid
+    record.errors[:birth_date].first.should == 'is not a valid date'
+  end
+
   describe ":allow_nil option" do
     it 'should not allow nil by default' do
       Person.validates_date :birth_date
