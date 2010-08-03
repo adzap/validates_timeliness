@@ -24,7 +24,7 @@ module ValidatesTimeliness
 
   # Ignore errors when restriction options are evaluated
   mattr_accessor :ignore_restriction_errors
-  @@ignore_restriction_errors = false
+  @@ignore_restriction_errors = defined?(Rails) ? !Rails.env.test? : false
 
   # Setup method for plugin configuration
   def self.setup

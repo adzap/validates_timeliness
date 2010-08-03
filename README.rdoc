@@ -128,20 +128,16 @@ The value should be an array of 3 values being year, month and day in that order
 === TEMPORAL RESTRICTION ERRORS:
 
 When using the validation temporal restrictions there are times when the restriction
-value itself may be invalid. Normally this will add an error to the model such as
-'restriction :before value was invalid'. These can be annoying if you are using
-procs or methods as restrictions and don't care if they don't evaluate properly
-and you want the validation to complete. In these situations you turn them off.
+option value itself may be invalid. This will add an error to the model such as
+'Error occurred validating birth_date for :before restriction'. These can be annoying
+in development or production as you most likely just want to skip the option if no
+valid value was returned. By default these errors are displayed in Rails test mode.
 
-To turn them off:
+To turn them on/off:
 
   # in the setup block
   config.ignore_restriction_errors = true
 
-A word of warning though, as this may hide issues with the model and make those
-corner cases a little harder to test. In general if you are using procs or
-model methods and you only care when they return  a value, then they should
-return nil in all other situations. Restrictions are skipped if they are nil.
 
 === DISPLAY INVALID VALUES IN DATE/TIME SELECT HELPERS:
 
