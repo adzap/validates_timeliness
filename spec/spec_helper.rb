@@ -25,12 +25,15 @@ LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/../lib/validates_timel
 I18n.load_path.unshift(LOCALE_PATH)
 
 class Person
+  include ActiveModel::AttributeMethods
   include ActiveModel::Validations
   extend  ActiveModel::Translation
 
   attr_accessor :birth_date, :birth_time, :birth_datetime
+  attr_accessor :attributes
 
   def initialize(attributes = {})
+    @attributes = {}
     attributes.each do |key, value|
       send "#{key}=", value
     end

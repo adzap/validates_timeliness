@@ -20,5 +20,15 @@ module ValidatesTimeliness
         validates_with Validator, _merge_attributes(attr_names).merge(:type => :datetime)
       end
     end
+
+    module ClassMethods
+      def timeliness_validated_attributes
+        @timeliness_validated_attributes ||= begin
+          _validators.map do |attr_name, validators|
+            attr_name.to_s if validators.any? {|v| v.is_a?(ValidatesTimeliness::Validator) }
+          end.compact
+        end
+      end
+    end
   end
 end

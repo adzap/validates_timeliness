@@ -29,13 +29,17 @@ module ValidatesTimeliness
   # Setup method for plugin configuration
   def self.setup
     yield self
-    extend_classes.each {|klass| klass.send(:include, ValidatesTimeliness::HelperMethods) }
+    extend_classes.each {|klass|
+      klass.send(:include, ValidatesTimeliness::HelperMethods)
+      klass.send(:include, ValidatesTimeliness::AttributeMethods)
+    }
   end
 end
 
 require 'validates_timeliness/conversion'
 require 'validates_timeliness/validator'
 require 'validates_timeliness/helper_methods'
+require 'validates_timeliness/attribute_methods'
 require 'validates_timeliness/extensions'
 require 'validates_timeliness/version'
 
