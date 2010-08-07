@@ -13,6 +13,12 @@ describe ValidatesTimeliness::HelperMethods do
     ActiveRecord::Base.instance_methods.should include('validates_datetime')
   end
 
+  it 'should validate instance when validation method called' do
+    r = Employee.new
+    r.validates_date :birth_date
+    r.errors[:birth_date].should_not be_empty
+  end
+
   describe ".timeliness_validated_attributes" do
     it 'should return attributes validated with plugin validator' do
       Person.validates_date :birth_date
