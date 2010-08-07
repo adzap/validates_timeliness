@@ -56,14 +56,14 @@ To validate a model with a date, time or datetime attribute you just use the
 validation method
 
   class Person < ActiveRecord::Base
-    validates_date :date_of_birth
+    validates_date :date_of_birth, :on_or_before => lambda { Date.today }
     # or
-    validates :date_of_birth, :timeliness => {:type => date}
+    validates :date_of_birth, :timeliness => {:on_or_before => lambda { Date.today }, :type => date}
   end
 
   # or even on a specific record, per ActiveModel API.
 
-  @person.validates_date :date_of_birth
+  @person.validates_date :date_of_birth, :on_or_before => lambda { Date.today }
 
 
 The list of validation methods available are as follows:
