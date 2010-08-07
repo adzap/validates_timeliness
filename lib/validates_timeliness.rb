@@ -26,6 +26,13 @@ module ValidatesTimeliness
   mattr_accessor :ignore_restriction_errors
   @@ignore_restriction_errors = defined?(Rails) ? !Rails.env.test? : false
 
+  # Shorthand time and date symbols for restrictions
+  mattr_accessor :restriction_shorthand_symbols
+  @@restriction_shorthand_symbols = {
+    :now   => lambda { Time.now },
+    :today => lambda { Date.today }
+  }
+
   # Setup method for plugin configuration
   def self.setup
     yield self

@@ -112,6 +112,26 @@ Using the I18n system to define new defaults:
 The %{restriction} signifies where the interpolation value for the restriction will be inserted.
 
 
+=== RESTRICTION OPTION SHORTHAND
+
+It is common to restrict an attribute to being on or before the current time or current day. 
+To specify this you need to use a lambda as an option value e.g. <tt>lambda { Time.now }</tt>.
+This can be tedious noise amongst your validations for something so common. To combat this the
+plugin allows you to use shorthand symbols for often used relative times or dates.
+
+Just provide the symbol as the option value like so:
+
+  validates_date :birth_date, :on_or_before => :today
+
+The :today symbol is evaluated as <tt>lambda { Date.today }.call</tt>. The :now and :today
+symbols are pre-configured. Configure your own like so:
+
+  # in the setup block
+  config.restriction_shorthand_symbols.update(
+    :yesterday => lambda { 1.day.ago }
+  )
+
+
 === DUMMY DATE FOR TIME TYPES
 
 Given that Ruby has no support for a time-only type, all time type columns are evaluated

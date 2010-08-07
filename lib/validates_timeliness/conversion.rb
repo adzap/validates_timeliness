@@ -31,13 +31,21 @@ module ValidatesTimeliness
       when String
         value.to_time(:local)
       when Symbol
-        evaluate_option_value(record.send(value), record)
+        if !record.respond_to?(value) && restriction_shorthand?(value)
+          ValidatesTimeliness.restriction_shorthand_symbols[value].call
+        else
+          evaluate_option_value(record.send(value), record)
+        end
       when Proc
         result = value.arity > 0 ? value.call(record) : value.call
         evaluate_option_value(result, record)
       else
         value
       end
+    end
+
+    def restriction_shorthand?(symbol)
+      ValidatesTimeliness.restriction_shorthand_symbols.keys.include?(symbol)
     end
 
   end

@@ -150,5 +150,25 @@ describe ValidatesTimeliness::Conversion do
       person.birth_time = value
       evaluate_option_value(:birth_time, person).should == Time.mktime(2010,1,1,12,0,0)
     end
+
+    context "restriction shorthand" do
+      before do
+        Timecop.freeze(Time.mktime(2010, 1, 1, 0, 0, 0))
+      end
+
+      it 'should evaluate :now as current time' do
+        evaluate_option_value(:now, person).should == Time.now
+      end
+
+      it 'should evaluate :today as current time' do
+        evaluate_option_value(:today, person).should == Date.today
+      end
+
+      it 'should not use shorthand if symbol if is record method' do
+        time = 1.day.from_now
+        person.stub!(:now).and_return(time)
+        evaluate_option_value(:now, person).should == time
+      end
+    end
   end
 end
