@@ -14,6 +14,6 @@ ValidatesTimeliness.setup do |config|
   # Handle multiparameter date/time values strictly
   # config.enable_multiparameter_extension!
   #
-  # Shorthand time and date symbols for restrictions
+  # Shorthand date and time symbols for restrictions
   # config.restriction_shorthand_symbols.update()
 end
