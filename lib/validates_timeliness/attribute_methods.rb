@@ -3,7 +3,9 @@ module ValidatesTimeliness
     extend ActiveSupport::Concern
 
     included do
-      attribute_method_suffix "_before_type_cast"
+      if attribute_method_matchers.any? {|m| m.suffix == "_before_type_cast" && m.prefix.blank? }
+        extend BeforeTypeCastMethods
+      end
     end
 
     module ClassMethods
@@ -25,6 +27,10 @@ module ValidatesTimeliness
         end
       end
 
+    end
+
+    module BeforeTypeCastMethods
+
       def define_method_attribute_before_type_cast(attr_name)
         if timeliness_validated_attributes.include?(attr_name)
           method_body, line = <<-EOV, __LINE__ + 1
@@ -39,5 +45,6 @@ module ValidatesTimeliness
       end
 
     end
+
   end
 end
