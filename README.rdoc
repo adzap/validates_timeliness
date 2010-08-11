@@ -17,7 +17,7 @@ Validate dates, times and datetimes for Rails 3.x and ActiveModel.
 
 * Supports I18n for the error messages
 
-* Adds before_type_cast method on validated attributes 
+* Adds before_type_cast method on validated attributes, if ORM supports it.
 
 == Installation:
 
