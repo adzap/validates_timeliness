@@ -111,8 +111,6 @@ describe ValidatesTimeliness::Validator do
   end
 
   describe "#format_error_value" do
-    let(:validator) { ValidatesTimeliness::Validator.new(:attributes => [:birth_date], :type => :date) }
-
     describe "default" do
       it 'should format date error value as yyyy-mm-dd' do
         validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_date], :type => :date)
