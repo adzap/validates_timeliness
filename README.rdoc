@@ -38,16 +38,17 @@ Then run
   
   rails generate validates_timeliness:install
 
-This creates configuration initializer and locale files. In the initializer, you need to uncomment the extend_classes setting like so
+This creates configuration initializer and locale files. In the initializer, you there are a number of config options to customize the plugin.
 
   ValidatesTimeliness.setup do |config|
 
-    config.extend_classes = [ ActiveRecord::Base ]
+    # Add validation helpers to these classes
+    # config.extend_classes = [ ActiveRecord::Base ]
 
   end
 
-This adds the validation helper methods to ActiveRecord. Replace it with the ORM of your choosing.
-As long as it supports ActiveModel it should work.
+By default the plugin extends ActiveRecord if present. If you are using one or more other ORMs, you need to add them to this config option array.
+As long as the ORM supports ActiveModel it should work.
 
 
 == Usage:

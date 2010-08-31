@@ -17,7 +17,7 @@ module ValidatesTimeliness
 
   # Add validation helpers to these classes
   mattr_accessor :extend_classes
-  @@extend_classes = []
+  @@extend_classes = [ defined?(ActiveRecord) && ActiveRecord::Base ].compact
 
   # Set the dummy date part for a time type values.
   mattr_accessor :dummy_date_for_time_type
