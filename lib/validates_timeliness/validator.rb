@@ -21,7 +21,7 @@ module ValidatesTimeliness
     def initialize(options)
       @allow_nil, @allow_blank = options.delete(:allow_nil), options.delete(:allow_blank)
       @type = options.delete(:type) || :datetime
-      @check_restrictions = RESTRICTIONS.keys & options.keys
+      @restrictions_to_check = RESTRICTIONS.keys & options.keys
 
       if range = options.delete(:between)
         raise ArgumentError, ":between must be a Range or an Array" unless range.is_a?(Range) || range.is_a?(Array)
@@ -41,7 +41,7 @@ module ValidatesTimeliness
 
       return record.errors.add(attr_name, :"invalid_#{@type}") if value.blank?
 
-      @check_restrictions.each do |restriction|
+      @restrictions_to_check.each do |restriction|
         begin
           restriction_value = type_cast(evaluate_option_value(options[restriction], record))
           unless value.send(RESTRICTIONS[restriction], restriction_value)
