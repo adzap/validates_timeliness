@@ -45,7 +45,7 @@ module ValidatesTimeliness
         begin
           restriction_value = type_cast(evaluate_option_value(options[restriction], record))
           unless value.send(RESTRICTIONS[restriction], restriction_value)
-            return record.errors.add(attr_name, restriction, :restriction => format_error_value(restriction_value))
+            return record.errors.add(attr_name, restriction, :message => options[:"#{restriction}_message"], :restriction => format_error_value(restriction_value))
           end
         rescue => e
           unless ValidatesTimeliness.ignore_restriction_errors

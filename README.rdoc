@@ -90,6 +90,17 @@ Regular validation options:
   :if           - Execute validation when :if evaluates true
   :unless       - Execute validation when :unless evaluates false
 
+The temporal restrictions can take 4 different value types:
+
+* String value
+* Date, Time, or DateTime object value
+* Proc or lambda object which may take an optional parameter, being the record object
+* A symbol matching a method name in the model
+
+When an attribute value is compared to temporal restrictions, they are compared as
+the same type as the validation method type. So using validates_date means all
+values are compared as dates.
+
 
 == Configuration
 
@@ -110,6 +121,21 @@ Using the I18n system to define new defaults:
         on_or_after: "must be on or after %{restriction}"
 
 The %{restriction} signifies where the interpolation value for the restriction will be inserted.
+
+You can also use validation options for custom error messages. The following option keys are available:
+
+    :invalid_date_message
+    :invalid_time_message
+    :invalid_datetime_message
+    :is_at_message
+    :before_message
+    :on_or_before_message
+    :after_message
+    :on_or_after_message
+
+    * There is no :between_message option. The between error message should be defined using the :on_or_before and :on_or_after messages.
+
+However, it is highly recommended you use the I18n system for error messages.
 
 
 === Restriction Option Shorthand
