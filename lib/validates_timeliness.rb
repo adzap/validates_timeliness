@@ -13,6 +13,7 @@ require 'active_support/core_ext/date_time/conversions'
 require 'active_support/core_ext/date_time/zones'
 
 module ValidatesTimeliness
+  autoload :VERSION, 'validates_timeliness/version'
 
   # Add validation helpers to these classes
   mattr_accessor :extend_classes
@@ -48,4 +49,3 @@ require 'validates_timeliness/validator'
 require 'validates_timeliness/helper_methods'
 require 'validates_timeliness/attribute_methods'
 require 'validates_timeliness/extensions'
-require 'validates_timeliness/version'
