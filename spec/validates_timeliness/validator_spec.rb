@@ -35,7 +35,7 @@ describe ValidatesTimeliness::Validator do
     Person.validates_date :birth_date, :allow_nil => true
     record = Person.new
     record.stub!(:birth_date).and_return(nil)
-    record.stub!(:birth_date_before_type_cast).and_return("Not a date")
+    record.stub!(:_timeliness_raw_value_for).and_return("Not a date")
     record.should_not be_valid
     record.errors[:birth_date].first.should == 'is not a valid date'
   end
