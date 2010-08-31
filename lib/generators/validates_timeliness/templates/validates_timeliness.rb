@@ -15,5 +15,8 @@ ValidatesTimeliness.setup do |config|
   # config.enable_multiparameter_extension!
   #
   # Shorthand date and time symbols for restrictions
-  # config.restriction_shorthand_symbols.update()
+  # config.restriction_shorthand_symbols.update(
+  #   :now   => lambda { Time.now },
+  #   :today => lambda { Date.today }
+  # )
 end
