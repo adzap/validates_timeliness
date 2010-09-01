@@ -48,7 +48,7 @@ This creates configuration initializer and locale files. In the initializer, you
   end
 
 By default the plugin extends ActiveRecord if present. If you are using one or more other ORMs, you need to add them to this config option array.
-As long as the ORM supports ActiveModel it should work.
+As long as the ORM supports ActiveModel validations, it should work.
 
 
 == Usage:
