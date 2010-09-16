@@ -1,5 +1,4 @@
 require 'date'
-require 'active_support/time_with_zone'
 require 'active_support/core_ext/hash/except'
 require 'active_support/core_ext/string/conversions'
 require 'active_support/core_ext/date/acts_like'
