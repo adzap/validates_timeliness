@@ -139,9 +139,9 @@ You can also use validation options for custom error messages. The following opt
     :after_message
     :on_or_after_message
 
-    * There is no :between_message option. The between error message should be defined using the :on_or_before and :on_or_after messages.
+Note: There is no :between_message option. The between error message should be defined using the :on_or_before and :on_or_after messages.
 
-However, it is highly recommended you use the I18n system for error messages.
+It is highly recommended you use the I18n system for error messages.
 
 
 === Restriction Option Shorthand
