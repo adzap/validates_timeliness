@@ -41,13 +41,14 @@ module ValidatesTimeliness
       raw_value = attribute_raw_value(record, attr_name) || value
       return if (@allow_nil && raw_value.nil?) || (@allow_blank && raw_value.blank?)
 
+      timezone_aware = record.class.timeliness_attribute_timezone_aware?(attr_name)
       value = type_cast(value)
 
       return record.errors.add(attr_name, :"invalid_#{@type}") if value.blank?
 
       @restrictions_to_check.each do |restriction|
         begin
-          restriction_value = type_cast(evaluate_option_value(options[restriction], record))
+          restriction_value = type_cast(evaluate_option_value(options[restriction], record, timezone_aware))
           unless value.send(RESTRICTIONS[restriction], restriction_value)
             return record.errors.add(attr_name, restriction, :message => options[:"#{restriction}_message"], :restriction => format_error_value(restriction_value))
           end

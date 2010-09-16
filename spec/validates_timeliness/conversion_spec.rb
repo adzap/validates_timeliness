@@ -24,64 +24,49 @@ describe ValidatesTimeliness::Conversion do
 
     describe "for time type" do
       it "should return same value for time value matching dummy date part" do
-        type_cast_value(Time.mktime(2000, 1, 1, 0, 0, 0), :time).should == Time.mktime(2000, 1, 1, 0, 0, 0)
+        type_cast_value(Time.utc(2000, 1, 1, 0, 0, 0), :time).should == Time.utc(2000, 1, 1, 0, 0, 0)
       end
 
       it "should return dummy time value with same time part for time value with different date" do
-        type_cast_value(Time.mktime(2010, 1, 1, 0, 0, 0), :time).should == Time.mktime(2000, 1, 1, 0, 0, 0)
+        type_cast_value(Time.utc(2010, 1, 1, 0, 0, 0), :time).should == Time.utc(2000, 1, 1, 0, 0, 0)
       end
 
       it "should return dummy time only for date value" do
-        type_cast_value(Date.new(2010, 1, 1), :time).should == Time.mktime(2000, 1, 1, 0, 0, 0)
+        type_cast_value(Date.new(2010, 1, 1), :time).should == Time.utc(2000, 1, 1, 0, 0, 0)
       end
 
-      it "should return dummy date with shifted local time for UTC datetime value" do
-        type_cast_value(DateTime.new(2010, 1, 1, 12, 34, 56), :time).should == Time.mktime(2000, 1, 1, 23, 34, 56)
-      end
-
-      it "should return dummy date with time part for local datetime value" do
-        type_cast_value(DateTime.civil_from_format(:local, 2010, 1, 1, 12, 34, 56), :time).should == Time.mktime(2000, 1, 1, 12, 34, 56)
+      it "should return dummy date with time part for datetime value" do
+        type_cast_value(DateTime.civil_from_format(:utc, 2010, 1, 1, 12, 34, 56), :time).should == Time.utc(2000, 1, 1, 12, 34, 56)
       end
     end
 
     describe "for datetime type" do
-      it "should return time in local offset for date value" do
+      it "should return Date as Time value" do
         type_cast_value(Date.new(2010, 1, 1), :datetime).should == Time.local_time(2010, 1, 1, 0, 0, 0)
       end
 
-      it "should return same value for same time value in local offset" do
-        type_cast_value(Time.local_time(2010, 1, 1, 12, 34, 56), :datetime).should == Time.local_time(2010, 1, 1, 12, 34, 56)
+      it "should return same Time value" do
+        value = Time.utc(2010, 1, 1, 12, 34, 56)
+        type_cast_value(Time.utc(2010, 1, 1, 12, 34, 56), :datetime).should == value
       end
 
-      it "should return shifted local time value for UTC time value" do
-        type_cast_value(Time.utc(2010, 1, 1, 12, 34, 56), :datetime).should == Time.local_time(2010, 1, 1, 23, 34, 56)
-      end
-
-      it "should return shifted local time value for UTC datetime value" do
-        type_cast_value(DateTime.new(2010, 1, 1, 12, 34, 56), :datetime).should == Time.local_time(2010, 1, 1, 23, 34, 56)
-      end
-
-      it "should return time value with same component values for local datetime value" do
-        type_cast_value(DateTime.civil_from_format(:local, 2010, 1, 1, 12, 34, 56), :datetime).should == Time.local_time(2010, 1, 1, 12, 34, 56)
+      it "should return as Time with same component values" do
+        type_cast_value(DateTime.civil_from_format(:utc, 2010, 1, 1, 12, 34, 56), :datetime).should == Time.utc(2010, 1, 1, 12, 34, 56)
       end
     end
   end
 
   describe "#dummy_time" do
-    it 'should return dummy date with shifted local time part for UTC time value' do
-      dummy_time(Time.utc(2010, 11, 22, 12, 34, 56)).should == Time.local_time(2000, 1, 1, 23, 34, 56)
+    it 'should return Time with dummy date values but same time components' do
+      dummy_time(Time.utc(2010, 11, 22, 12, 34, 56)).should == Time.utc(2000, 1, 1, 12, 34, 56)
     end
 
-    it 'should return dummy date with same time part part for local time value with non-dummy date' do
-      dummy_time(Time.local_time(2010, 11, 22, 12, 34, 56)).should == Time.local_time(2000, 1, 1, 12, 34, 56)
+    it 'should return same value for Time which already has dummy date values' do
+      dummy_time(Time.utc(2000, 1, 1, 12, 34, 56)).should == Time.utc(2000, 1, 1, 12, 34, 56)
     end
 
-    it 'should return same value for local time with dummy date' do
-      dummy_time(Time.local_time(2000, 1, 1, 12, 34, 56)).should == Time.local_time(2000, 1, 1, 12, 34, 56)
-    end
-
-    it 'should return exact dummy time value for date value' do
-      dummy_time(Date.new(2010, 11, 22)).should == Time.mktime(2000, 1, 1, 0, 0, 0)
+    it 'should return base dummy time value for Date value' do
+      dummy_time(Date.new(2010, 11, 22)).should == Time.utc(2000, 1, 1, 0, 0, 0)
     end
 
     describe "with custom dummy date" do
@@ -91,7 +76,7 @@ describe ValidatesTimeliness::Conversion do
       end
 
       it 'should return dummy time with custom dummy date' do
-        dummy_time(Time.local_time(1999, 11, 22, 12, 34, 56)).should == Time.local_time(2010, 1, 1, 12, 34, 56)
+        dummy_time(Time.utc(1999, 11, 22, 12, 34, 56)).should == Time.utc(2010, 1, 1, 12, 34, 56)
       end
 
       after(:all) do
@@ -118,11 +103,6 @@ describe ValidatesTimeliness::Conversion do
       evaluate_option_value(value, person).should == value
     end
 
-    it 'should return local Time value from string time value' do
-      value = '2010-01-01 12:00:00'
-      evaluate_option_value(value, person).should == Time.mktime(2010,1,1,12,0,0)
-    end
-
     it 'should return Time value returned from proc with 0 arity' do
       value = Time.mktime(2010,1,1)
       evaluate_option_value(lambda { value }, person).should == value
@@ -134,21 +114,37 @@ describe ValidatesTimeliness::Conversion do
       evaluate_option_value(lambda {|r| r.birth_time }, person).should == value
     end
 
-    it 'should return Time value from proc which returns string time' do
-      value = '2010-01-01 12:00:00'
-      evaluate_option_value(lambda { value }, person).should == Time.mktime(2010,1,1,12,0,0)
-    end
-
     it 'should return Time value for attribute method symbol which returns Time' do
       value = Time.mktime(2010,1,1)
       person.birth_time = value
       evaluate_option_value(:birth_time, person).should == value
     end
 
-    it 'should return Time value for attribute method symbol which returns string time value' do
+    it 'should return Time value is default zone from string time value' do
+      value = '2010-01-01 12:00:00'
+      evaluate_option_value(value, person).should == Time.utc(2010,1,1,12,0,0)
+    end
+
+    it 'should return Time value is current zone from string time value if timezone aware' do
+      value = '2010-01-01 12:00:00'
+      evaluate_option_value(value, person, true).should == Time.zone.local(2010,1,1,12,0,0)
+    end
+
+    it 'should return Time value in default zone from proc which returns string time' do
+      value = '2010-01-01 12:00:00'
+      evaluate_option_value(lambda { value }, person).should == Time.utc(2010,1,1,12,0,0)
+    end
+
+    it 'should return Time value in default zone for attribute method symbol which returns string time value' do
       value = '2010-01-01 12:00:00'
       person.birth_time = value
-      evaluate_option_value(:birth_time, person).should == Time.mktime(2010,1,1,12,0,0)
+      evaluate_option_value(:birth_time, person).should == Time.utc(2010,1,1,12,0,0)
+    end
+
+    it 'should return Time value in current zone attribute method symbol which returns string time value if timezone aware' do
+      value = '2010-01-01 12:00:00'
+      person.birth_time = value
+      evaluate_option_value(:birth_time, person, true).should == Time.zone.local(2010,1,1,12,0,0)
     end
 
     context "restriction shorthand" do

@@ -4,13 +4,10 @@ require 'active_support/core_ext/hash/except'
 require 'active_support/core_ext/string/conversions'
 require 'active_support/core_ext/date/acts_like'
 require 'active_support/core_ext/date/conversions'
-require 'active_support/core_ext/date/zones'
 require 'active_support/core_ext/time/acts_like'
 require 'active_support/core_ext/time/conversions'
-require 'active_support/core_ext/time/zones'
 require 'active_support/core_ext/date_time/acts_like'
 require 'active_support/core_ext/date_time/conversions'
-require 'active_support/core_ext/date_time/zones'
 
 module ValidatesTimeliness
   autoload :VERSION, 'validates_timeliness/version'
@@ -18,6 +15,14 @@ module ValidatesTimeliness
   # Add plugin to supported ORMs (only :active_record for now)
   mattr_accessor :extend_orms
   @@extend_orms = [ defined?(ActiveRecord) && :active_record ].compact
+
+  # User the plugin date/time parser which is stricter and extendable
+  mattr_accessor :use_plugin_parser
+  @@use_plugin_parser = false
+
+  # Default timezone
+  mattr_accessor :default_timezone
+  @@default_timezone = defined?(ActiveRecord) ? ActiveRecord::Base.default_timezone : :utc
 
   # Set the dummy date part for a time type values.
   mattr_accessor :dummy_date_for_time_type
@@ -41,6 +46,7 @@ module ValidatesTimeliness
   end
 end
 
+require 'validates_timeliness/parser'
 require 'validates_timeliness/conversion'
 require 'validates_timeliness/validator'
 require 'validates_timeliness/helper_methods'

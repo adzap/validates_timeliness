@@ -8,7 +8,7 @@ module ValidatesTimeliness
       when :date
         value.to_date
       when :datetime
-        value.to_time.in_time_zone
+        value.to_time
       end
     rescue
       nil
@@ -16,29 +16,34 @@ module ValidatesTimeliness
 
     def dummy_time(value)
       time = if value.acts_like?(:time)
-        value = value.in_time_zone
         [value.hour, value.min, value.sec]
       else
         [0,0,0]
       end
-      Time.local(*(ValidatesTimeliness.dummy_date_for_time_type + time))
+      Time.send(ValidatesTimeliness.default_timezone, *(ValidatesTimeliness.dummy_date_for_time_type + time))
     end
 
-    def evaluate_option_value(value, record)
+    def evaluate_option_value(value, record, timezone_aware=false)
       case value
-      when Time, Date
+      when Time
+        timezone_aware ? value.in_time_zone : value
+      when Date
         value
       when String
-        value.to_time(:local)
+        if ValidatesTimeliness.use_plugin_parser
+          ValidatesTimeliness::Parser.parse(value, :datetime, :timezone_aware => timezone_aware, :strict => false)
+        else
+          timezone_aware ? Time.zone.parse(value) : value.to_time(ValidatesTimeliness.default_timezone)
+        end
       when Symbol
         if !record.respond_to?(value) && restriction_shorthand?(value)
           ValidatesTimeliness.restriction_shorthand_symbols[value].call
         else
-          evaluate_option_value(record.send(value), record)
+          evaluate_option_value(record.send(value), record, timezone_aware)
         end
       when Proc
         result = value.arity > 0 ? value.call(record) : value.call
-        evaluate_option_value(result, record)
+        evaluate_option_value(result, record, timezone_aware)
       else
         value
       end

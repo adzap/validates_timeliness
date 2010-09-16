@@ -1,6 +1,3 @@
-$:.unshift(File.dirname(__FILE__) + '/../lib')
-$:.unshift(File.dirname(__FILE__))
-
 require 'rspec'
 require 'rspec/autorun'
 
@@ -19,6 +16,7 @@ ValidatesTimeliness.setup do |c|
   c.extend_orms = [ :active_record ]
   c.enable_date_time_select_extension!
   c.enable_multiparameter_extension!
+  c.default_timezone = :utc
 end
 
 Time.zone = 'Australia/Melbourne'
