@@ -18,9 +18,13 @@ module ValidatesTimeliness
       :timeliness
     end
 
+    def setup(klass)
+      @klass = klass
+    end
+
     def initialize(options)
-      @allow_nil, @allow_blank = options.delete(:allow_nil), options.delete(:allow_blank)
       @type = options.delete(:type) || :datetime
+      @allow_nil, @allow_blank = options.delete(:allow_nil), options.delete(:allow_blank)
       @restrictions_to_check = RESTRICTIONS.keys & options.keys
 
       if range = options.delete(:between)

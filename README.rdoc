@@ -42,13 +42,18 @@ This creates configuration initializer and locale files. In the initializer, you
 
   ValidatesTimeliness.setup do |config|
 
-    # Add validation helpers to these classes
-    # config.extend_classes = [ ActiveRecord::Base ]
+    # Add plugin to supported ORMs (only :active_record for now)
+    # config.extend_orms = [ :active_record ]
 
   end
 
-By default the plugin extends ActiveRecord if present. If you are using one or more other ORMs, you need to add them to this config option array.
-As long as the ORM supports ActiveModel validations, it should work.
+By default the plugin extends ActiveRecord if present. Currently ActiveRecord is the only ORM included for extension. If you wish to extend
+another ORM then look at the shim for ActiveRecord to see how to setup the hooks.
+http://github.com/adzap/validates_timeliness/tree/master/lib/validates_timeliness/orms/active_record.rb
+
+To extend other ORMs is pretty straight forward. It matter of hooking into a couple of methods, being the attribute method generation and 
+timezone handling of validated attributes. However, the plugin must support the ActiveModel validations system. If you extend an ORM 
+successfully, please send me a pull request to add the shim to the plugin or let me know where to find it.
 
 
 == Usage:

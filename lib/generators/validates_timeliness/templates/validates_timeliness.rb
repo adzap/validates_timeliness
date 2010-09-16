@@ -1,6 +1,6 @@
 ValidatesTimeliness.setup do |config|
-  # Add validation helpers to these classes
-  # config.extend_classes = [ ActiveRecord::Base ]
+  # Add plugin to supported ORMs (only :active_record for now)
+  # config.extend_orms = [ :active_record ]
   #
   # Set the dummy date part for a time type values.
   # config.dummy_date_for_time_type = [ 2000, 1, 1 ]

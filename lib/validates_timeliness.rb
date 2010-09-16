@@ -15,9 +15,9 @@ require 'active_support/core_ext/date_time/zones'
 module ValidatesTimeliness
   autoload :VERSION, 'validates_timeliness/version'
 
-  # Add validation helpers to these classes
-  mattr_accessor :extend_classes
-  @@extend_classes = [ defined?(ActiveRecord) && ActiveRecord::Base ].compact
+  # Add plugin to supported ORMs (only :active_record for now)
+  mattr_accessor :extend_orms
+  @@extend_orms = [ defined?(ActiveRecord) && :active_record ].compact
 
   # Set the dummy date part for a time type values.
   mattr_accessor :dummy_date_for_time_type
@@ -37,10 +37,7 @@ module ValidatesTimeliness
   # Setup method for plugin configuration
   def self.setup
     yield self
-    extend_classes.each {|klass|
-      klass.send(:include, ValidatesTimeliness::HelperMethods)
-      klass.send(:include, ValidatesTimeliness::AttributeMethods)
-    }
+    extend_orms.each {|orm| require "validates_timeliness/orms/#{orm}" }
   end
 end
 

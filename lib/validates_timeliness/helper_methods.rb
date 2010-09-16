@@ -5,30 +5,37 @@ module ValidatesTimeliness
     included do
       include ValidationMethods
       extend ValidationMethods
+      class_inheritable_accessor :timeliness_validated_attributes
+      self.timeliness_validated_attributes = {}
     end
 
     module ValidationMethods
+      def validates_timeliness_of(*attr_names)
+        options = _merge_attributes(attr_names)
+        attributes = options[:attributes].inject({}) {|validated, attr_name|
+          attr_name = attr_name.to_s
+          validated[attr_name] = options[:type]
+          validated
+        }
+        timeliness_validated_attributes.update(attributes)
+        validates_with Validator, options
+      end
+
       def validates_date(*attr_names)
-        validates_with Validator, _merge_attributes(attr_names).merge(:type => :date)
+        options = attr_names.extract_options!
+        validates_timeliness_of *(attr_names << options.merge(:type => :date))
       end
 
       def validates_time(*attr_names)
-        validates_with Validator, _merge_attributes(attr_names).merge(:type => :time)
+        options = attr_names.extract_options!
+        validates_timeliness_of *(attr_names << options.merge(:type => :time))
       end
 
       def validates_datetime(*attr_names)
-        validates_with Validator, _merge_attributes(attr_names).merge(:type => :datetime)
+        options = attr_names.extract_options!
+        validates_timeliness_of *(attr_names << options.merge(:type => :datetime))
       end
-    end
 
-    module ClassMethods
-      def timeliness_validated_attributes
-        @timeliness_validated_attributes ||= begin
-          _validators.map do |attr_name, validators|
-            attr_name.to_s if validators.any? {|v| v.is_a?(ValidatesTimeliness::Validator) }
-          end.compact
-        end
-      end
     end
   end
 end
