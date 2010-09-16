@@ -18,10 +18,6 @@ module ValidatesTimeliness
       :timeliness
     end
 
-    def setup(klass)
-      @klass = klass
-    end
-
     def initialize(options)
       @type = options.delete(:type) || :datetime
       @allow_nil, @allow_blank = options.delete(:allow_nil), options.delete(:allow_blank)
@@ -32,9 +28,6 @@ module ValidatesTimeliness
         options[:on_or_after], options[:on_or_before] = range.first, range.last
       end
       super
-    end
-
-    def check_validity!
     end
 
     def validate_each(record, attr_name, value)
