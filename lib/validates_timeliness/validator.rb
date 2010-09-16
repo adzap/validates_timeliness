@@ -38,17 +38,19 @@ module ValidatesTimeliness
     end
 
     def validate_each(record, attr_name, value)
-      raw_value = attribute_raw_value(record, attr_name) || value
+      raw_value = record._timeliness_raw_value_for(attr_name) || value
       return if (@allow_nil && raw_value.nil?) || (@allow_blank && raw_value.blank?)
 
-      timezone_aware = record.class.timeliness_attribute_timezone_aware?(attr_name)
-      value = type_cast(value)
+      @timezone_aware = record.class.timeliness_attribute_timezone_aware?(attr_name)
+      value = parse(value) if value.is_a?(String)
+      value = type_cast_value(value, @type)
 
       return record.errors.add(attr_name, :"invalid_#{@type}") if value.blank?
 
       @restrictions_to_check.each do |restriction|
         begin
-          restriction_value = type_cast(evaluate_option_value(options[restriction], record, timezone_aware))
+          restriction_value = type_cast_value(evaluate_option_value(options[restriction], record), @type)
+
           unless value.send(RESTRICTIONS[restriction], restriction_value)
             return record.errors.add(attr_name, restriction, :message => options[:"#{restriction}_message"], :restriction => format_error_value(restriction_value))
           end
@@ -60,18 +62,11 @@ module ValidatesTimeliness
       end
     end
 
-    def attribute_raw_value(record, attr_name)
-      record._timeliness_raw_value_for(attr_name)
-    end
-
-    def type_cast(value)
-      type_cast_value(value, @type)
-    end
-
     def format_error_value(value)
       format = I18n.t(@type, :scope => 'validates_timeliness.error_value_formats')
       value.strftime(format)
     end
+
   end
 end
 

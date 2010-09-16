@@ -126,8 +126,9 @@ describe ValidatesTimeliness::Conversion do
     end
 
     it 'should return Time value is current zone from string time value if timezone aware' do
+      @timezone_aware = true
       value = '2010-01-01 12:00:00'
-      evaluate_option_value(value, person, true).should == Time.zone.local(2010,1,1,12,0,0)
+      evaluate_option_value(value, person).should == Time.zone.local(2010,1,1,12,0,0)
     end
 
     it 'should return Time value in default zone from proc which returns string time' do
@@ -142,9 +143,10 @@ describe ValidatesTimeliness::Conversion do
     end
 
     it 'should return Time value in current zone attribute method symbol which returns string time value if timezone aware' do
+      @timezone_aware = true
       value = '2010-01-01 12:00:00'
       person.birth_time = value
-      evaluate_option_value(:birth_time, person, true).should == Time.zone.local(2010,1,1,12,0,0)
+      evaluate_option_value(:birth_time, person).should == Time.zone.local(2010,1,1,12,0,0)
     end
 
     context "restriction shorthand" do
