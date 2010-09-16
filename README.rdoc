@@ -7,6 +7,9 @@
 
 Validate dates, times and datetimes for Rails 3.x and ActiveModel.
 
+If you a looking for the old version for Rails 2.x go here:http://github.com/adzap/validates_timeliness/tree/v2.3.
+
+
 == Features:
 
 * Adds ActiveModel validation for dates, times and datetimes
@@ -19,24 +22,24 @@ Validate dates, times and datetimes for Rails 3.x and ActiveModel.
 
 * Adds before_type_cast method on validated attributes, if ORM supports it.
 
+
 == Installation:
 
 As plugin (from master)
 
-  rails plugin install git://github.com/adzap/validates_timeliness.git -r rails3
+  rails plugin install git://github.com/adzap/validates_timeliness.git
 
 As gem (not working as yet)
 
-  gem install validates_timeliness
-
   # in Gemfile
-
   gem 'validates_timeliness'
 
+  # Run bundler
+  $ bundle install
 
 Then run
   
-  rails generate validates_timeliness:install
+  $ rails generate validates_timeliness:install
 
 This creates configuration initializer and locale files. In the initializer, you there are a number of config options to customize the plugin.
 
@@ -51,7 +54,7 @@ By default the plugin extends ActiveRecord if present. Currently ActiveRecord is
 another ORM then look at the shim for ActiveRecord to see how to setup the hooks.
 http://github.com/adzap/validates_timeliness/tree/master/lib/validates_timeliness/orms/active_record.rb
 
-To extend other ORMs is pretty straight forward. It matter of hooking into a couple of methods, being the attribute method generation and 
+To extend other ORMs is pretty straight forward. It's matter of hooking into a couple of methods, being the attribute method generation and 
 timezone handling of validated attributes. However, the plugin must support the ActiveModel validations system. If you extend an ORM 
 successfully, please send me a pull request to add the shim to the plugin or let me know where to find it.
 
@@ -144,6 +147,20 @@ Note: There is no :between_message option. The between error message should be d
 It is highly recommended you use the I18n system for error messages.
 
 
+=== Plugin date/time parser
+
+The plugin comes with a customisable date and time parser. You can add or remove valid formats
+for dates, times, and datetimes. It is also more strict than the Ruby parser, which means it 
+won't accept day of the month if it's not a valid number for that month.
+
+By default the parser is switched off. To switch it on:
+
+  # in the setup block
+  config.use_plugin_parser = true
+
+See the wiki:http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser for all the details about the parser.
+
+
 === Restriction Option Shorthand
 
 It is common to restrict an attribute to being on or before the current time or current day. 
@@ -216,9 +233,6 @@ To activate it, put this in an initializer:
 
   # in the setup block
   config.enable_multiparameter_extension!
-
-
-...
 
 
 == License:
