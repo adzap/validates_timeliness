@@ -22,7 +22,7 @@ module ValidatesTimeliness
         if self.class.send(:create_time_zone_conversion_attribute?, name, column_for_attribute(name))
           Time.zone.local(*values)
         else
-          Time.time_with_datetime_fallback(@@default_timezone, *values)
+          Time.time_with_datetime_fallback(self.class.default_timezone, *values)
         end
       end
 
