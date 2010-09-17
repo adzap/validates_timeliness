@@ -119,7 +119,7 @@ module ValidatesTimeliness
 
 
     # All tokens available for format construction. The token array is made of
-    # token regexp, validation regexp and key for format proc mapping if any.
+    # validation regexp and key for format proc mapping if any.
     # If the token needs no format proc arg then the validation regexp should
     # not have a capturing group, as all captured groups are passed to the
     # format proc.
@@ -127,27 +127,28 @@ module ValidatesTimeliness
     # The token regexp should only use a capture group if 'look-behind' anchor
     # is required. The first capture group will be considered a literal and put
     # into the validation regexp string as-is. This is a hack.
-    @@format_tokens = [
-      { 'ddd'  => [ /d{3}/, '\w{3,9}' ] },
-      { 'dd'   => [ /d{2}/, '\d{2}',   :day ] },
-      { 'd'    => [ /d/,    '\d{1,2}', :day ] },
-      { 'ampm' => [ /ampm/, '[aApP]\.?[mM]\.?', :meridian ] },
-      { 'mmm'  => [ /m{3}/, '\w{3,9}', :month ] },
-      { 'mm'   => [ /m{2}/, '\d{2}',   :month ] },
-      { 'm'    => [ /m{1}/, '\d{1,2}', :month ] },
-      { 'yyyy' => [ /y{4}/, '\d{4}',   :year ] },
-      { 'yy'   => [ /y{2}/, '\d{4}|\d{2}', :year ] },
-      { 'hh'   => [ /h{2}/, '\d{2}',   :hour ] },
-      { 'h'    => [ /h{1}/, '\d{1,2}', :hour ] },
-      { 'nn'   => [ /n{2}/, '\d{2}',   :min ]  },
-      { 'n'    => [ /n{1}/, '\d{1,2}', :min ] },
-      { 'ss'   => [ /s{2}/, '\d{2}',   :sec ] },
-      { 's'    => [ /s{1}/, '\d{1,2}', :sec ] },
-      { 'u'    => [ /u{1}/, '\d{1,6}', :usec ] },
-      { 'zo'   => [ /zo/,   '[+-]\d{2}:?\d{2}', :offset ] },
-      { 'tz'   => [ /tz/,   '[A-Z]{1,4}' ] },
-      { '_'    => [ /_/,    '\s?' ] }
-    ]
+    #
+    @@format_tokens = {
+      'ddd'  => [ '\w{3,9}' ],
+      'dd'   => [ '\d{2}',   :day ],
+      'd'    => [ '\d{1,2}', :day ],
+      'ampm' => [ '[aApP]\.?[mM]\.?', :meridian ],
+      'mmm'  => [ '\w{3,9}', :month ],
+      'mm'   => [ '\d{2}',   :month ],
+      'm'    => [ '\d{1,2}', :month ],
+      'yyyy' => [ '\d{4}',   :year ],
+      'yy'   => [ '\d{4}|\d{2}', :year ],
+      'hh'   => [ '\d{2}',   :hour ],
+      'h'    => [ '\d{1,2}', :hour ],
+      'nn'   => [ '\d{2}',   :min ],
+      'n'    => [ '\d{1,2}', :min ],
+      'ss'   => [ '\d{2}',   :sec ],
+      's'    => [ '\d{1,2}', :sec ],
+      'u'    => [ '\d{1,6}', :usec ],
+      'zo'   => [ '[+-]\d{2}:?\d{2}', :offset ],
+      'tz'   => [ '[A-Z]{1,4}' ],
+      '_'    => [ '\s?' ]
+    }
 
     # Arguments which will be passed to the format proc if matched in the
     # time string. The key must be the key from the format tokens. The array
@@ -331,9 +332,10 @@ module ValidatesTimeliness
         format.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes
         found_tokens, token_order = [], []
 
-        format_tokens.each do |token|
-          token_regexp, regexp_str, arg_key = *token.values.first
-          if format.gsub!(token_regexp, "%<#{found_tokens.size}>")
+        tokens = format_tokens.keys.sort {|a,b| a.size <=> b.size }.reverse
+        tokens.each do |token|
+          regexp_str, arg_key = *format_tokens[token]
+          if format.gsub!(/#{token}/, "%<#{found_tokens.size}>")
             regexp_str = "(#{regexp_str})" if arg_key
             found_tokens << [regexp_str, arg_key]
           end
