@@ -55,6 +55,14 @@ describe ValidatesTimeliness::Conversion do
       it "should return as Time with same component values" do
         type_cast_value(DateTime.civil_from_format(:utc, 2010, 1, 1, 12, 34, 56), :datetime).should == Time.utc(2010, 1, 1, 12, 34, 56)
       end
+
+      it "should return same Time in correct zone if timezone aware" do
+        @timezone_aware = true
+        value = Time.utc(2010, 1, 1, 12, 34, 56)
+        result = type_cast_value(value, :datetime)
+        result.should == Time.zone.local(2010, 1, 1, 23, 34, 56)
+        result.zone.should == 'EST'
+      end
     end
 
     describe "ignore_usec option" do
@@ -63,6 +71,14 @@ describe ValidatesTimeliness::Conversion do
       it "should ignore usec on time values when evaluated" do
         value = Time.utc(2010, 1, 1, 12, 34, 56, 10000)
         type_cast_value(value, :datetime).should == Time.utc(2010, 1, 1, 12, 34, 56)
+      end
+
+      it "should ignore usec and return time in correct zone if timezone aware" do
+        @timezone_aware = true
+        value = Time.utc(2010, 1, 1, 12, 34, 56, 10000)
+        result = type_cast_value(value, :datetime)
+        result.should == Time.zone.local(2010, 1, 1, 23, 34, 56)
+        result.zone.should == 'EST'
       end
     end
   end
@@ -74,6 +90,11 @@ describe ValidatesTimeliness::Conversion do
 
     it 'should return same value for Time which already has dummy date values' do
       dummy_time(Time.utc(2000, 1, 1, 12, 34, 56)).should == Time.utc(2000, 1, 1, 12, 34, 56)
+    end
+
+    it 'should return time component values shifted to current zone if timezone aware' do
+      @timezone_aware = true
+      dummy_time(Time.utc(2000, 1, 1, 12, 34, 56)).should == Time.zone.local(2000, 1, 1, 23, 34, 56)
     end
 
     it 'should return base dummy time value for Date value' do
