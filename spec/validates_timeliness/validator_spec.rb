@@ -86,6 +86,17 @@ describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe ":ignore_usec option" do
+    it "should not be valid when usec values don't match and option is false" do
+      Person.validates_datetime :birth_datetime, :on_or_before => Time.utc(2010,1,2,3,4,5), :ignore_usec => false
+      invalid!(:birth_datetime, Time.utc(2010,1,2,3,4,5,10000))
+    end
+
+    it "should be valid when usec values dont't match and option is true" do
+      Person.validates_datetime :birth_datetime, :on_or_before => Time.utc(2010,1,2,3,4,5), :ignore_usec => true
+      valid!(:birth_datetime, Time.utc(2010,1,2,3,4,5,10000))
+    end
+  end
   describe "restriction value errors" do
     let(:person) { Person.new(:birth_date => Date.today) }
 

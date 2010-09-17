@@ -13,6 +13,11 @@ module ValidatesTimeliness
       when :datetime
         value.to_time
       end
+      if options[:ignore_usec] && value.is_a?(Time)
+        ValidatesTimeliness::Parser.make_time(Array(value).reverse[4..9])
+      else
+        value
+      end
     end
 
     def dummy_time(value)

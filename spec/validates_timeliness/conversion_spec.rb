@@ -8,6 +8,8 @@ describe ValidatesTimeliness::Conversion do
   end
 
   describe "#type_cast_value" do
+    let(:options) { Hash.new }
+
     describe "for date type" do
       it "should return same value for date value" do
         type_cast_value(Date.new(2010, 1, 1), :date).should == Date.new(2010, 1, 1)
@@ -52,6 +54,15 @@ describe ValidatesTimeliness::Conversion do
 
       it "should return as Time with same component values" do
         type_cast_value(DateTime.civil_from_format(:utc, 2010, 1, 1, 12, 34, 56), :datetime).should == Time.utc(2010, 1, 1, 12, 34, 56)
+      end
+    end
+
+    describe "ignore_usec option" do
+      let(:options) { {:ignore_usec => true} }
+
+      it "should ignore usec on time values when evaluated" do
+        value = Time.utc(2010, 1, 1, 12, 34, 56, 10000)
+        type_cast_value(value, :datetime).should == Time.utc(2010, 1, 1, 12, 34, 56)
       end
     end
   end
