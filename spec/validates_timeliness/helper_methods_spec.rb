@@ -21,8 +21,16 @@ describe ValidatesTimeliness::HelperMethods do
 
   describe ".timeliness_validated_attributes" do
     it 'should return attributes validated with plugin validator' do
+      Person.timeliness_validated_attributes = {}
       Person.validates_date :birth_date
-      Person.timeliness_validated_attributes.should == {"birth_date" => :date}
+      Person.validates_time :birth_time
+      Person.validates_datetime :birth_datetime
+
+      Person.timeliness_validated_attributes.should == {
+        "birth_date" => :date,
+        "birth_time" => :time,
+        "birth_datetime" => :datetime
+      }
     end
   end
 end

@@ -5,7 +5,7 @@ module ValidatesTimeliness
     included do
       include ValidationMethods
       extend ValidationMethods
-      class_inheritable_accessor :timeliness_validated_attributes
+      class_inheritable_hash :timeliness_validated_attributes
       self.timeliness_validated_attributes = {}
     end
 
@@ -17,7 +17,7 @@ module ValidatesTimeliness
           validated[attr_name] = options[:type]
           validated
         }
-        timeliness_validated_attributes.update(attributes)
+        self.timeliness_validated_attributes = attributes
         validates_with Validator, options
       end
 
