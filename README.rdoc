@@ -33,15 +33,15 @@ time string.
 
 As gem
 
-  sudo gem install validates_timeliness
+  gem install validates_timeliness -v '~> 2.3'
 
   # in environment.rb
 
-  config.gem 'validates_timeliness'
+  config.gem 'validates_timeliness', :version => '~> 2.3'
 
 As plugin (from master)
 
-  ./script/plugin install git://github.com/adzap/validates_timeliness.git
+  ./script/plugin install git://github.com/adzap/validates_timeliness.git -r v2.3
 
 == USAGE:
 
