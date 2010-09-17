@@ -51,7 +51,7 @@ This creates configuration initializer and locale files. In the initializer, you
   end
 
 By default the plugin extends ActiveRecord if present. Currently ActiveRecord is the only ORM included for extension. If you wish to extend
-another ORM then look at the wiki for more information[http://github.com/adzap/validates_timeliness/wiki/ORM-Support].
+another ORM then look at the {wiki page}[http://github.com/adzap/validates_timeliness/wiki/ORM-Support] for more information.
 
 To extend other ORMs is pretty straight forward. It's matter of hooking into a couple of methods, being the attribute method generation and 
 timezone handling of validated attributes. However, the plugin must support the ActiveModel validations system. If you extend an ORM 
@@ -98,12 +98,16 @@ Regular validation options:
   :if           - Execute validation when :if evaluates true
   :unless       - Execute validation when :unless evaluates false
 
+Special options:
+  :ignore_usec  - Ignores microsecond value on datetime restrictions
+  :format       - Limit validation to a single format for special cases. Requires plugin parser.
+
 The temporal restrictions can take 4 different value types:
 
-* String value
 * Date, Time, or DateTime object value
 * Proc or lambda object which may take an optional parameter, being the record object
 * A symbol matching a method name in the model
+* String value
 
 When an attribute value is compared to temporal restrictions, they are compared as
 the same type as the validation method type. So using validates_date means all
@@ -157,7 +161,7 @@ By default the parser is switched off. To switch it on:
   # in the setup block
   config.use_plugin_parser = true
 
-See the wiki:http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser for all the details about the parser.
+See the wiki[http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser] for all the details about the parser.
 
 
 === Restriction Option Shorthand
