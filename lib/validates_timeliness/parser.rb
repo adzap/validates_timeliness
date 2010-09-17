@@ -96,6 +96,7 @@ module ValidatesTimeliness
       'm\d\yy',
       'd\m\yy',
       'd-m-yy',
+      'dd-mm-yyyy',
       'd.m.yy',
       'd mmm yy'
     ]
@@ -111,6 +112,9 @@ module ValidatesTimeliness
       'd/m/yy hh:nn:ss',
       'd/m/yy h:nn_ampm',
       'd/m/yy h:nn',
+      'dd-mm-yyyy hh:nn:ss',
+      'dd-mm-yyyy h:nn_ampm',
+      'dd-mm-yyyy h:nn',
       'ddd, dd mmm yyyy hh:nn:ss (zo|tz)', # RFC 822
       'ddd mmm d hh:nn:ss zo yyyy', # Ruby time string
       'yyyy-mm-ddThh:nn:ssZ', # iso 8601 without zone offset
