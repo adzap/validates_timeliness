@@ -56,7 +56,7 @@ module ValidatesTimeliness
 
     def parse(value)
       if ValidatesTimeliness.use_plugin_parser
-        ValidatesTimeliness::Parser.parse(value, @type, :timezone_aware => @timezone_aware, :strict => false)
+        ValidatesTimeliness::Parser.parse(value, @type, :timezone_aware => @timezone_aware, :format => options[:format], :strict => false)
       else
         @timezone_aware ? Time.zone.parse(value) : value.to_time(ValidatesTimeliness.default_timezone)
       end

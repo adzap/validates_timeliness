@@ -97,6 +97,27 @@ describe ValidatesTimeliness::Validator do
       valid!(:birth_datetime, Time.utc(2010,1,2,3,4,5,10000))
     end
   end
+
+  describe ":format option" do
+    before(:all) do
+      ValidatesTimeliness.use_plugin_parser = true
+    end
+
+    it "should be valid when value matches format" do
+      Person.validates_date :birth_date, :format => 'dd-mm-yyyy'
+      valid!(:birth_date, '11-12-1913')
+    end
+
+    it "should not be valid when value does not match format" do
+      Person.validates_date :birth_date, :format => 'dd/mm/yyyy'
+      invalid!(:birth_date, '1913-12-11', 'is not a valid date')
+    end
+
+    after(:all) do
+      ValidatesTimeliness.use_plugin_parser = false
+    end
+  end
+
   describe "restriction value errors" do
     let(:person) { Person.new(:birth_date => Date.today) }
 
