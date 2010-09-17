@@ -7,7 +7,7 @@
 
 Validate dates, times and datetimes for Rails 3.x and ActiveModel.
 
-If you a looking for the old version for Rails 2.x go here:http://github.com/adzap/validates_timeliness/tree/v2.3.
+If you a looking for the old version for Rails 2.x go here:[http://github.com/adzap/validates_timeliness/tree/v2.3].
 
 
 == Features
@@ -51,8 +51,7 @@ This creates configuration initializer and locale files. In the initializer, you
   end
 
 By default the plugin extends ActiveRecord if present. Currently ActiveRecord is the only ORM included for extension. If you wish to extend
-another ORM then look at the shim for ActiveRecord to see how to setup the hooks.
-http://github.com/adzap/validates_timeliness/tree/master/lib/validates_timeliness/orms/active_record.rb
+another ORM then look at the {shim for ActiveRecord}:[http://github.com/adzap/validates_timeliness/tree/master/lib/validates_timeliness/orms/active_record.rb] to see how to setup the hooks.
 
 To extend other ORMs is pretty straight forward. It's matter of hooking into a couple of methods, being the attribute method generation and 
 timezone handling of validated attributes. However, the plugin must support the ActiveModel validations system. If you extend an ORM 
@@ -181,6 +180,18 @@ symbols are pre-configured. Configure your own like so:
   )
 
 
+=== Default Timezone
+
+The plugin needs to know the default timezone you are using when parsing or type casting values. If you are using
+ActiveRecord then the default is automatically set to the same default zone as ActiveRecord. If you are using 
+another ORM you may need to change this setting.
+
+  # in the setup block
+  config.default_timezone = :utc
+
+By default it will be UTC if ActiveRecord is not loaded.
+
+
 === Dummy Date For Time Types
 
 Given that Ruby has no support for a time-only type, all time type columns are evaluated
@@ -222,9 +233,9 @@ To activate it, put this in an initializer:
   config.enable_date_time_select_extension!
 
 
-=== Stricter Parsing for Select Helpers
+=== Strict Parsing for Select Helpers
 
-when using date/time select helpers, the component values are handled by ActiveRecord using
+When using date/time select helpers, the component values are handled by ActiveRecord using
 the Time class to instantiate them into a time value. But this mean that some invalid dates,
 such as 31st June, are shifted forward and treated as valid. To handle these cases in a strict
 way you can enable the plugin handler to treat them as invalid dates.
@@ -233,6 +244,11 @@ To activate it, put this in an initializer:
 
   # in the setup block
   config.enable_multiparameter_extension!
+
+
+== Credits
+
+* Adam Meehan (adam.meehan@gmail.com, http://github.com/adzap)
 
 
 == License
