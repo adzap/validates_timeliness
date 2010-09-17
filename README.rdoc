@@ -7,7 +7,7 @@
 
 Validate dates, times and datetimes for Rails 3.x and ActiveModel.
 
-If you a looking for the old version for Rails 2.x go here:[http://github.com/adzap/validates_timeliness/tree/v2.3].
+If you a looking for the old version for Rails 2.x go here[http://github.com/adzap/validates_timeliness/tree/v2.3].
 
 
 == Features
@@ -51,7 +51,7 @@ This creates configuration initializer and locale files. In the initializer, you
   end
 
 By default the plugin extends ActiveRecord if present. Currently ActiveRecord is the only ORM included for extension. If you wish to extend
-another ORM then look at the {shim for ActiveRecord}:[http://github.com/adzap/validates_timeliness/tree/master/lib/validates_timeliness/orms/active_record.rb] to see how to setup the hooks.
+another ORM then look at the wiki for more information[http://github.com/adzap/validates_timeliness/wiki/ORM-Support].
 
 To extend other ORMs is pretty straight forward. It's matter of hooking into a couple of methods, being the attribute method generation and 
 timezone handling of validated attributes. However, the plugin must support the ActiveModel validations system. If you extend an ORM 
