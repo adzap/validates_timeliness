@@ -29,10 +29,10 @@ As plugin (from master)
 
   rails plugin install git://github.com/adzap/validates_timeliness.git
 
-As gem (not working as yet)
+As gem (in beta)
 
   # in Gemfile
-  gem 'validates_timeliness'
+  gem 'validates_timeliness', '3.0.0.beta'
 
   # Run bundler
   $ bundle install
