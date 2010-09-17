@@ -49,7 +49,11 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-desc "install the gem locally"
+Rake::GemPackageTask.new(spec) do |pkg|
+  pkg.gem_spec = spec
+end
+
+desc "Install the gem locally"
 task :install => [:package] do
   sh %{gem install pkg/#{GEM_NAME}-#{GEM_VERSION}}
 end
