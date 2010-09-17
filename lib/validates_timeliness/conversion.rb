@@ -27,7 +27,7 @@ module ValidatesTimeliness
         [0,0,0]
       end
       values = ValidatesTimeliness.dummy_date_for_time_type + time
-      @timezone_aware ? Time.zone.local(*values) : Time.send(ValidatesTimeliness.default_timezone, *values)
+      ValidatesTimeliness::Parser.make_time(values, @timezone_aware)
     end
 
     def evaluate_option_value(value, record)
