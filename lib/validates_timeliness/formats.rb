@@ -209,6 +209,8 @@ module ValidatesTimeliness
           values[0..2] = dummy_date_for_time_type if type == :time
           return values
         end
+      rescue
+        nil
       end
 
       # Delete formats of specified type. Error raised if format not found.
@@ -255,6 +257,7 @@ module ValidatesTimeliness
         hour = hour.to_i
         return hour if meridian.nil?
         if meridian.delete('.').downcase == 'am'
+          raise if hour == 0 || hour > 12
           hour == 12 ? 0 : hour
         else
           hour == 12 ? hour : hour + 12

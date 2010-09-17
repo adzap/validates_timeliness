@@ -102,6 +102,13 @@ describe ValidatesTimeliness::Formats do
       time_array.should == [2000,1,1,12,13,14,0]
     end
 
+    it "should return nil if time hour is out of range for AM meridian" do
+      time_array = formats.parse('13:14 am', :time, :strict => true)
+      time_array.should == nil
+      time_array = formats.parse('00:14 am', :time, :strict => true)
+      time_array.should == nil
+    end
+
     it "should return date array from time string" do
       time_array = formats.parse('2000-02-01', :date, :strict => true)
       time_array.should == [2000,2,1,0,0,0,0]
