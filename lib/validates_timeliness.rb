@@ -9,6 +9,7 @@ require 'active_support/core_ext/date_time/acts_like'
 require 'active_support/core_ext/date_time/conversions'
 
 module ValidatesTimeliness
+  autoload :Parser,  'validates_timeliness/parser'
   autoload :VERSION, 'validates_timeliness/version'
 
   # Add plugin to supported ORMs (only :active_record for now)
@@ -45,7 +46,6 @@ module ValidatesTimeliness
   end
 end
 
-require 'validates_timeliness/parser'
 require 'validates_timeliness/conversion'
 require 'validates_timeliness/validator'
 require 'validates_timeliness/helper_methods'

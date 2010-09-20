@@ -18,6 +18,7 @@ module ValidatesTimeliness
           def #{attr_name}=(value)
             @attributes_cache ||= {}
             @attributes_cache["_#{attr_name}_before_type_cast"] = value
+            #{ "value = ValidatesTimeliness::Parser.parse(value, :#{type}) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
             super
           end
         EOV

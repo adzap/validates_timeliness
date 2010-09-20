@@ -6,15 +6,42 @@ describe ValidatesTimeliness::AttributeMethods do
   end
   
   context "attribute write method" do
-    class EmployeeCopy < ActiveRecord::Base
+    class EmployeeWithCache < ActiveRecord::Base
       set_table_name 'employees'
       validates_datetime :birth_datetime
     end
 
     it 'should cache attribute raw value' do
-      r = EmployeeCopy.new
+      r = EmployeeWithCache.new
       r.birth_datetime = date_string = '2010-01-01'
       r._timeliness_raw_value_for(:birth_datetime).should == date_string
+    end
+
+    context "with plugin parser" do
+      class EmployeeWithParser < ActiveRecord::Base
+        set_table_name 'employees'
+        validates_datetime :birth_date
+      end
+
+      before :all do
+        ValidatesTimeliness.use_plugin_parser = true
+      end
+
+      it 'should parse a string value' do
+        ValidatesTimeliness::Parser.should_receive(:parse) 
+        r = EmployeeWithParser.new
+        r.birth_date = '2010-01-01'
+      end
+
+      it 'should be strict on day values' do
+        r = EmployeeWithParser.new
+        r.birth_date = '2010-02-31'
+        r.birth_date.should be_nil
+      end
+
+      after :all do
+        ValidatesTimeliness.use_plugin_parser = false
+      end
     end
   end
 
