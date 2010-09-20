@@ -2,12 +2,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{validates_timeliness}
-  s.version = "3.0.0.beta"
+  s.version = "3.0.0.beta.2"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adam Meehan"]
   s.autorequire = %q{validates_timeliness}
-  s.date = %q{2010-09-17}
+  s.date = %q{2010-09-21}
   s.description = %q{Date and time validation plugin for Rails which allows custom formats}
   s.email = %q{adam.meehan@gmail.com}
   s.extra_rdoc_files = ["README.rdoc", "LICENSE", "CHANGELOG"]
