@@ -99,18 +99,28 @@ describe ValidatesTimeliness::Validator do
   end
 
   describe ":format option" do
+    class PersonWithFormatOption
+      include TestModel
+      self.model_attributes = :birth_date, :birth_time, :birth_datetime
+      validates_date :birth_date, :format => 'dd-mm-yyyy'
+    end
+
+    let(:person) { PersonWithFormatOption.new }
+
     before(:all) do
       ValidatesTimeliness.use_plugin_parser = true
     end
 
     it "should be valid when value matches format" do
-      Person.validates_date :birth_date, :format => 'dd-mm-yyyy'
-      valid!(:birth_date, '11-12-1913')
+      person.birth_date = '11-12-1913'
+      person.valid?
+      person.errors[:birth_date].should be_empty
     end
 
     it "should not be valid when value does not match format" do
-      Person.validates_date :birth_date, :format => 'dd/mm/yyyy'
-      invalid!(:birth_date, '1913-12-11', 'is not a valid date')
+      person.birth_date = '1913-12-11'
+      person.valid?
+      person.errors[:birth_date].should include('is not a valid date')
     end
 
     after(:all) do

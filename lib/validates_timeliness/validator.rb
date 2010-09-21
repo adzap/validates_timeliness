@@ -35,7 +35,7 @@ module ValidatesTimeliness
       return if (@allow_nil && raw_value.nil?) || (@allow_blank && raw_value.blank?)
 
       @timezone_aware = record.class.timeliness_attribute_timezone_aware?(attr_name)
-      value = parse(value) if value.is_a?(String)
+      value = parse(raw_value) if value.is_a?(String) || options[:format]
       value = type_cast_value(value, @type)
 
       return record.errors.add(attr_name, :"invalid_#{@type}") if value.blank?
