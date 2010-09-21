@@ -1,5 +1,4 @@
 require 'rspec'
-require 'rspec/autorun'
 
 require 'active_model'
 require 'active_model/validations'
