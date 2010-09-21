@@ -31,6 +31,8 @@ GEM
     activesupport (3.0.0)
     arel (1.0.1)
       activesupport (~> 3.0.0)
+    bson (1.0.4)
+    bson_ext (1.0.4)
     builder (2.1.2)
     columnize (0.3.1)
     diff-lcs (1.1.2)
@@ -43,6 +45,14 @@ GEM
       mime-types
       treetop (>= 1.4.5)
     mime-types (1.16)
+    mongo (1.0.7)
+      bson (>= 1.0.4)
+    mongoid (2.0.0.beta.17)
+      activemodel (~> 3.0.0)
+      bson (= 1.0.4)
+      mongo (= 1.0.7)
+      tzinfo (~> 0.3.22)
+      will_paginate (~> 3.0.pre)
     nokogiri (1.4.3.1)
     polyglot (0.3.1)
     rack (1.2.1)
@@ -90,12 +100,15 @@ GEM
     treetop (1.4.8)
       polyglot (>= 0.3.1)
     tzinfo (0.3.23)
+    will_paginate (3.0.pre2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   ZenTest
+  bson_ext (= 1.0.4)
+  mongoid (= 2.0.0.beta.17)
   rails (= 3.0.0)
   rspec (>= 2.0.0.beta.17)
   rspec-rails (>= 2.0.0.beta.17)
