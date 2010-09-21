@@ -20,7 +20,8 @@ describe ValidatesTimeliness::AttributeMethods do
     context "with plugin parser" do
       class EmployeeWithParser < ActiveRecord::Base
         set_table_name 'employees'
-        validates_datetime :birth_date
+        validates_date :birth_date
+        validates_datetime :birth_datetime
       end
 
       before :all do
@@ -33,10 +34,10 @@ describe ValidatesTimeliness::AttributeMethods do
         r.birth_date = '2010-01-01'
       end
 
-      it 'should be strict on day values' do
+      it 'should parse string as current timezone' do
         r = EmployeeWithParser.new
-        r.birth_date = '2010-02-31'
-        r.birth_date.should be_nil
+        r.birth_datetime = '2010-01-01 12:00'
+        r.birth_datetime.zone == Time.zone.name
       end
 
       after :all do

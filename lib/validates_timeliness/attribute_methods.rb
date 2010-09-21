@@ -19,7 +19,7 @@ module ValidatesTimeliness
           def #{attr_name}=(value)
             @attributes_cache ||= {}
             @attributes_cache["_#{attr_name}_before_type_cast"] = value
-            #{ "value = ValidatesTimeliness::Parser.parse(value, :#{type}) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
+            #{ "value = ValidatesTimeliness::Parser.parse(value, :#{type}, :timezone_aware => #{timezone_aware}) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
             super
           end
         EOV
@@ -34,6 +34,8 @@ module ValidatesTimeliness
         EOV
         class_eval(method_body, __FILE__, line)
       end
+
+      public
 
       def timeliness_attribute_timezone_aware?(attr_name)
         false
