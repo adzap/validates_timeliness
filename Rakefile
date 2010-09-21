@@ -20,9 +20,7 @@ spec = Gem::Specification.new do |s|
   s.author = "Adam Meehan"
   s.email = "adam.meehan@gmail.com"
   s.homepage = "http://github.com/adzap/validates_timeliness"
-
   s.require_path = 'lib'
-  s.autorequire = GEM_NAME
   s.files = %w(validates_timeliness.gemspec LICENSE CHANGELOG README.rdoc Rakefile) + Dir.glob("{lib,spec}/**/*")
 end
 
