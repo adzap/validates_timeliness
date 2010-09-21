@@ -3,6 +3,8 @@ module ValidatesTimeliness
     module Mongoid
       extend ActiveSupport::Concern
       # You need define the fields before you define the validations.
+      # It is best to use the plugin parser to avoid errors on a bad
+      # field value in Mongoid. Parser will return nil rather than error.
 
       module ClassMethods 
         def timeliness_validation_for(attr_names, type)
