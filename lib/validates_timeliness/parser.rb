@@ -10,15 +10,7 @@ module ValidatesTimeliness
   # string values.
   #
   class Parser
-    cattr_accessor :time_formats,
-                   :date_formats,
-                   :datetime_formats,
-                   :time_expressions,
-                   :date_expressions,
-                   :datetime_expressions,
-                   :format_tokens,
-                   :format_proc_args
-
+    cattr_reader :time_expressions, :date_expressions, :datetime_expressions
 
     # Set the threshold value for a two digit year to be considered last century
     #
@@ -73,6 +65,7 @@ module ValidatesTimeliness
     #   by the next lowest length valid repeating token (e.g. yyy will be
     #   replaced with yy)
 
+    cattr_accessor :time_formats
     @@time_formats = [
       'hh:nn:ss',
       'hh-nn-ss',
@@ -87,6 +80,7 @@ module ValidatesTimeliness
       'h_ampm'
     ]
 
+    cattr_accessor :date_formats
     @@date_formats = [
       'yyyy-mm-dd',
       'yyyy/mm/dd',
@@ -101,6 +95,7 @@ module ValidatesTimeliness
       'd mmm yy'
     ]
 
+    cattr_accessor :datetime_formats
     @@datetime_formats = [
       'yyyy-mm-dd hh:nn:ss',
       'yyyy-mm-dd h:nn',
@@ -132,11 +127,11 @@ module ValidatesTimeliness
     # is required. The first capture group will be considered a literal and put
     # into the validation regexp string as-is. This is a hack.
     #
+    cattr_accessor :format_tokens
     @@format_tokens = {
       'ddd'  => [ '\w{3,9}' ],
       'dd'   => [ '\d{2}',   :day ],
       'd'    => [ '\d{1,2}', :day ],
-      'ampm' => [ '[aApP]\.?[mM]\.?', :meridian ],
       'mmm'  => [ '\w{3,9}', :month ],
       'mm'   => [ '\d{2}',   :month ],
       'm'    => [ '\d{1,2}', :month ],
@@ -149,6 +144,7 @@ module ValidatesTimeliness
       'ss'   => [ '\d{2}',   :sec ],
       's'    => [ '\d{1,2}', :sec ],
       'u'    => [ '\d{1,6}', :usec ],
+      'ampm' => [ '[aApP]\.?[mM]\.?', :meridian ],
       'zo'   => [ '[+-]\d{2}:?\d{2}', :offset ],
       'tz'   => [ '[A-Z]{1,4}' ],
       '_'    => [ '\s?' ]
@@ -163,6 +159,7 @@ module ValidatesTimeliness
     # The code can be used to manipulate the arg value if required, otherwise
     # should just be the arg name.
     #
+    cattr_accessor :format_proc_args
     @@format_proc_args = {
       :year     => [0,   'y', 'unambiguous_year(y)'],
       :month    => [1,   'm', 'month_index(m)'],
@@ -174,7 +171,6 @@ module ValidatesTimeliness
       :offset   => [7,   'z', 'offset_in_seconds(z)'],
       :meridian => [nil, 'md', nil]
     }
-
 
     @@type_wrapper = {
       :date     => [/\A/, nil],
