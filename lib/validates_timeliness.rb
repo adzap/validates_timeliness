@@ -42,7 +42,7 @@ module ValidatesTimeliness
   # Setup method for plugin configuration
   def self.setup
     yield self
-    extend_orms.each {|orm| require "validates_timeliness/orms/#{orm}" }
+    extend_orms.each {|orm| require "validates_timeliness/orm/#{orm}" }
   end
 end
 
