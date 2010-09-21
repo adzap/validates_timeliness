@@ -14,7 +14,7 @@ describe ValidatesTimeliness::HelperMethods do
   end
 
   it 'should validate instance when validation method called' do
-    r = Employee.new
+    r = Person.new
     r.validates_date :birth_date
     r.errors[:birth_date].should_not be_empty
   end

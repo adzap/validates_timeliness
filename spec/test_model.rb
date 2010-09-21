@@ -14,11 +14,16 @@ module TestModel
 
   module ClassMethods
     def define_method_attribute=(attr_name)
-      generated_attribute_methods.module_eval("def #{attr_name}=(new_value); @attributes['#{attr_name}']=new_value ; end", __FILE__, __LINE__)
+      generated_attribute_methods.module_eval("def #{attr_name}=(new_value); @attributes['#{attr_name}']=self.class.type_cast(new_value); end", __FILE__, __LINE__)
     end
 
     def define_method_attribute(attr_name)
       generated_attribute_methods.module_eval("def #{attr_name}; @attributes['#{attr_name}']; end", __FILE__, __LINE__)
+    end
+
+    def type_cast(value)
+      return value unless value.is_a?(String)
+      value.to_time rescue nil
     end
   end
 
