@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe ValidatesTimeliness::HelperMethods do
-  it 'should define class validation methods on extended classes' do
-    ActiveRecord::Base.should respond_to(:validates_date)
-    ActiveRecord::Base.should respond_to(:validates_time)
-    ActiveRecord::Base.should respond_to(:validates_datetime)
+  it 'should define class validation methods' do
+    Person.should respond_to(:validates_date)
+    Person.should respond_to(:validates_time)
+    Person.should respond_to(:validates_datetime)
   end
 
-  it 'should define instance validation methods on extended classes' do
-    ActiveRecord::Base.instance_methods.should include('validates_date')
-    ActiveRecord::Base.instance_methods.should include('validates_time')
-    ActiveRecord::Base.instance_methods.should include('validates_datetime')
+  it 'should define instance validation methods' do
+    Person.instance_methods.should include('validates_date')
+    Person.instance_methods.should include('validates_time')
+    Person.instance_methods.should include('validates_datetime')
   end
 
   it 'should validate instance when validation method called' do
@@ -33,4 +33,5 @@ describe ValidatesTimeliness::HelperMethods do
       }
     end
   end
+
 end

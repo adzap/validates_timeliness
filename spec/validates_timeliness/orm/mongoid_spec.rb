@@ -24,6 +24,18 @@ describe ValidatesTimeliness, 'Mongoid' do
     ::ValidatesTimeliness.use_plugin_parser = false
   end
 
+  it 'should define class validation methods' do
+    Article.should respond_to(:validates_date)
+    Article.should respond_to(:validates_time)
+    Article.should respond_to(:validates_datetime)
+  end
+
+  it 'should define instance validation methods' do
+    Article.instance_methods.should include('validates_date')
+    Article.instance_methods.should include('validates_time')
+    Article.instance_methods.should include('validates_datetime')
+  end
+
   it 'should define _timeliness_raw_value_for instance method' do
     Article.instance_methods.should include('_timeliness_raw_value_for')
   end
