@@ -12,7 +12,7 @@ module ValidatesTimeliness
   autoload :Parser,  'validates_timeliness/parser'
   autoload :VERSION, 'validates_timeliness/version'
 
-  # Add plugin to supported ORMs (only :active_record for now)
+  # Add plugin to supported ORMs (:active_record, :mongoid)
   mattr_accessor :extend_orms
   @@extend_orms = [ defined?(ActiveRecord) && :active_record ].compact
 

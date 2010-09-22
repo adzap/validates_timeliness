@@ -1,5 +1,5 @@
 ValidatesTimeliness.setup do |config|
-  # Add plugin to supported ORMs (only :active_record for now)
+  # Add plugin to supported ORMs (:active_record, :mongoid)
   # config.extend_orms = [ :active_record ]
   #
   # User the plugin date/time parser which is stricter and extendable
