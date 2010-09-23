@@ -10,30 +10,32 @@ Mongoid.configure do |config|
   config.persist_in_safe_mode = false
 end
 
+class Article
+  ::ValidatesTimeliness.use_plugin_parser = true
+  include Mongoid::Document
+  field :publish_date, :type => Date
+  field :publish_time, :type => Time
+  field :publish_datetime, :type => DateTime
+  validates_date :publish_date, :allow_nil => true
+  validates_time :publish_time, :allow_nil => true
+  validates_datetime :publish_datetime, :allow_nil => true
+  ::ValidatesTimeliness.use_plugin_parser = false
+end
+
 describe ValidatesTimeliness, 'Mongoid' do
 
-  class Article
-    ::ValidatesTimeliness.use_plugin_parser = true
-    include Mongoid::Document
-    field :publish_date, :type => Date
-    field :publish_time, :type => Time
-    field :publish_datetime, :type => DateTime
-    validates_date :publish_date
-    validates_time :publish_time
-    validates_datetime :publish_datetime
-    ::ValidatesTimeliness.use_plugin_parser = false
-  end
+  context "validation methods" do
+    it 'should be defined on the class' do
+      Article.should respond_to(:validates_date)
+      Article.should respond_to(:validates_time)
+      Article.should respond_to(:validates_datetime)
+    end
 
-  it 'should define class validation methods' do
-    Article.should respond_to(:validates_date)
-    Article.should respond_to(:validates_time)
-    Article.should respond_to(:validates_datetime)
-  end
-
-  it 'should define instance validation methods' do
-    Article.instance_methods.should include('validates_date')
-    Article.instance_methods.should include('validates_time')
-    Article.instance_methods.should include('validates_datetime')
+    it 'should be defined on the instance' do
+      Article.instance_methods.should include('validates_date')
+      Article.instance_methods.should include('validates_time')
+      Article.instance_methods.should include('validates_datetime')
+    end
   end
 
   it 'should define _timeliness_raw_value_for instance method' do
