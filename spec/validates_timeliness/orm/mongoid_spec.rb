@@ -70,6 +70,15 @@ describe ValidatesTimeliness, 'Mongoid' do
     end
   end
 
+  context "cached value" do
+    it 'should be cleared on reload' do
+      r = Article.create!
+      r.publish_date = '2010-01-01'
+      r.reload
+      r._timeliness_raw_value_for(:publish_date).should be_nil
+    end
+  end
+
   context "before_type_cast method" do
     it 'should not be defined if ORM does not support it' do
       Article.instance_methods(false).should_not include("birth_datetime_before_type_cast")

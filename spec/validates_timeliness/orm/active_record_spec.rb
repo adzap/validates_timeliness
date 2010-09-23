@@ -58,6 +58,15 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     end
   end
 
+  context "cached value" do
+    it 'should be cleared on reload' do
+      r = Employee.create!
+      r.birth_date = '2010-01-01'
+      r.reload
+      r._timeliness_raw_value_for(:birth_date).should be_nil
+    end
+  end
+
   context "before_type_cast method" do
     it 'should be defined on class if ORM supports it' do
       Employee.instance_methods(false).should include("birth_datetime_before_type_cast")

@@ -32,4 +32,10 @@ module Mongoid::Document
   include ValidatesTimeliness::HelperMethods
   include ValidatesTimeliness::AttributeMethods
   include ValidatesTimeliness::ORM::Mongoid
+
+  def reload_with_timeliness
+    @attributes_cache = {}
+    reload_without_timeliness
+  end
+  alias_method_chain :reload, :timeliness
 end
