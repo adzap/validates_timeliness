@@ -22,8 +22,8 @@ module ValidatesTimeliness
 
       module InstanceMethods
         def reload(*args)
-          super
           _clear_timeliness_cache
+          super
         end
       end
 
