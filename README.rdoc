@@ -54,15 +54,33 @@ By default the plugin extends ActiveRecord if present. Currently ActiveRecord an
 another ORM then look at the {wiki page}[http://github.com/adzap/validates_timeliness/wiki/ORM-Support] for more information.
 
 
-== Usage:
+== Examples
+
+  validates_datetime :occurred_at
+
+  validates_date :date_of_birth :before => lambda { 18.years.ago },
+                                :before_message => "must be at least 18 years old"
+
+  validates_datetime :finish_time, :after => :start_time # Method symbol
+
+  validates_date :booked_at, :on => :create, :on_or_after => :today # See Restriction Option Shorthand.
+  validates_time :booked_at, :between => ['9.00am', '5:00pm']
+
+  validates_time :breakfast_time, :on_or_after => '6:00am',
+                                  :on_or_after_message => 'must be after opening time',
+                                  :before => :lunchtime,
+                                  :before_message => 'must be before lunch time'
+
+
+== Usage
 
 To validate a model with a date, time or datetime attribute you just use the
 validation method
 
   class Person < ActiveRecord::Base
-    validates_date :date_of_birth, :on_or_before => lambda { Date.today }
+    validates_date :date_of_birth, :on_or_before => :today
     # or
-    validates :date_of_birth, :timeliness => {:on_or_before => lambda { Date.today }, :type => date}
+    validates :date_of_birth, :timeliness => {:on_or_before => :today, :type => date}
   end
 
   # or even on a specific record, per ActiveModel API.
@@ -86,13 +104,13 @@ Temporal options (or restrictions):
   :after        - Attribute must be after this value to be valid
   :on_or_after  - Attribute must be equal to or after this value to be valid
   :between      - Attribute must be between the values to be valid. Range or Array of 2 values. 
-                  Uses :on_or_after and :on_of_before for error messages on lower and upper bounds respectively.
 
 Regular validation options:
   :allow_nil    - Allow a nil value to be valid
   :allow_blank  - Allows a nil or empty string value to be valid
   :if           - Execute validation when :if evaluates true
   :unless       - Execute validation when :unless evaluates false
+  :on           - Specify validation context e.g :save, :create or :update. Default is :save.
 
 Special options:
   :ignore_usec  - Ignores microsecond value on datetime restrictions
