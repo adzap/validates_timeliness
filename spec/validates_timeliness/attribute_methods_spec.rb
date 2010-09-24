@@ -8,7 +8,9 @@ describe ValidatesTimeliness::AttributeMethods do
   context "attribute write method" do
     class PersonWithCache
       include TestModel
-      self.model_attributes = :birth_date, :birth_time, :birth_datetime
+      attribute :birth_date, :date
+      attribute :birth_time, :time
+      attribute :birth_datetime, :datetime
       validates_date :birth_date
       validates_time :birth_time
       validates_datetime :birth_datetime
@@ -23,7 +25,9 @@ describe ValidatesTimeliness::AttributeMethods do
     context "with plugin parser" do
       class PersonWithParser
         include TestModel
-        self.model_attributes = :birth_date, :birth_time, :birth_datetime
+        attribute :birth_date, :date
+        attribute :birth_time, :time
+        attribute :birth_datetime, :datetime
         validates_date :birth_date
         validates_time :birth_time
         validates_datetime :birth_datetime

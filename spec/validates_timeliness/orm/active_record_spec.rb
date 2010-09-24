@@ -16,8 +16,8 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     end
   end
 
-  it 'should define _timeliness_raw_value_for instance method' do
-    Employee.instance_methods.should include('_timeliness_raw_value_for')
+  it 'should determine type for attribute' do
+    Employee.timeliness_attribute_type(:birth_date).should == :date
   end
   
   context "attribute write method" do

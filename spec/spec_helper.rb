@@ -48,11 +48,13 @@ end
 
 class Person
   include TestModel
-  self.model_attributes = :birth_date, :birth_time, :birth_datetime
+  attribute :birth_date, :date
+  attribute :birth_time, :time
+  attribute :birth_datetime, :datetime
   validates_date :birth_date
   validates_time :birth_time
   validates_datetime :birth_datetime
-  define_attribute_methods model_attributes
+  define_attribute_methods model_attributes.keys
 end
 
 ActiveRecord::Base.time_zone_aware_attributes = true
@@ -62,8 +64,8 @@ ActiveRecord::Schema.define(:version => 1) do
   create_table :employees, :force => true do |t|
     t.string   :first_name
     t.string   :last_name
-    t.datetime :birth_date
-    t.datetime :birth_time
+    t.date     :birth_date
+    t.time     :birth_time
     t.datetime :birth_datetime
   end
 end
@@ -80,10 +82,10 @@ Rspec.configure do |c|
   c.include(RspecTagMatchers)
   c.before do
     Person.reset_callbacks(:validate)
-    Person.timeliness_validated_attributes = {}
+    Person.timeliness_validated_attributes = []
     Person._validators.clear
     Employee.reset_callbacks(:validate)
-    Employee.timeliness_validated_attributes = {}
+    Employee.timeliness_validated_attributes = []
     Employee._validators.clear
   end
 end

@@ -38,8 +38,8 @@ describe ValidatesTimeliness, 'Mongoid' do
     end
   end
 
-  it 'should define _timeliness_raw_value_for instance method' do
-    Article.instance_methods.should include('_timeliness_raw_value_for')
+  it 'should determine type for attribute' do
+    Article.timeliness_attribute_type(:publish_date).should == :date
   end
   
   context "attribute write method" do

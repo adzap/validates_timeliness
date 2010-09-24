@@ -7,12 +7,17 @@ module ValidatesTimeliness
       # field value in Mongoid. Parser will return nil rather than error.
 
       module ClassMethods 
+        # Mongoid has no bulk attribute method definition hook. It defines
+        # them with each field definition. So we likewise define them after
+        # each validation is defined.
+        #
         def timeliness_validation_for(attr_names, type)
           super
-          attr_names.each { |attr_name| define_timeliness_write_method(attr_name, type, false) }
+          attr_names.each { |attr_name| define_timeliness_write_method(attr_name) }
         end
 
-        def define_timeliness_write_method(attr_name, type, timezone_aware)
+        def define_timeliness_write_method(attr_name)
+          type = timeliness_attribute_type(attr_name)
           method_body, line = <<-EOV, __LINE__ + 1
             def #{attr_name}=(value)
               @attributes_cache ||= {}
@@ -23,7 +28,16 @@ module ValidatesTimeliness
           EOV
           class_eval(method_body, __FILE__, line)
         end
+
+        def timeliness_attribute_type(attr_name)
+          {
+            Date => :date,
+            Time => :datetime,
+            DateTime => :datetime
+          }[fields[attr_name.to_s].type] || :datetime
+        end
       end
+
     end
   end
 end

@@ -101,7 +101,9 @@ describe ValidatesTimeliness::Validator do
   describe ":format option" do
     class PersonWithFormatOption
       include TestModel
-      self.model_attributes = :birth_date, :birth_time, :birth_datetime
+      attribute :birth_date, :date
+      attribute :birth_time, :time
+      attribute :birth_datetime, :datetime
       validates_date :birth_date, :format => 'dd-mm-yyyy'
     end
 

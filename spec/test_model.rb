@@ -13,24 +13,29 @@ module TestModel
   end
 
   module ClassMethods
+    def attribute(name, type)
+      self.model_attributes ||= {}
+      self.model_attributes[name] = type
+    end
+
     def define_method_attribute=(attr_name)
-      generated_attribute_methods.module_eval("def #{attr_name}=(new_value); @attributes['#{attr_name}']=self.class.type_cast(new_value); end", __FILE__, __LINE__)
+      generated_attribute_methods.module_eval("def #{attr_name}=(new_value); @attributes['#{attr_name}']=self.class.type_cast('#{attr_name}', new_value); end", __FILE__, __LINE__)
     end
 
     def define_method_attribute(attr_name)
       generated_attribute_methods.module_eval("def #{attr_name}; @attributes['#{attr_name}']; end", __FILE__, __LINE__)
     end
 
-    def type_cast(value)
+    def type_cast(attr_name, value)
       return value unless value.is_a?(String)
-      value.to_time rescue nil
+      value.send("to_#{model_attributes[attr_name.to_sym]}") rescue nil
     end
   end
 
   module DynamicMethods
     def method_missing(method_id, *args, &block)
       if !self.class.attribute_methods_generated?
-        self.class.define_attribute_methods self.class.model_attributes.map(&:to_s)
+        self.class.define_attribute_methods self.class.model_attributes.keys.map(&:to_s)
         method_name = method_id.to_s
         send(method_id, *args, &block)
       else
