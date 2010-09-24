@@ -10,6 +10,7 @@ class ActiveRecord::Base
     end
 
     def timeliness_attribute_timezone_aware?(attr_name)
+      attr_name = attr_name.to_s
       create_time_zone_conversion_attribute?(attr_name, columns_hash[attr_name])
     end
 

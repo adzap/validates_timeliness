@@ -51,11 +51,12 @@ describe ValidatesTimeliness, 'ActiveRecord' do
 
       it 'should parse string as current timezone' do
         r = EmployeeWithParser.new
-        r.birth_datetime = '2010-01-01 12:00'
-        r.birth_datetime.zone == Time.zone.name
+        r.birth_datetime = '2010-06-01 12:00'
+        r.birth_datetime.utc_offset.should == 10.hours
       end
 
       after :all do
+        Time.zone = 'Australia/Melbourne'
         ValidatesTimeliness.use_plugin_parser = false
       end
     end
