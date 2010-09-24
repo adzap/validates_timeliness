@@ -20,8 +20,8 @@ module ValidatesTimeliness
 
         method_body, line = <<-EOV, __LINE__ + 1
           def #{attr_name}=(value)
-            @attributes_cache ||= {}
-            @attributes_cache["_#{attr_name}_before_type_cast"] = value
+            @timeliness_cache ||= {}
+            @timeliness_cache["#{attr_name}"] = value
             #{ "value = ValidatesTimeliness::Parser.parse(value, :#{type}, :timezone_aware => #{timezone_aware}) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
             super
           end
@@ -53,7 +53,11 @@ module ValidatesTimeliness
     module InstanceMethods
 
       def _timeliness_raw_value_for(attr_name)
-        @attributes_cache && @attributes_cache["_#{attr_name}_before_type_cast"]
+        @timeliness_cache && @timeliness_cache[attr_name.to_s]
+      end
+
+      def _clear_timeliness_cache
+        @timeliness_cache = {}
       end
 
     end

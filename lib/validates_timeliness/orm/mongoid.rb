@@ -20,8 +20,8 @@ module ValidatesTimeliness
           type = timeliness_attribute_type(attr_name)
           method_body, line = <<-EOV, __LINE__ + 1
             def #{attr_name}=(value)
-              @attributes_cache ||= {}
-              @attributes_cache["_#{attr_name}_before_type_cast"] = value
+              @timeliness_cache ||= {}
+              @timeliness_cache["#{attr_name}"] = value
               #{ "value = ValidatesTimeliness::Parser.parse(value, :#{type}) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
               write_attribute(:#{attr_name}, value)
             end
@@ -48,7 +48,7 @@ module Mongoid::Document
   include ValidatesTimeliness::ORM::Mongoid
 
   def reload_with_timeliness
-    @attributes_cache = {}
+    _clear_timeliness_cache
     reload_without_timeliness
   end
   alias_method_chain :reload, :timeliness
