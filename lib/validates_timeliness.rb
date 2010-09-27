@@ -39,6 +39,10 @@ module ValidatesTimeliness
     :today => lambda { Date.today }
   }
 
+  def self.parser
+    Parser
+  end
+
   # Setup method for plugin configuration
   def self.setup
     yield self
