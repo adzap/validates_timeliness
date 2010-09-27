@@ -177,22 +177,6 @@ describe ValidatesTimeliness::Parser do
         ValidatesTimeliness::Parser.ambiguous_year_threshold = default
       end
     end
-
-    context "with custom dummy date values" do
-      before(:all) do
-        @old_dummy_date = ValidatesTimeliness.dummy_date_for_time_type
-        ValidatesTimeliness.dummy_date_for_time_type = [2009,1,1]
-      end
-
-      it "should return time array with custom dummy date" do
-        time_array = formats._parse('12:13:14', :time, :strict => true)
-        time_array.should == [2009,1,1,12,13,14,0]
-      end
-
-      after(:all) do
-        ValidatesTimeliness.dummy_date_for_time_type = @old_dummy_date
-      end
-    end
   end
 
   describe "parse" do

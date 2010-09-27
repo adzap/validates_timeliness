@@ -23,14 +23,6 @@ module ValidatesTimeliness
     cattr_accessor :ambiguous_year_threshold
     self.ambiguous_year_threshold = 30
 
-    # Set the dummy date part for a time type value. Should be an array of 3 values
-    # being year, month and day in that order.
-    #
-    # Default: [ 2000, 1, 1 ] same as ActiveRecord
-    #
-    cattr_accessor :dummy_date_for_time_type
-    self.dummy_date_for_time_type = [ 2000, 1, 1 ]
-
     # Format tokens:
     #       y = year
     #       m = month
