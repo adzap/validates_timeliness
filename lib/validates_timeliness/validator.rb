@@ -14,6 +14,12 @@ module ValidatesTimeliness
       :on_or_after  => :>=,
     }.freeze
 
+    DEFAULT_ERROR_VALUE_FORMATS = {
+      :date => '%Y-%m-%d',
+      :time => '%H:%M:%S',
+      :datetime => '%Y-%m-%d %H:%M:%S'
+    }.freeze
+
     def self.kind
       :timeliness
     end
@@ -56,7 +62,7 @@ module ValidatesTimeliness
     end
 
     def format_error_value(value)
-      format = I18n.t(@type, :scope => 'validates_timeliness.error_value_formats')
+      format = I18n.t(@type, :default => DEFAULT_ERROR_VALUE_FORMATS[@type], :scope => 'validates_timeliness.error_value_formats')
       value.strftime(format)
     end
 

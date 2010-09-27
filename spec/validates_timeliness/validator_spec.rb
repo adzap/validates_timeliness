@@ -171,6 +171,21 @@ describe ValidatesTimeliness::Validator do
         validator.format_error_value(Time.mktime(2010,1,1,12,34,56)).should == '2010-01-01 12:34:56'
       end
     end
+
+    describe "with missing translation" do
+      before :all do
+        I18n.locale = :es
+      end
+
+      it 'should use the default format for the type' do
+        validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_date], :type => :date)
+        validator.format_error_value(Date.new(2010,1,1)).should == '2010-01-01'
+      end
+
+      after :all do
+        I18n.locale = :en
+      end
+    end
   end
 
   context "custom error message" do
