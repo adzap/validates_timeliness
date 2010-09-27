@@ -63,7 +63,7 @@ another ORM then look at the {wiki page}[http://github.com/adzap/validates_timel
 
   validates_datetime :finish_time, :after => :start_time # Method symbol
 
-  validates_date :booked_at, :on => :create, :on_or_after => :today # See Restriction Option Shorthand.
+  validates_date :booked_at, :on => :create, :on_or_after => :today # See Restriction Shorthand.
   validates_time :booked_at, :between => ['9.00am', '5:00pm']
 
   validates_time :breakfast_time, :on_or_after => '6:00am',
@@ -78,9 +78,9 @@ To validate a model with a date, time or datetime attribute you just use the
 validation method
 
   class Person < ActiveRecord::Base
-    validates_date :date_of_birth, :on_or_before => :today
+    validates_date :date_of_birth, :on_or_before => lambda { Date.today }
     # or
-    validates :date_of_birth, :timeliness => {:on_or_before => :today, :type => date}
+    validates :date_of_birth, :timeliness => {:on_or_before => lambda { Date.today }, :type => date}
   end
 
   # or even on a specific record, per ActiveModel API.
@@ -178,7 +178,7 @@ By default the parser is switched off. To switch it on:
 See the wiki[http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser] for all the details about the parser.
 
 
-=== Restriction Option Shorthand
+=== Restriction Shorthand
 
 It is common to restrict an attribute to being on or before the current time or current day. 
 To specify this you need to use a lambda as an option value e.g. <tt>lambda { Time.now }</tt>.
