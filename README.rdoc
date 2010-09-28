@@ -5,7 +5,7 @@
 
 == Description
 
-Validate dates, times and datetimes for Rails 3.x and ActiveModel.
+Complete validation of dates, times and datetimes for Rails 3.x and ActiveModel.
 
 If you a looking for the old version for Rails 2.x go here[http://github.com/adzap/validates_timeliness/tree/v2.3].
 
