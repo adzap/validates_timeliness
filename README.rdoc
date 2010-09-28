@@ -12,15 +12,15 @@ If you a looking for the old version for Rails 2.x go here[http://github.com/adz
 
 == Features
 
-* Adds ActiveModel validation for dates, times and datetimes
+* Adds validation for dates, times and datetimes to ActiveModel
 
-* Should work with any ORM using ActiveModel (currently ActiveRecord and Mongoid supported)
+* Adds extensions to fix Rails date/time select issues
+
+* Includes extensible date/time parser
 
 * Supports timezone handling
 
 * Supports I18n for the error messages
-
-* Adds before_type_cast method on validated attributes, if ORM supports it.
 
 
 == Installation
@@ -41,17 +41,8 @@ Then run
   
   $ rails generate validates_timeliness:install
 
-This creates configuration initializer and locale files. In the initializer, you there are a number of config options to customize the plugin.
-
-  ValidatesTimeliness.setup do |config|
-
-    # Add plugin to supported ORMs (:active_record, :mongoid)
-    # config.extend_orms = [ :active_record ]
-
-  end
-
-By default the plugin extends ActiveRecord if present. Currently ActiveRecord and Mongoid are supported for extension. If you wish to extend
-another ORM then look at the {wiki page}[http://github.com/adzap/validates_timeliness/wiki/ORM-Support] for more information.
+This creates configuration initializer and locale files. In the initializer, you there are a number of config
+options to customize the plugin.
 
 
 == Examples
@@ -129,6 +120,29 @@ values are compared as dates.
 
 
 == Configuration
+
+=== ORM/ODM Support
+
+The plugin adds date/time validation to ActiveModel for any ORM/ODM that supports the ActiveModel validations component.
+However, there is an issue with most ORM/ODMs which does not allow 100% date/time validation by default. Specifically, when you
+assign an invalid date/time value to an attribute, most ORM/ODMs will only store a nil value for the attribute. This causes an
+issue for date/time validation, since we need to know that a value was assigned but was invalid. To fix this, we need to cache
+the original invalid value to know that the attribute is not just nil.
+
+Each ORM/ODM requires a specific shim to fix it. The plugin includes a shim for ActiveRecord and Mongoid. You can activate them
+like so
+
+  ValidatesTimeliness.setup do |config|
+
+    # Extend ORM/ODMs for full support (:active_record, :mongoid).
+    config.extend_orms = [ :mongoid ]
+
+  end
+
+By default the plugin extends ActiveRecord if loaded. If you wish to extend another ORM then look at the {wiki page}[http://github.com/adzap/validates_timeliness/wiki/ORM-Support] for more information.
+
+It is not required that you use a shim, but you will not catch errors when the attribute value is invalid and evaluated to nil.
+
 
 === Error Messages
 
