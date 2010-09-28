@@ -2,12 +2,24 @@ require 'spec_helper'
 
 describe ValidatesTimeliness::AttributeMethods do
   it 'should define _timeliness_raw_value_for instance method' do
-    Person.instance_methods.should include('_timeliness_raw_value_for')
+    PersonWithShim.instance_methods.should include('_timeliness_raw_value_for')
+  end
+
+  describe ".timeliness_validated_attributes" do
+    it 'should return attributes validated with plugin validator' do
+      PersonWithShim.timeliness_validated_attributes = []
+      PersonWithShim.validates_date :birth_date
+      PersonWithShim.validates_time :birth_time
+      PersonWithShim.validates_datetime :birth_datetime
+
+      PersonWithShim.timeliness_validated_attributes.should == [ :birth_date, :birth_time, :birth_datetime ]
+    end
   end
   
   context "attribute write method" do
     class PersonWithCache
       include TestModel
+      include TestModelShim
       attribute :birth_date, :date
       attribute :birth_time, :time
       attribute :birth_datetime, :datetime
@@ -25,6 +37,7 @@ describe ValidatesTimeliness::AttributeMethods do
     context "with plugin parser" do
       class PersonWithParser
         include TestModel
+        include TestModelShim
         attribute :birth_date, :date
         attribute :birth_time, :time
         attribute :birth_datetime, :datetime
@@ -57,7 +70,7 @@ describe ValidatesTimeliness::AttributeMethods do
 
   context "before_type_cast method" do
     it 'should not be defined if ORM does not support it' do
-      Person.instance_methods(false).should_not include("birth_datetime_before_type_cast")
+      PersonWithShim.instance_methods(false).should_not include("birth_datetime_before_type_cast")
     end
   end
 end

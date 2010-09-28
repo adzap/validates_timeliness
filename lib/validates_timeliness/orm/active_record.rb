@@ -32,7 +32,6 @@ module ValidatesTimeliness
 end
 
 class ActiveRecord::Base
-  include ValidatesTimeliness::HelperMethods
   include ValidatesTimeliness::AttributeMethods
   include ValidatesTimeliness::ORM::ActiveRecord
 end

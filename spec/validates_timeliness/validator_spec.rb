@@ -101,6 +101,7 @@ describe ValidatesTimeliness::Validator do
   describe ":format option" do
     class PersonWithFormatOption
       include TestModel
+      include TestModelShim
       attribute :birth_date, :date
       attribute :birth_time, :time
       attribute :birth_datetime, :datetime

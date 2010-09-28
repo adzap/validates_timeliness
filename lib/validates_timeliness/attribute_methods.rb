@@ -2,7 +2,23 @@ module ValidatesTimeliness
   module AttributeMethods
     extend ActiveSupport::Concern
 
+    included do
+      class_inheritable_accessor :timeliness_validated_attributes
+      self.timeliness_validated_attributes = []
+    end
+
     module ClassMethods
+
+      public
+      # Override in ORM shim
+      def timeliness_attribute_timezone_aware?(attr_name)
+        false
+      end
+
+      # Override in ORM shim
+      def timeliness_attribute_type(attr_name)
+        :datetime
+      end
 
       protected
 
@@ -37,21 +53,9 @@ module ValidatesTimeliness
         EOV
         class_eval(method_body, __FILE__, line)
       end
-
-      # Override in ORM shim
-      def timeliness_attribute_timezone_aware?(attr_name)
-        false
-      end
-
-      # Override in ORM shim
-      def timeliness_attribute_type(attr_name)
-        :datetime
-      end
-
     end
 
     module InstanceMethods
-
       def _timeliness_raw_value_for(attr_name)
         @timeliness_cache && @timeliness_cache[attr_name.to_s]
       end
@@ -59,7 +63,6 @@ module ValidatesTimeliness
       def _clear_timeliness_cache
         @timeliness_cache = {}
       end
-
     end
 
   end

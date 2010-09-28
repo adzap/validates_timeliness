@@ -24,15 +24,11 @@ LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/../lib/generators/vali
 I18n.load_path.unshift(LOCALE_PATH)
 
 # Extend TestModel as you would another ORM/ODM module
-module TestModel
-  include ValidatesTimeliness::HelperMethods
+module TestModelShim
+  extend ActiveSupport::Concern
   include ValidatesTimeliness::AttributeMethods
 
-  def self.included(base)
-    base.extend HookMethods
-  end
-
-  module HookMethods
+  module ClassMethods
     # Hook method for attribute method generation
     def define_attribute_methods(attr_names)
       super
@@ -55,6 +51,10 @@ class Person
   validates_time :birth_time
   validates_datetime :birth_datetime
   define_attribute_methods model_attributes.keys
+end
+
+class PersonWithShim < Person
+  include TestModelShim
 end
 
 ActiveRecord::Base.time_zone_aware_attributes = true
@@ -82,7 +82,7 @@ Rspec.configure do |c|
   c.include(RspecTagMatchers)
   c.before do
     Person.reset_callbacks(:validate)
-    Person.timeliness_validated_attributes = []
+    PersonWithShim.timeliness_validated_attributes = []
     Person._validators.clear
     Employee.reset_callbacks(:validate)
     Employee.timeliness_validated_attributes = []

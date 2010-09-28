@@ -37,10 +37,10 @@ module ValidatesTimeliness
     end
 
     def validate_each(record, attr_name, value)
-      raw_value = record._timeliness_raw_value_for(attr_name) || value
+      raw_value = attribute_raw_value(record, attr_name) || value
       return if (@allow_nil && raw_value.nil?) || (@allow_blank && raw_value.blank?)
 
-      @timezone_aware = record.class.timeliness_attribute_timezone_aware?(attr_name)
+      @timezone_aware = timezone_aware?(record, attr_name)
       value = parse(raw_value) if value.is_a?(String) || options[:format]
       value = type_cast_value(value, @type)
 
@@ -64,6 +64,17 @@ module ValidatesTimeliness
     def format_error_value(value)
       format = I18n.t(@type, :default => DEFAULT_ERROR_VALUE_FORMATS[@type], :scope => 'validates_timeliness.error_value_formats')
       value.strftime(format)
+    end
+
+    def attribute_raw_value(record, attr_name)
+      if record.respond_to?(:_timeliness_raw_value_for)
+        record._timeliness_raw_value_for(attr_name)
+      end
+    end
+
+    def timezone_aware?(record, attr_name)
+      record.class.respond_to?(:timeliness_attribute_timezone_aware?) &&
+        record.class.timeliness_attribute_timezone_aware?(attr_name)
     end
 
   end
