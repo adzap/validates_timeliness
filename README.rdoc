@@ -14,11 +14,13 @@ If you a looking for the old version for Rails 2.x go here[http://github.com/adz
 
 * Adds validation for dates, times and datetimes to ActiveModel
 
+* Handles timezones and type casting of values for you
+
+* Only Rails date/time validation plugin offering complete validation (See ORM/ODM support)
+
 * Adds extensions to fix Rails date/time select issues
 
 * Includes extensible date/time parser
-
-* Supports timezone handling
 
 * Supports I18n for the error messages
 
