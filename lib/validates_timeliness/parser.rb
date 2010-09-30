@@ -37,10 +37,10 @@ module ValidatesTimeliness
     #      zo = Timezone offset (e.g. +10:00, -08:00, +1000)
     #
     #   All other characters are considered literal. You can embed regexp in the
-    #   format but no gurantees that it will remain intact. If you avoid the use
+    #   format but no guarantees that it will remain intact. If you avoid the use
     #   of any token characters and regexp dots or backslashes as special characters
     #   in the regexp, it may well work as expected. For special characters use
-    #   POSIX character clsses for safety.
+    #   POSIX character classes for safety.
     #
     # Repeating tokens:
     #       x = 1 or 2 digits for unit (e.g. 'h' means an hour can be '9' or '09')
@@ -108,16 +108,8 @@ module ValidatesTimeliness
       'yyyy-mm-ddThh:nn:sszo' # iso 8601 with zone offset
     ]
 
-
     # All tokens available for format construction. The token array is made of
-    # validation regexp and key for format proc mapping if any.
-    # If the token needs no format proc arg then the validation regexp should
-    # not have a capturing group, as all captured groups are passed to the
-    # format proc.
-    #
-    # The token regexp should only use a capture group if 'look-behind' anchor
-    # is required. The first capture group will be considered a literal and put
-    # into the validation regexp string as-is. This is a hack.
+    # regexp and key for format component mapping, if any.
     #
     cattr_accessor :format_tokens
     @@format_tokens = {
@@ -142,14 +134,14 @@ module ValidatesTimeliness
       '_'    => [ '\s?' ]
     }
 
-    # Arguments which will be passed to the format proc if matched in the
-    # time string. The key must be the key from the format tokens. The array
-    # consists of the arry position of the arg, the arg name, and the code to
-    # place in the time array slot. The position can be nil which means the arg
-    # won't be placed in the array.
+    # Component values will be passed to the format method if matched in the
+    # time string. The key should match the key defined in the format tokens.
     #
-    # The code can be used to manipulate the arg value if required, otherwise
-    # should just be the arg name.
+    # The array consists of the position the argument should be inserted in
+    # the time array, and the code to place in the time array. If the position
+    # is nil, then the argument won't be put in the time array.
+    #
+    # If the code slot is empty, then just the raw argument value is used.
     #
     cattr_accessor :format_components
     @@format_components = {
@@ -180,11 +172,10 @@ module ValidatesTimeliness
 
       def parse(raw_value, type, options={})
         return nil if raw_value.blank?
-        return raw_value if raw_value.acts_like?(:time) || raw_value.acts_like?(:date)
-        
         time_array = _parse(raw_value, type, options.reverse_merge(:strict => true))
+
         return nil if time_array.nil?
-        
+
         if type == :date
           Date.new(*time_array[0..2]) rescue nil
         else
@@ -236,6 +227,7 @@ module ValidatesTimeliness
       end
 
       # Delete formats of specified type. Error raised if format not found.
+      #
       def remove_formats(type, *remove_formats)
         remove_formats.each do |format|
           unless self.send("#{type}_formats").delete(format)
@@ -248,7 +240,9 @@ module ValidatesTimeliness
       # Adds new formats. Must specify format type and can specify a :before
       # option to nominate which format the new formats should be inserted in
       # front on to take higher precedence.
+      #
       # Error is raised if format already exists or if :before format is not found.
+      #
       def add_formats(type, *add_formats)
         formats = self.send("#{type}_formats")
         options = {}
@@ -267,7 +261,8 @@ module ValidatesTimeliness
 
       # Removes formats where the 1 or 2 digit month comes first, to eliminate
       # formats which are ambiguous with the European style of day then month.
-      # The mmm token is ignored as its not ambigous.
+      # The mmm token is ignored as its not ambiguous.
+      #
       def remove_us_formats
         us_format_regexp = /\Am{1,2}[^m]/
         date_formats.reject! { |format| us_format_regexp =~ format }
@@ -328,6 +323,8 @@ module ValidatesTimeliness
         found_tokens, token_order = [], []
 
         tokens = format_tokens.keys.sort {|a,b| a.size <=> b.size }.reverse
+
+        # Substitute tokens with numbered placeholder
         tokens.each do |token|
           regexp_str, arg_key = *format_tokens[token]
           if format.gsub!(/#{token}/, "%<#{found_tokens.size}>")
@@ -336,7 +333,8 @@ module ValidatesTimeliness
           end
         end
 
-        format.scan(/%<(\d)>/).each {|token_index| 
+        # Replace placeholders with token regexps
+        format.scan(/%<(\d)>/).each {|token_index|
           token_index = token_index.first
           token = found_tokens[token_index.to_i]
           format.gsub!("%<#{token_index}>", token[0])
@@ -349,7 +347,7 @@ module ValidatesTimeliness
         raise "The following format regular expression failed to compile: #{format}\n from format #{string_format}."
       end
 
-      # Compiles a format method which maps the regexp capture groups to method 
+      # Compiles a format method which maps the regexp capture groups to method
       # arguments based on order captured. A time array is built using the argument
       # values placed in the position defined by format component.
       #
