@@ -151,17 +151,17 @@ module ValidatesTimeliness
     # The code can be used to manipulate the arg value if required, otherwise
     # should just be the arg name.
     #
-    cattr_accessor :format_proc_args
-    @@format_proc_args = {
-      :year     => [0,   'y', 'unambiguous_year(y)'],
-      :month    => [1,   'm', 'month_index(m)'],
-      :day      => [2,   'd', 'd'],
-      :hour     => [3,   'h', 'full_hour(h, md ||= nil)'],
-      :min      => [4,   'n', 'n'],
-      :sec      => [5,   's', 's'],
-      :usec     => [6,   'u', 'microseconds(u)'],
-      :offset   => [7,   'z', 'offset_in_seconds(z)'],
-      :meridian => [nil, 'md', nil]
+    cattr_accessor :format_components
+    @@format_components = {
+      :year     => [ 0, 'unambiguous_year(year)'],
+      :month    => [ 1, 'month_index(month)'],
+      :day      => [ 2 ],
+      :hour     => [ 3, 'full_hour(hour, meridian ||= nil)'],
+      :min      => [ 4 ],
+      :sec      => [ 5 ],
+      :usec     => [ 6, 'microseconds(usec)'],
+      :offset   => [ 7, 'offset_in_seconds(offset)'],
+      :meridian => [ nil ]
     }
 
     @@type_wrapper = {
@@ -350,20 +350,18 @@ module ValidatesTimeliness
       end
 
       # Compiles a format method which maps the regexp capture groups to method 
-      # arguments based on order captured. A time array is built using the values
-      # in the position indicated by the first element of the proc arg array.
+      # arguments based on order captured. A time array is built using the argument
+      # values placed in the position defined by format component.
       #
-      def compile_format_method(order, name)
-        values  = [nil] * 7
-        args = []
-        order.each do |part|
-          proc_arg = format_proc_args[part]
-          args << proc_arg[1]
-          values[proc_arg[0]] = proc_arg[2] if proc_arg[0]
+      def compile_format_method(components, name)
+        values = [nil] * 7
+        components.each do |component|
+          position, code = *format_components[component]
+          values[position] = code || component if position
         end
         class_eval <<-DEF
           class << self
-            define_method(:"format_#{name}") do |#{args.join(',')}|
+            define_method(:"format_#{name}") do |#{components.join(',')}|
               [#{values.map {|i| i || 'nil' }.join(',')}].map {|i| i.is_a?(Float) ? i : i.to_i }
             end
           end
