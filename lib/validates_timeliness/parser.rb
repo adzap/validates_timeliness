@@ -134,14 +134,14 @@ module ValidatesTimeliness
       '_'    => [ '\s?' ]
     }
 
-    # Component values will be passed to the format method if matched in the
-    # time string. The key should match the key defined in the format tokens.
+    # Component argument values will be passed to the format method if matched in
+    # the time string. The key should match the key defined in the format tokens.
     #
-    # The array consists of the position the argument should be inserted in
-    # the time array, and the code to place in the time array. If the position
-    # is nil, then the argument won't be put in the time array.
+    # The array consists of the position the value should be inserted in
+    # the time array, and the code to place in the time array.
     #
-    # If the code slot is empty, then just the raw argument value is used.
+    # If the position is nil, then the value won't be put in the time array. If the
+    # code slot is empty, then just the raw value is used.
     #
     cattr_accessor :format_components
     @@format_components = {
@@ -349,7 +349,7 @@ module ValidatesTimeliness
 
       # Compiles a format method which maps the regexp capture groups to method
       # arguments based on order captured. A time array is built using the argument
-      # values placed in the position defined by format component.
+      # values placed in the position defined by the component.
       #
       def compile_format_method(components, name)
         values = [nil] * 7
