@@ -170,9 +170,9 @@ module ValidatesTimeliness
         @@datetime_expressions = compile_formats(@@datetime_formats)
       end
 
-      def parse(raw_value, type, options={})
-        return nil if raw_value.blank?
-        time_array = _parse(raw_value, type, options.reverse_merge(:strict => true))
+      def parse(value, type, options={})
+        return value unless value.is_a?(String)
+        time_array = _parse(value, type, options.reverse_merge(:strict => true))
 
         return nil if time_array.nil?
 
@@ -355,12 +355,12 @@ module ValidatesTimeliness
         values = [nil] * 7
         components.each do |component|
           position, code = *format_components[component]
-          values[position] = code || component if position
+          values[position] = code || "#{component}.to_i" if position
         end
         class_eval <<-DEF
           class << self
             define_method(:"format_#{name}") do |#{components.join(',')}|
-              [#{values.map {|i| i || 'nil' }.join(',')}].map {|i| i.is_a?(Float) ? i : i.to_i }
+              [#{values.map {|i| i || 'nil' }.join(',')}]
             end
           end
         DEF

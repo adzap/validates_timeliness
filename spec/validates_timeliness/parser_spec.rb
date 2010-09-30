@@ -4,27 +4,27 @@ describe ValidatesTimeliness::Parser do
 
   describe "format proc generator" do
     it "should generate proc which outputs date array with values in correct order" do
-      generate_method('yyyy-mm-dd').call('2000', '1', '2').should == [2000,1,2,0,0,0,0]
+      generate_method('yyyy-mm-dd').call('2000', '1', '2').should == [2000,1,2,nil,nil,nil,nil]
    end
 
     it "should generate proc which outputs date array from format with different order" do
-      generate_method('dd/mm/yyyy').call('2', '1', '2000').should == [2000,1,2,0,0,0,0]
+      generate_method('dd/mm/yyyy').call('2', '1', '2000').should == [2000,1,2,nil,nil,nil,nil]
     end
 
     it "should generate proc which outputs time array" do
-      generate_method('hh:nn:ss').call('01', '02', '03').should == [0,0,0,1,2,3,0]
+      generate_method('hh:nn:ss').call('01', '02', '03').should == [nil,nil,nil,1,2,3,nil]
     end
 
     it "should generate proc which outputs time array with meridian 'pm' adjusted hour" do
-      generate_method('hh:nn:ss ampm').call('01', '02', '03', 'pm').should == [0,0,0,13,2,3,0]
+      generate_method('hh:nn:ss ampm').call('01', '02', '03', 'pm').should == [nil,nil,nil,13,2,3,nil]
     end
 
     it "should generate proc which outputs time array with meridian 'am' unadjusted hour" do
-      generate_method('hh:nn:ss ampm').call('01', '02', '03', 'am').should == [0,0,0,1,2,3,0]
+      generate_method('hh:nn:ss ampm').call('01', '02', '03', 'am').should == [nil,nil,nil,1,2,3,nil]
     end
 
     it "should generate proc which outputs time array with microseconds" do
-      generate_method('hh:nn:ss.u').call('01', '02', '03', '99').should == [0,0,0,1,2,3,990000]
+      generate_method('hh:nn:ss.u').call('01', '02', '03', '99').should == [nil,nil,nil,1,2,3,990000]
     end
 
     it "should generate proc which outputs datetime array with zone offset" do
@@ -99,7 +99,7 @@ describe ValidatesTimeliness::Parser do
 
     it "should return time array from date string" do
       time_array = formats._parse('12:13:14', :time, :strict => true)
-      time_array.should == [2000,1,1,12,13,14,0]
+      time_array.should == [2000,1,1,12,13,14,nil]
     end
 
     it "should return nil if time hour is out of range for AM meridian" do
@@ -111,43 +111,43 @@ describe ValidatesTimeliness::Parser do
 
     it "should return date array from time string" do
       time_array = formats._parse('2000-02-01', :date, :strict => true)
-      time_array.should == [2000,2,1,0,0,0,0]
+      time_array.should == [2000,2,1,nil,nil,nil,nil]
     end
 
     it "should return datetime array from string value" do
       time_array = formats._parse('2000-02-01 12:13:14', :datetime, :strict => true)
-      time_array.should == [2000,2,1,12,13,14,0]
+      time_array.should == [2000,2,1,12,13,14,nil]
     end
 
     it "should parse date string when type is datetime" do
       time_array = formats._parse('2000-02-01', :datetime, :strict => false)
-      time_array.should == [2000,2,1,0,0,0,0]
+      time_array.should == [2000,2,1,nil,nil,nil,nil]
     end
 
     it "should ignore time when extracting date and strict is false" do
       time_array = formats._parse('2000-02-01 12:13', :date, :strict => false)
-      time_array.should == [2000,2,1,0,0,0,0]
+      time_array.should == [2000,2,1,nil,nil,nil,nil]
     end
 
     it "should ignore time when extracting date from format with trailing year and strict is false" do
       time_array = formats._parse('01-02-2000 12:13', :date, :strict => false)
-      time_array.should == [2000,2,1,0,0,0,0]
+      time_array.should == [2000,2,1,nil,nil,nil,nil]
     end
 
     it "should ignore date when extracting time and strict is false" do
       time_array = formats._parse('2000-02-01 12:13', :time, :strict => false)
-      time_array.should == [2000,1,1,12,13,0,0]
+      time_array.should == [2000,1,1,12,13,nil,nil]
     end
 
     it "should return zone offset when :include_offset option is true" do
       time_array = formats._parse('2000-02-01T12:13:14-10:30', :datetime, :include_offset => true)
-      time_array.should == [2000,2,1,12,13,14,0,-37800]
+      time_array.should == [2000,2,1,12,13,14,nil,-37800]
     end
 
     context "with format option" do
       it "should return values if string matches specified format" do
         time_array = formats._parse('2000-02-01 12:13:14', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
-        time_array.should == [2000,2,1,12,13,14,0]
+        time_array.should == [2000,2,1,12,13,14,nil]
       end
 
       it "should return nil if string does not match specified format" do
@@ -159,21 +159,21 @@ describe ValidatesTimeliness::Parser do
     context "date with ambiguous year" do
       it "should return year in current century if year below threshold" do
         time_array = formats._parse('01-02-29', :date)
-        time_array.should == [2029,2,1,0,0,0,0]
+        time_array.should == [2029,2,1,nil,nil,nil,nil]
       end
 
       it "should return year in last century if year at or above threshold" do
         time_array = formats._parse('01-02-30', :date)
-        time_array.should == [1930,2,1,0,0,0,0]
+        time_array.should == [1930,2,1,nil,nil,nil,nil]
       end
 
       it "should allow custom threshold" do
         default = ValidatesTimeliness::Parser.ambiguous_year_threshold
         ValidatesTimeliness::Parser.ambiguous_year_threshold = 40
         time_array = formats._parse('01-02-39', :date)
-        time_array.should == [2039,2,1,0,0,0,0]
+        time_array.should == [2039,2,1,nil,nil,nil,nil]
         time_array = formats._parse('01-02-40', :date)
-        time_array.should == [1940,2,1,0,0,0,0]
+        time_array.should == [1940,2,1,nil,nil,nil,nil]
         ValidatesTimeliness::Parser.ambiguous_year_threshold = default
       end
     end
@@ -266,7 +266,7 @@ describe ValidatesTimeliness::Parser do
       formats.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
       validate("59:23:58", :time).should be_true
       time_array = formats._parse('59:23:58', :time)
-      time_array.should == [2000,1,1,23,58,59,0]
+      time_array.should == [2000,1,1,23,58,59,nil]
     end
 
     it "should raise error if format exists" do
@@ -287,10 +287,10 @@ describe ValidatesTimeliness::Parser do
   describe "removing US formats" do
     it "should validate a date as European format when US formats removed" do
       time_array = formats._parse('01/02/2000', :date)
-      time_array.should == [2000, 1, 2,0,0,0,0]
+      time_array.should == [2000,1,2,nil,nil,nil,nil]
       formats.remove_us_formats
       time_array = formats._parse('01/02/2000', :date)
-      time_array.should == [2000, 2, 1,0,0,0,0]
+      time_array.should == [2000,2,1,nil,nil,nil,nil]
     end
 
     after do
