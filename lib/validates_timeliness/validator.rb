@@ -44,21 +44,27 @@ module ValidatesTimeliness
       value = parse(raw_value) if value.is_a?(String) || options[:format]
       value = type_cast_value(value, @type)
 
-      return record.errors.add(attr_name, :"invalid_#{@type}") if value.blank?
+      if value.blank?
+        return add_error(record, attr_name, :"invalid_#{@type}")
+      end
 
       @restrictions_to_check.each do |restriction|
         begin
           restriction_value = type_cast_value(evaluate_option_value(options[restriction], record), @type)
-
           unless value.send(RESTRICTIONS[restriction], restriction_value)
-            return record.errors.add(attr_name, restriction, :message => options[:"#{restriction}_message"], :restriction => format_error_value(restriction_value))
+            return add_error(record, attr_name, restriction, format_error_value(restriction_value))
           end
         rescue => e
           unless ValidatesTimeliness.ignore_restriction_errors
-            record.errors[attr_name] = "Error occurred validating #{attr_name} for #{restriction.inspect} restriction:\n#{e.message}" 
+            add_error(record, attr_name, "Error occurred validating #{attr_name} for #{restriction.inspect} restriction:\n#{e.message}")
           end
         end
       end
+    end
+
+    def add_error(record, attr_name, message, value=nil)
+      message_options = { :message => options[:"#{message}_message"], :restriction => value }
+      record.errors.add(attr_name, message, message_options)
     end
 
     def format_error_value(value)

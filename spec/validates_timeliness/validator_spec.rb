@@ -190,11 +190,14 @@ describe ValidatesTimeliness::Validator do
   end
 
   context "custom error message" do
+    it 'should be used for invalid type' do
+      Person.validates_date :birth_date, :invalid_date_message => 'custom invalid message'
+      invalid!(:birth_date, 'asdf', 'custom invalid message')
+    end
   
-    it 'should be used for failing restriction' do
+    it 'should be used for invalid restriction' do
       Person.validates_date :birth_date, :before => Time.now, :before_message => 'custom before message'
       invalid!(:birth_date, Time.now, 'custom before message')
     end
-
   end
 end
