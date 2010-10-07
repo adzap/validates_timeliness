@@ -2,9 +2,6 @@ ValidatesTimeliness.setup do |config|
   # Extend ORM/ODMs for full support (:active_record, :mongoid).
   # config.extend_orms = [ :active_record ]
   #
-  # User the plugin date/time parser which is stricter and extendable
-  # config.use_plugin_parser = false
-  #
   # Set the dummy date part for a time type values.
   # config.dummy_date_for_time_type = [ 2000, 1, 1 ]
   #
@@ -22,6 +19,9 @@ ValidatesTimeliness.setup do |config|
   #   :now   => lambda { Time.now },
   #   :today => lambda { Date.today }
   # )
+  #
+  # Use the plugin date/time parser which is stricter and extendable
+  # config.use_plugin_parser = false
   #
   # Add one or more formats making them valid. e.g. add_formats(:date, 'd(st|rd|th) of mmm, yyyy')
   # config.parser.add_formats()

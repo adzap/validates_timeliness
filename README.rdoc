@@ -73,7 +73,7 @@ validation method
   class Person < ActiveRecord::Base
     validates_date :date_of_birth, :on_or_before => lambda { Date.today }
     # or
-    validates :date_of_birth, :timeliness => {:on_or_before => lambda { Date.today }, :type => date}
+    validates :date_of_birth, :timeliness => {:on_or_before => lambda { Date.today }, :type => :date}
   end
 
   # or even on a specific record, per ActiveModel API.
