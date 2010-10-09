@@ -1,8 +1,10 @@
 require 'spec_helper'
 
+# Try loading mongoid and connecting. Otherwise, abort and skip spec.
+begin
+
 require 'mongoid'
 require 'validates_timeliness/orm/mongoid'
-
 Mongoid.configure do |config|
   name = "validates_timeliness_test"
   host = "localhost"
@@ -86,4 +88,10 @@ describe ValidatesTimeliness, 'Mongoid' do
       Article.instance_methods(false).should_not include("birth_datetime_before_type_cast")
     end
   end
+end
+
+rescue LoadError
+  puts "Mongoid specs skipped. Mongoid not installed"
+rescue StandardError
+  puts "Mongoid specs skipped. MongoDB connection failed."
 end
