@@ -9,8 +9,8 @@ module ValidatesTimeliness
   # Formats can be added or removed to customize the set of valid date or time
   # string values.
   #
-  class Parser
-    cattr_reader :time_expressions, :date_expressions, :datetime_expressions
+  module Parser
+    mattr_reader :time_expressions, :date_expressions, :datetime_expressions
 
     # Set the threshold value for a two digit year to be considered last century
     #
@@ -20,7 +20,7 @@ module ValidatesTimeliness
     #     year = '29' is considered 2029
     #     year = '30' is considered 1930
     #
-    cattr_accessor :ambiguous_year_threshold
+    mattr_accessor :ambiguous_year_threshold
     self.ambiguous_year_threshold = 30
 
     # Format tokens:
@@ -57,7 +57,7 @@ module ValidatesTimeliness
     #   by the next lowest length valid repeating token (e.g. yyy will be
     #   replaced with yy)
 
-    cattr_accessor :time_formats
+    mattr_accessor :time_formats
     @@time_formats = [
       'hh:nn:ss',
       'hh-nn-ss',
@@ -72,7 +72,7 @@ module ValidatesTimeliness
       'h_ampm'
     ]
 
-    cattr_accessor :date_formats
+    mattr_accessor :date_formats
     @@date_formats = [
       'yyyy-mm-dd',
       'yyyy/mm/dd',
@@ -87,7 +87,7 @@ module ValidatesTimeliness
       'd mmm yy'
     ]
 
-    cattr_accessor :datetime_formats
+    mattr_accessor :datetime_formats
     @@datetime_formats = [
       'yyyy-mm-dd hh:nn:ss',
       'yyyy-mm-dd h:nn',
@@ -111,7 +111,7 @@ module ValidatesTimeliness
     # All tokens available for format construction. The token array is made of
     # regexp and key for format component mapping, if any.
     #
-    cattr_accessor :format_tokens
+    mattr_accessor :format_tokens
     @@format_tokens = {
       'ddd'  => [ '\w{3,9}' ],
       'dd'   => [ '\d{2}',   :day ],
@@ -143,7 +143,7 @@ module ValidatesTimeliness
     # If the position is nil, then the value won't be put in the time array. If the
     # code slot is empty, then just the raw value is used.
     #
-    cattr_accessor :format_components
+    mattr_accessor :format_components
     @@format_components = {
       :year     => [ 0, 'unambiguous_year(year)'],
       :month    => [ 1, 'month_index(month)'],
