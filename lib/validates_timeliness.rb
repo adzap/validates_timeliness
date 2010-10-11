@@ -35,8 +35,8 @@ module ValidatesTimeliness
   # Shorthand time and date symbols for restrictions
   mattr_accessor :restriction_shorthand_symbols
   @@restriction_shorthand_symbols = {
-    :now   => lambda { Time.now },
-    :today => lambda { Date.today }
+    :now   => lambda { Time.current },
+    :today => lambda { Date.current }
   }
 
   def self.parser

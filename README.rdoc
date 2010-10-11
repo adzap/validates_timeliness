@@ -197,7 +197,7 @@ See the wiki[http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser] fo
 === Restriction Shorthand
 
 It is common to restrict an attribute to being on or before the current time or current day. 
-To specify this you need to use a lambda as an option value e.g. <tt>lambda { Time.now }</tt>.
+To specify this you need to use a lambda as an option value e.g. <tt>lambda { Time.current }</tt>.
 This can be tedious noise amongst your validations for something so common. To combat this the
 plugin allows you to use shorthand symbols for often used relative times or dates.
 
