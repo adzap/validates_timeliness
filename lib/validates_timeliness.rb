@@ -1,4 +1,6 @@
 require 'date'
+require 'active_support/concern'
+require 'active_support/core_ext/module'
 require 'active_support/core_ext/hash/except'
 require 'active_support/core_ext/string/conversions'
 require 'active_support/core_ext/date/acts_like'
