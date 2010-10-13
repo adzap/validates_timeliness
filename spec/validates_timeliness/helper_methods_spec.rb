@@ -8,9 +8,9 @@ describe ValidatesTimeliness, 'HelperMethods' do
   end
 
   it 'should define instance validation methods' do
-    Person.instance_methods.should include('validates_date')
-    Person.instance_methods.should include('validates_time')
-    Person.instance_methods.should include('validates_datetime')
+    Person.new.should respond_to(:validates_date)
+    Person.new.should respond_to(:validates_time)
+    Person.new.should respond_to(:validates_datetime)
   end
 
   it 'should validate instance when validation method called' do

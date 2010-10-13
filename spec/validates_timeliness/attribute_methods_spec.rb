@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ValidatesTimeliness::AttributeMethods do
   it 'should define _timeliness_raw_value_for instance method' do
-    PersonWithShim.instance_methods.should include('_timeliness_raw_value_for')
+    PersonWithShim.new.should respond_to(:_timeliness_raw_value_for)
   end
 
   describe ".timeliness_validated_attributes" do
@@ -70,7 +70,7 @@ describe ValidatesTimeliness::AttributeMethods do
 
   context "before_type_cast method" do
     it 'should not be defined if ORM does not support it' do
-      PersonWithShim.instance_methods(false).should_not include("birth_datetime_before_type_cast")
+      PersonWithShim.new.should_not respond_to(:birth_datetime_before_type_cast)
     end
   end
 end

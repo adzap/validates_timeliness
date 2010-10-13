@@ -34,9 +34,9 @@ describe ValidatesTimeliness, 'Mongoid' do
     end
 
     it 'should be defined on the instance' do
-      Article.instance_methods.should include('validates_date')
-      Article.instance_methods.should include('validates_time')
-      Article.instance_methods.should include('validates_datetime')
+      Article.new.should respond_to(:validates_date)
+      Article.new.should respond_to(:validates_time)
+      Article.new.should respond_to(:validates_datetime)
     end
   end
 
@@ -85,7 +85,7 @@ describe ValidatesTimeliness, 'Mongoid' do
 
   context "before_type_cast method" do
     it 'should not be defined if ORM does not support it' do
-      Article.instance_methods(false).should_not include("birth_datetime_before_type_cast")
+      Article.new.should_not respond_to(:birth_datetime_before_type_cast)
     end
   end
 end

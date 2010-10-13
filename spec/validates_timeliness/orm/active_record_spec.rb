@@ -10,9 +10,9 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     end
 
     it 'should defines for the instance' do
-      ActiveRecord::Base.instance_methods.should include('validates_date')
-      ActiveRecord::Base.instance_methods.should include('validates_time')
-      ActiveRecord::Base.instance_methods.should include('validates_datetime')
+      Employee.new.should respond_to(:validates_date)
+      Employee.new.should respond_to(:validates_time)
+      Employee.new.should respond_to(:validates_datetime)
     end
   end
 
@@ -73,7 +73,7 @@ describe ValidatesTimeliness, 'ActiveRecord' do
 
   context "before_type_cast method" do
     it 'should be defined on class if ORM supports it' do
-      Employee.instance_methods(false).should include("birth_datetime_before_type_cast")
+      Employee.new.should respond_to(:birth_datetime_before_type_cast)
     end
 
     it 'should return original value' do
