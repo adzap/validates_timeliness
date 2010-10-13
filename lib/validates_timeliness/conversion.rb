@@ -11,7 +11,7 @@ module ValidatesTimeliness
       when :date
         value.to_date
       when :datetime
-        value.to_time
+        value.is_a?(Time) ? value : value.to_time
       end
       if options[:ignore_usec] && value.is_a?(Time)
         ValidatesTimeliness::Parser.make_time(Array(value).reverse[4..9], @timezone_aware)
