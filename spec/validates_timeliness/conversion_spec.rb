@@ -102,8 +102,8 @@ describe ValidatesTimeliness::Conversion do
     end
 
     describe "with custom dummy date" do
-      before(:all) do
-        @@original_dummy_date = ValidatesTimeliness.dummy_date_for_time_type
+      before do
+        @original_dummy_date = ValidatesTimeliness.dummy_date_for_time_type
         ValidatesTimeliness.dummy_date_for_time_type = [2010, 1, 1] 
       end
 
@@ -111,8 +111,8 @@ describe ValidatesTimeliness::Conversion do
         dummy_time(Time.utc(1999, 11, 22, 12, 34, 56)).should == Time.utc(2010, 1, 1, 12, 34, 56)
       end
 
-      after(:all) do
-        ValidatesTimeliness.dummy_date_for_time_type = @@original_dummy_date
+      after do
+        ValidatesTimeliness.dummy_date_for_time_type = @original_dummy_date
       end
     end
   end
