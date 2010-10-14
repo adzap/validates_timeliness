@@ -44,7 +44,7 @@ describe ValidatesTimeliness, 'ActiveRecord' do
       end
 
       it 'should parse a string value' do
-        ValidatesTimeliness::Parser.should_receive(:parse) 
+        Timeliness::Parser.should_receive(:parse)
         r = EmployeeWithParser.new
         r.birth_date = '2010-01-01'
       end

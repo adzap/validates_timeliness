@@ -2,7 +2,8 @@
 - Rails 3 and ActiveModel compatibility
 - Uses ActiveModel::EachValidator as validator base class.
 - Configuration settings stored in ValidatesTimeliness module only. ValidatesTimeliness.setup block to configure.
-- Plugin parser is off by default.
+- Parser extracted to the Timeliness gem http://github.com/adzap/timeliness
+- Parser is disabled by default. See initializer for enabling it.
 - Method override for parsing and before type cast values is on validated attributes only. Old version handled all date/datetime columns, validates or not. Too intrusive.
 - Add validation helpers to classes using extend_orms config setting. e.g. conf.extend_orms = [ :active_record ]
 - Changed :between option so it is split into :on_or_after and :on_or_before option values. The error message for either failing check will be used instead of a between error message.  

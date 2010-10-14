@@ -38,7 +38,7 @@ module ValidatesTimeliness
           def #{attr_name}=(value)
             @timeliness_cache ||= {}
             @timeliness_cache["#{attr_name}"] = value
-            #{ "value = ValidatesTimeliness::Parser.parse(value, :#{type}, :timezone_aware => #{timezone_aware}) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
+            #{ "value = Timeliness::Parser.parse(value, :#{type}, :zone => (:current if #{timezone_aware})) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
             super
           end
         EOV

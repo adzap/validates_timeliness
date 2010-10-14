@@ -14,7 +14,7 @@ module ValidatesTimeliness
         value.is_a?(Time) ? value : value.to_time
       end
       if options[:ignore_usec] && value.is_a?(Time)
-        ValidatesTimeliness::Parser.make_time(Array(value).reverse[4..9], @timezone_aware)
+        Timeliness::Parser.make_time(Array(value).reverse[4..9], (:current if @timezone_aware))
       else
         value
       end
@@ -28,7 +28,7 @@ module ValidatesTimeliness
         [0,0,0]
       end
       values = ValidatesTimeliness.dummy_date_for_time_type + time
-      ValidatesTimeliness::Parser.make_time(values, @timezone_aware)
+      Timeliness::Parser.make_time(values, (:current if @timezone_aware))
     end
 
     def evaluate_option_value(value, record)
@@ -57,7 +57,7 @@ module ValidatesTimeliness
 
     def parse(value)
       if ValidatesTimeliness.use_plugin_parser
-        ValidatesTimeliness::Parser.parse(value, @type, :timezone_aware => @timezone_aware, :format => options[:format], :strict => false)
+        Timeliness::Parser.parse(value, @type, :zone => (:current if @timezone_aware), :format => options[:format], :strict => false)
       else
         @timezone_aware ? Time.zone.parse(value) : value.to_time(ValidatesTimeliness.default_timezone)
       end

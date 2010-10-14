@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+gem 'timeliness', '~> 0.1.1'
+
 group :test do
   gem 'ZenTest'
   gem 'rails', '3.0.0'
