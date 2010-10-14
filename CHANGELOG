@@ -4,6 +4,7 @@
 - Configuration settings stored in ValidatesTimeliness module only. ValidatesTimeliness.setup block to configure.
 - Parser extracted to the Timeliness gem http://github.com/adzap/timeliness
 - Parser is disabled by default. See initializer for enabling it.
+- Removed RSpec matcher. Encouraged poor specs by copy-pasting from spec to model, or worse, the other way round.
 - Method override for parsing and before type cast values is on validated attributes only. Old version handled all date/datetime columns, validates or not. Too intrusive.
 - Add validation helpers to classes using extend_orms config setting. e.g. conf.extend_orms = [ :active_record ]
 - Changed :between option so it is split into :on_or_after and :on_or_before option values. The error message for either failing check will be used instead of a between error message.  
