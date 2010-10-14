@@ -22,7 +22,7 @@ module ValidatesTimeliness
             def #{attr_name}=(value)
               @timeliness_cache ||= {}
               @timeliness_cache["#{attr_name}"] = value
-              #{ "value = ValidatesTimeliness::Parser.parse(value, :#{type}) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
+              #{ "value = Timeliness::Parser.parse(value, :#{type}) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
               write_attribute(:#{attr_name}, value)
             end
           EOV

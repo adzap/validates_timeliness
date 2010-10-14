@@ -57,7 +57,7 @@ describe ValidatesTimeliness, 'Mongoid' do
       end
 
       it 'should parse a string value' do
-        ValidatesTimeliness::Parser.should_receive(:parse) 
+        Timeliness::Parser.should_receive(:parse)
         r = Article.new
         r.publish_date = '2010-01-01'
       end

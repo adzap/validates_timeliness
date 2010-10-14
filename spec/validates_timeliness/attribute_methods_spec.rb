@@ -51,7 +51,7 @@ describe ValidatesTimeliness::AttributeMethods do
       end
 
       it 'should parse a string value' do
-        ValidatesTimeliness::Parser.should_receive(:parse) 
+        Timeliness::Parser.should_receive(:parse)
         r = PersonWithParser.new
         r.birth_date = '2010-01-01'
       end

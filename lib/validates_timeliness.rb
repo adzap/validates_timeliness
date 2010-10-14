@@ -9,26 +9,18 @@ require 'active_support/core_ext/time/acts_like'
 require 'active_support/core_ext/time/conversions'
 require 'active_support/core_ext/date_time/acts_like'
 require 'active_support/core_ext/date_time/conversions'
+require 'timeliness'
 
 module ValidatesTimeliness
-  autoload :Parser,  'validates_timeliness/parser'
   autoload :VERSION, 'validates_timeliness/version'
+
+  class << self
+    delegate :parser, :default_timezone, :default_timezone=, :dummy_date_for_time_type, :to => Timeliness
+  end
 
   # Extend ORM/ODMs for full support (:active_record, :mongoid).
   mattr_accessor :extend_orms
   @@extend_orms = []
-
-  # User the plugin date/time parser which is stricter and extendable
-  mattr_accessor :use_plugin_parser
-  @@use_plugin_parser = false
-
-  # Default timezone
-  mattr_accessor :default_timezone
-  @@default_timezone = :utc
-
-  # Set the dummy date part for a time type values.
-  mattr_accessor :dummy_date_for_time_type
-  @@dummy_date_for_time_type = [ 2000, 1, 1 ]
 
   # Ignore errors when restriction options are evaluated
   mattr_accessor :ignore_restriction_errors
@@ -41,9 +33,18 @@ module ValidatesTimeliness
     :today => lambda { Date.current }
   }
 
-  def self.parser
-    Parser
+  # Use the plugin date/time parser which is stricter and extensible
+  mattr_accessor :use_plugin_parser
+  @@use_plugin_parser = false
+
+  # Default timezone
+  self.default_timezone = :utc
+
+  # Set the dummy date part for a time type values.
+  def self.dummy_date_for_time_type=(array)
+    Timeliness.date_for_time_type = array
   end
+  self.dummy_date_for_time_type = [ 2000, 1, 1 ]
 
   # Setup method for plugin configuration
   def self.setup
