@@ -20,7 +20,7 @@ If you a looking for the old version for Rails 2.x go here[http://github.com/adz
 
 * Adds extensions to fix Rails date/time select issues
 
-* Includes extensible date/time parser
+* Uses extensible date/time parser ({timeliness gem}[http://github.com/adzap/timeliness])
 
 * Supports I18n for the error messages
 
@@ -34,7 +34,7 @@ As plugin (from master)
 As gem (in beta)
 
   # in Gemfile
-  gem 'validates_timeliness', '>= 3.0.0.beta'
+  gem 'validates_timeliness', '>= 3.0.5.beta'
 
   # Run bundler
   $ bundle install
@@ -182,16 +182,17 @@ It is highly recommended you use the I18n system for error messages.
 
 === Plugin Parser
 
-The plugin comes with a customisable date and time parser. You can add or remove valid formats
-for dates, times, and datetimes. It is also more strict than the Ruby parser, which means it 
-won't accept day of the month if it's not a valid number for that month.
+The uses the {timeliness gem}[http://github.com/adzap/timeliness] as a fast, configurable and extensible date and time parser.
+You can add or remove valid formats for dates, times, and datetimes. It is also more strict than the
+Ruby parser, which means it won't accept day of the month if it's not a valid number for the month.
 
-By default the parser is switched off. To switch it on:
+By default the parser is disabled. To enable it:
 
   # in the setup block
   config.use_plugin_parser = true
 
-See the wiki[http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser] for all the details about the parser.
+Enabling the parser will mean that strings assigned to attributes validated with the plugin will be parsed
+using the gem. See the wiki[http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser] for more details about the parser configuration.
 
 
 === Restriction Shorthand
