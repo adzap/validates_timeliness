@@ -11,11 +11,18 @@ require 'active_support/core_ext/date_time/acts_like'
 require 'active_support/core_ext/date_time/conversions'
 require 'timeliness'
 
+Timeliness.module_eval do
+  class << self
+    alias :dummy_date_for_time_type :date_for_time_type
+    alias :dummy_date_for_time_type= :date_for_time_type=
+  end
+end
+
 module ValidatesTimeliness
   autoload :VERSION, 'validates_timeliness/version'
 
   class << self
-    delegate :parser, :default_timezone, :default_timezone=, :dummy_date_for_time_type, :to => Timeliness
+    delegate :default_timezone, :default_timezone=, :dummy_date_for_time_type, :dummy_date_for_time_type=, :to => Timeliness
   end
 
   # Extend ORM/ODMs for full support (:active_record, :mongoid).
@@ -41,10 +48,11 @@ module ValidatesTimeliness
   self.default_timezone = :utc
 
   # Set the dummy date part for a time type values.
-  def self.dummy_date_for_time_type=(array)
-    Timeliness.date_for_time_type = array
-  end
   self.dummy_date_for_time_type = [ 2000, 1, 1 ]
+
+  def self.parser
+    Timeliness
+  end
 
   # Setup method for plugin configuration
   def self.setup
