@@ -34,7 +34,7 @@ As plugin (from master)
 As gem (in beta)
 
   # in Gemfile
-  gem 'validates_timeliness', '>= 3.0.5.beta'
+  gem 'validates_timeliness', '>= 3.0.0.beta.5'
 
   # Run bundler
   $ bundle install
