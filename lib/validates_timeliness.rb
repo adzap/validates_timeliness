@@ -15,6 +15,7 @@ Timeliness.module_eval do
   class << self
     alias :dummy_date_for_time_type :date_for_time_type
     alias :dummy_date_for_time_type= :date_for_time_type=
+    alias :remove_us_formats :use_euro_formats
   end
 end
 
