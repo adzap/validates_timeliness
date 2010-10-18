@@ -182,7 +182,7 @@ It is highly recommended you use the I18n system for error messages.
 
 === Plugin Parser
 
-The uses the {timeliness gem}[http://github.com/adzap/timeliness] as a fast, configurable and extensible date and time parser.
+The plugin uses the {timeliness gem}[http://github.com/adzap/timeliness] as a fast, configurable and extensible date and time parser.
 You can add or remove valid formats for dates, times, and datetimes. It is also more strict than the
 Ruby parser, which means it won't accept day of the month if it's not a valid number for the month.
 
