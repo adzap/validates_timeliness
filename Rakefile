@@ -14,15 +14,15 @@ spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.rubyforge_project = "validates_timeliness"
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README.rdoc", "LICENSE", "CHANGELOG"]
+  s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc", "LICENSE"]
   s.summary = %q{Date and time validation plugin for Rails which allows custom formats}
   s.description = s.summary
   s.author = "Adam Meehan"
   s.email = "adam.meehan@gmail.com"
   s.homepage = "http://github.com/adzap/validates_timeliness"
   s.require_path = 'lib'
-  s.files = %w(validates_timeliness.gemspec LICENSE CHANGELOG README.rdoc Rakefile) + Dir.glob("{lib,spec}/**/*")
-  s.add_runtime_dependency 'timeliness', '~> 0.1.1'
+  s.files = %w(validates_timeliness.gemspec LICENSE CHANGELOG.rdoc README.rdoc Rakefile) + Dir.glob("{lib,spec}/**/*")
+  s.add_runtime_dependency 'timeliness', '~> 0.1.0'
 end
 
 desc 'Default: run specs.'
