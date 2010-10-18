@@ -12,6 +12,5 @@ group :test do
   gem 'rspec-rails', '>= 2.0.0.beta.17'
   gem 'timecop'
   gem 'rspec_tag_matchers'
-  gem 'ruby-debug',   :platforms => :mri_18
-  gem 'ruby-debug19', :platforms => :mri_19
+  gem 'ruby-debug'
 end
