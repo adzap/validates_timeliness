@@ -18,9 +18,9 @@ If you a looking for the old version for Rails 2.x go here[http://github.com/adz
 
 * Only Rails date/time validation plugin offering complete validation (See ORM/ODM support)
 
-* Adds extensions to fix Rails date/time select issues
+* Adds extensions to fix Rails date/time select issues (See Extensions)
 
-* Uses extensible date/time parser ({timeliness gem}[http://github.com/adzap/timeliness])
+* Uses extensible date/time parser (Using {timeliness gem}[http://github.com/adzap/timeliness]. See Plugin Parser)
 
 * Supports I18n for the error messages
 
@@ -31,7 +31,7 @@ As plugin (from master)
 
   rails plugin install git://github.com/adzap/validates_timeliness.git
 
-As gem (in beta)
+As gem
 
   # in Gemfile
   gem 'validates_timeliness', '~> 3.0.0'
@@ -45,6 +45,8 @@ Then run
 
 This creates configuration initializer and locale files. In the initializer, you there are a number of config
 options to customize the plugin.
+
+NOTE: You may wish to enable the plugin parser and the extensions to start. Please read those sections first.
 
 
 == Examples
@@ -175,7 +177,8 @@ You can also use validation options for custom error messages. The following opt
     :after_message
     :on_or_after_message
 
-Note: There is no :between_message option. The between error message should be defined using the :on_or_before and :on_or_after messages.
+Note: There is no :between_message option. The between error message should be defined using the 
+:on_or_before and :on_or_after messages.
 
 It is highly recommended you use the I18n system for error messages.
 
@@ -254,31 +257,32 @@ To turn them on/off:
   config.ignore_restriction_errors = true
 
 
-=== Display Invalid Values in Select Helpers
-
-The plugin offers an extension for ActionView to allowing invalid
-date and time values to be redisplayed to the user as feedback, instead of
-a blank field which happens by default in Rails. Though the date helpers make this a
-pretty rare occurrence, given the select dropdowns for each date/time component, but
-it may be something of interest.
-
-To activate it, put this in an initializer:
-
-  # in the setup block
-  config.enable_date_time_select_extension!
-
+== Extensions
 
 === Strict Parsing for Select Helpers
 
 When using date/time select helpers, the component values are handled by ActiveRecord using
-the Time class to instantiate them into a time value. But this mean that some invalid dates,
+the Time class to instantiate them into a time value. This means that some invalid dates,
 such as 31st June, are shifted forward and treated as valid. To handle these cases in a strict
-way you can enable the plugin handler to treat them as invalid dates.
+way, you can enable the plugin extension to treat them as invalid dates.
 
 To activate it, put this in an initializer:
 
   # in the setup block
   config.enable_multiparameter_extension!
+
+
+=== Display Invalid Values in Select Helpers
+
+The plugin offers an extension for ActionView to allowing invalid date and time values to be
+redisplayed to the user as feedback, instead of a blank field which happens by default in
+Rails. Though the date helpers make this a pretty rare occurrence, given the select dropdowns
+for each date/time component, but it may be something of interest.
+
+To activate it, put this in an initializer:
+
+  # in the setup block
+  config.enable_date_time_select_extension!
 
 
 == Credits
