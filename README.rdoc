@@ -266,7 +266,7 @@ the Time class to instantiate them into a time value. This means that some inval
 such as 31st June, are shifted forward and treated as valid. To handle these cases in a strict
 way, you can enable the plugin extension to treat them as invalid dates.
 
-To activate it, put this in an initializer:
+To activate it, uncomment this line in the initializer:
 
   # in the setup block
   config.enable_multiparameter_extension!
@@ -279,7 +279,7 @@ redisplayed to the user as feedback, instead of a blank field which happens by d
 Rails. Though the date helpers make this a pretty rare occurrence, given the select dropdowns
 for each date/time component, but it may be something of interest.
 
-To activate it, put this in an initializer:
+To activate it, uncomment this line in the initializer:
 
   # in the setup block
   config.enable_date_time_select_extension!
