@@ -10,7 +10,6 @@ module ValidatesTimeliness
 
       included do
         alias_method_chain :datetime_selector, :timeliness
-        alias_method_chain :value, :timeliness
       end
 
       module InstanceMethods
@@ -22,13 +21,13 @@ module ValidatesTimeliness
           datetime_selector_without_timeliness(*args)
         end
 
-        def value_with_timeliness(object)
+        def value(object)
           unless @timeliness_date_or_time_tag && @template_object.params[@object_name]
-            return value_without_timeliness(object)
+            return super
           end
 
           pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
-          return value_without_timeliness(object) if pairs.empty?
+          return super if pairs.empty?
 
           values = [nil] * 6
           pairs.map do |(param, value)|
