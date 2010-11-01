@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    validates_timeliness (3.0.0)
+      timeliness (~> 0.1.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -117,4 +123,5 @@ DEPENDENCIES
   ruby-debug
   sqlite3-ruby
   timecop
-  timeliness (~> 0.1.1)
+  timeliness (~> 0.1.0)
+  validates_timeliness!
