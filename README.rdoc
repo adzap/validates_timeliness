@@ -285,9 +285,14 @@ To activate it, uncomment this line in the initializer:
   config.enable_date_time_select_extension!
 
 
-== Credits
+== Contributors
 
-* Adam Meehan (adam.meehan@gmail.com, http://github.com/adzap)
+To see the generous people who have contributed code, take a look at the {contributors list}[http://github.com/adzap/validates_timeliness/contributors].
+
+
+== Maintainers
+
+* {Adam Meehan}[http://github.com/adzap]
 
 
 == License
