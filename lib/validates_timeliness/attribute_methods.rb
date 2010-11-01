@@ -42,7 +42,7 @@ module ValidatesTimeliness
             super
           end
         EOV
-        class_eval(method_body, __FILE__, line)
+        generated_timeliness_methods.module_eval(method_body, __FILE__, line)
       end
 
       def define_timeliness_before_type_cast_method(attr_name)
@@ -51,7 +51,11 @@ module ValidatesTimeliness
             _timeliness_raw_value_for('#{attr_name}')
           end
         EOV
-        class_eval(method_body, __FILE__, line)
+        generated_timeliness_methods.module_eval(method_body, __FILE__, line)
+      end
+
+      def generated_timeliness_methods
+        @generated_timeliness_methods ||= Module.new.tap { |m| include(m) }
       end
     end
 

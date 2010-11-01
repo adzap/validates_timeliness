@@ -34,6 +34,12 @@ describe ValidatesTimeliness::AttributeMethods do
       r._timeliness_raw_value_for(:birth_datetime).should == date_string
     end
 
+    it 'should not overwrite user defined methods' do
+      e = Employee.new
+      e.birth_date = '2010-01-01'
+      e.redefined_birth_date_called.should be_true
+    end
+
     context "with plugin parser" do
       class PersonWithParser
         include TestModel

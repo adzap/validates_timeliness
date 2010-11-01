@@ -75,6 +75,13 @@ class Employee < ActiveRecord::Base
   validates_time :birth_time
   validates_datetime :birth_datetime
   define_attribute_methods
+
+  attr_accessor :redefined_birth_date_called
+
+  def birth_date=(value)
+    self.redefined_birth_date_called = true
+    super
+  end
 end
 
 Rspec.configure do |c|
