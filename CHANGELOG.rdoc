@@ -1,3 +1,6 @@
+= 3.0.1 [2010-11-02]
+* Generate timeliness write methods in an included module to allow overriding in model class (josevalim)
+
 = 3.0.0 [2010-10-18]
 * Rails 3 and ActiveModel compatibility
 * Uses ActiveModel::EachValidator as validator base class.
