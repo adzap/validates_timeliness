@@ -9,6 +9,23 @@ describe ValidatesTimeliness::Conversion do
 
   describe "#type_cast_value" do
     let(:options) { Hash.new }
+    
+    describe "invalids type" do
+      it "should return nil for number in date value" do
+        type_cast_value(666, :date).should == nil
+      end
+      it "should return nil for number in datetime value" do
+        type_cast_value(666, :datetime).should == nil
+      end
+
+      it "should return nil for invalid string in date value" do
+        type_cast_value("666", :date).should == nil
+      end
+      it "should return nil for invalid string in datetime value" do
+        type_cast_value("666", :datetime).should == nil
+      end
+
+    end
 
     describe "for date type" do
       it "should return same value for date value" do

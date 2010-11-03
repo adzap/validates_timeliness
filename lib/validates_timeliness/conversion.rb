@@ -3,21 +3,29 @@ module ValidatesTimeliness
 
     def type_cast_value(value, type)
       return nil if value.nil?
-
-      value = value.in_time_zone if value.acts_like?(:time) && @timezone_aware
-      value = case type
-      when :time
-        dummy_time(value)
-      when :date
-        value.to_date
-      when :datetime
-        value.is_a?(Time) ? value : value.to_time
+      begin
+        
+         value = value.in_time_zone if value.acts_like?(:time) && @timezone_aware
+          value = case type
+          when :time
+            dummy_time(value)
+          when :date
+            value.to_date
+          when :datetime
+            value.is_a?(Time) ? value : value.to_time
+          end
+          if options[:ignore_usec] && value.is_a?(Time)
+            Timeliness::Parser.make_time(Array(value).reverse[4..9], (:current if @timezone_aware))
+          else
+            value
+          end
+        
+      rescue Exception => e
+        nil
       end
-      if options[:ignore_usec] && value.is_a?(Time)
-        Timeliness::Parser.make_time(Array(value).reverse[4..9], (:current if @timezone_aware))
-      else
-        value
-      end
+      
+      
+     
     end
 
     def dummy_time(value)
