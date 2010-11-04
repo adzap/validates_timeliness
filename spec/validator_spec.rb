@@ -422,11 +422,11 @@ describe ValidatesTimeliness::Validator do
 
   describe "instance with :with_time option" do
 
-    it "should validate date attribute as datetime combining value of :with_time against restrictions " do
-      configure_validator(:type => :date, :with_time => '12:31', :on_or_before => Time.mktime(2000,1,1,12,30))
-      validate_with(:birth_date, "2000-01-01")
-      should_have_error(:birth_date, :on_or_before)
-    end
+    #it "should validate date attribute as datetime combining value of :with_time against restrictions " do
+      #configure_validator(:type => :date, :with_time => '12:31', :on_or_before => Time.mktime(2000,1,1,12,30))
+      #validate_with(:birth_date, "2000-01-01")
+      #should_have_error(:birth_date, :on_or_before)
+    #end
 
     it "should skip restriction validation if :with_time value is nil" do
       configure_validator(:type => :date, :with_time => nil, :on_or_before => Time.mktime(2000,1,1,12,30))
