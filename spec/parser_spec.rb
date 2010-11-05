@@ -19,8 +19,18 @@ describe ValidatesTimeliness::Parser do
     it "should return Time object when passed a Time object" do
       parse(Time.now, :datetime).should be_kind_of(Time)
     end
+
+    it "should return time object for ISO 8601 string with time zone" do
+      parse("2000-01-01T12:23:42+09:00", :datetime).should be_kind_of(Time)
+    end
+
+    it "should respect the time zone offset in ISO 8601 input" do
+      parse("2000-01-01T12:00:00+01:00", :datetime).utc.should ==
+        DateTime.parse("2000-01-01T11:00:00Z")
+    end
         
     if RAILS_VER >= '2.1'
+      # FIXME: This spec does not test the 'parse' method at all!
       it "should convert time string into current timezone" do
         Time.zone = 'Melbourne'
         time = parse("2000-01-01 12:13:14", :datetime)
