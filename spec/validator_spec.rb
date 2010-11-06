@@ -3,6 +3,14 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe ValidatesTimeliness::Validator do
   attr_accessor :person, :validator
 
+  if ValidatesTimeliness::I18N_LATEST
+    I18N_REGEXP = /\%\{\w*\}/
+    I18N_INTERPOLATION = '%{%s}'
+  else
+    I18N_REGEXP = /\{\{\w*\}\}/
+    I18N_INTERPOLATION = '{{%s}}'
+  end
+
   before :all do
     # freezes time using time_travel plugin
     Time.now = Time.utc(2000, 1, 1, 0, 0, 0)
@@ -513,8 +521,9 @@ describe ValidatesTimeliness::Validator do
 
     describe "localized error messages" do
       before(:all) do
+        message = "retfa #{I18N_INTERPOLATION}" % 'restriction'
         translations = {
-          :activerecord => {:errors => {:messages => { :after => 'retfa {{restriction}}' }}},
+          :activerecord => {:errors => {:messages => { :after => message }}},
           :validates_timeliness => {:error_value_formats => {}}
         }
         I18n.backend.store_translations 'zz', translations
@@ -616,7 +625,8 @@ describe ValidatesTimeliness::Validator do
 
         describe "I18n" do
           it "should use global default if locale format missing" do
-            I18n.backend.store_translations 'zz', :activerecord => {:errors => {:messages => { :after => 'after {{restriction}}' }}}
+            message = "after #{I18N_INTERPOLATION}" % 'restriction'
+            I18n.backend.store_translations 'zz', :activerecord => {:errors => {:messages => { :after => message }}}
             I18n.locale = :zz
             configure_validator(:type => :datetime, :after => 1.day.from_now)
             validate_with(:birth_date_and_time, Time.now)
@@ -708,6 +718,6 @@ describe ValidatesTimeliness::Validator do
   def error_messages
     return @error_messages if defined?(@error_messages)
     messages = defined?(I18n) ? I18n.t('activerecord.errors.messages') : validator.send(:error_messages)
-    @error_messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(/ (\%s|\{\{\w*\}\}).*/, ''); h }
+    @error_messages = messages.inject({}) {|h, (k, v)| h[k] = v.sub(/ (\%s|#{I18N_REGEXP}).*/, ''); h }
   end
 end

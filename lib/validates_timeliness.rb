@@ -2,10 +2,18 @@ require 'validates_timeliness/formats'
 require 'validates_timeliness/parser'
 require 'validates_timeliness/validator'
 require 'validates_timeliness/validation_methods'
-
 require 'validates_timeliness/active_record/attribute_methods'
 require 'validates_timeliness/active_record/multiparameter_attributes'
 require 'validates_timeliness/action_view/instance_tag'
+begin
+  i18n_path = $:.grep(/active_support\/vendor\/i18n-/)
+  if i18n_path.empty?
+    require 'i18n/version'
+  else
+    require i18n_path[0] + '/version'
+  end
+rescue LoadError
+end if defined?(I18n)
 
 module ValidatesTimeliness
 
@@ -15,7 +23,9 @@ module ValidatesTimeliness
   mattr_accessor :use_time_zones
   self.use_time_zones = false
 
-  LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/validates_timeliness/locale/en.yml')
+  I18N_LATEST = defined?(I18n::VERSION) && I18n::VERSION >= '0.4.0'
+  locale_file = I18N_LATEST ? 'en.new.yml' : 'en.old.yml'
+  LOCALE_PATH = File.expand_path(File.join(File.dirname(__FILE__),'validates_timeliness','locale',locale_file))
 
   class << self
 
