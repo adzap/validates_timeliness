@@ -23,12 +23,12 @@ describe ValidatesTimeliness::Parser do
     it "should return Time object when passed a Time object" do
       parse(Time.now, :datetime).should be_kind_of(Time)
     end
-        
+
     if RAILS_VER >= '2.1'
       it "should convert time string into current timezone" do
         Time.zone = 'Melbourne'
-        time = parse("2000-01-01 12:13:14", :datetime)
-        Time.zone.utc_offset.should == 10.hours
+        time = parse("2000-06-01 12:13:14", :datetime)
+        time.utc_offset.should == 10.hours
       end
     end
 
