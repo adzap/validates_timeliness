@@ -13,7 +13,7 @@ module ValidatesTimeliness
         if type == :date
           Date.new(*time_array[0..2]) rescue nil
         else
-          make_time(time_array[0..7])
+          make_time(time_array[0..6])
         end
       end
 

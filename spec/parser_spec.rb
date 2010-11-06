@@ -7,6 +7,10 @@ describe ValidatesTimeliness::Parser do
     it "should return time object for valid time string" do
       parse("2000-01-01 12:13:14", :datetime).should be_kind_of(Time)
     end
+
+    it "should return Time object for ISO 8601 string with time zone" do
+      parse("2000-01-01T12:23:42+09:00", :datetime).should be_kind_of(Time)
+    end
     
     it "should return nil for time string with invalid date part" do
       parse("2000-02-30 12:13:14", :datetime).should be_nil
