@@ -1,3 +1,8 @@
+= 2.3.2 [2010-11-07]
+- Fixed parser for string with timezone offset (thanks sigi)
+- Support for latest I18n interpolation tokens in locale file
+- Fixed parser allowing an hour over 12 for AM meridian
+
 = 2.3.1 [2010-03-19]
 - Fixed bug where custom attribute writer method for date/times were being overriden
 
