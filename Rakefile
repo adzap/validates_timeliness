@@ -3,7 +3,7 @@ require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'rubygems/specification'
 require 'rspec/core/rake_task'
-require 'lib/validates_timeliness/version'
+require './lib/validates_timeliness/version'
 
 GEM_NAME = "validates_timeliness"
 GEM_VERSION = ValidatesTimeliness::VERSION
