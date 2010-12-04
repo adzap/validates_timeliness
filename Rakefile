@@ -22,7 +22,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = "http://github.com/adzap/validates_timeliness"
   s.require_path = 'lib'
   s.files = %w(validates_timeliness.gemspec LICENSE CHANGELOG.rdoc README.rdoc Rakefile) + Dir.glob("{lib,spec}/**/*")
-  s.add_runtime_dependency 'timeliness', '~> 0.1.0'
+  s.add_runtime_dependency 'timeliness', '~> 0.3.2'
 end
 
 desc 'Default: run specs.'
