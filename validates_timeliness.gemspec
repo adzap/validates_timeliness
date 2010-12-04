@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{validates_timeliness}
-  s.version = "3.0.1"
+  s.version = "3.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adam Meehan"]
-  s.date = %q{2010-11-02}
+  s.date = %q{2010-12-04}
   s.description = %q{Date and time validation plugin for Rails which allows custom formats}
   s.email = %q{adam.meehan@gmail.com}
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc", "LICENSE"]
@@ -22,11 +22,11 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<timeliness>, ["~> 0.1.0"])
+      s.add_runtime_dependency(%q<timeliness>, ["~> 0.3.2"])
     else
-      s.add_dependency(%q<timeliness>, ["~> 0.1.0"])
+      s.add_dependency(%q<timeliness>, ["~> 0.3.2"])
     end
   else
-    s.add_dependency(%q<timeliness>, ["~> 0.1.0"])
+    s.add_dependency(%q<timeliness>, ["~> 0.3.2"])
   end
 end

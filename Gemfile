@@ -11,7 +11,7 @@ gem 'rspec_tag_matchers'
 gem 'ruby-debug'
 
 group :mongoid do
-  gem 'mongoid', '2.0.0.beta.17'
+  gem 'mongoid', '2.0.0.beta.19'
   gem 'bson_ext', '1.0.4'
 end
 
