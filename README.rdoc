@@ -24,6 +24,7 @@ If you a looking for the old version for Rails 2.x go here[http://github.com/adz
 
 * Supports I18n for the error messages
 
+* Supports MRI 1.8.x and 1.9.x and Rubinius.
 
 == Installation
 
@@ -34,7 +35,7 @@ As plugin (from master)
 As gem
 
   # in Gemfile
-  gem 'validates_timeliness', '~> 3.0.0'
+  gem 'validates_timeliness', '~> 3.0.2'
 
   # Run bundler
   $ bundle install
