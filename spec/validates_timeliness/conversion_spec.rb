@@ -22,6 +22,10 @@ describe ValidatesTimeliness::Conversion do
       it "should return date part of datetime value" do
         type_cast_value(DateTime.new(2010, 1, 1, 0, 0, 0), :date).should == Date.new(2010, 1, 1)
       end
+
+      it 'should return nil for invalid value types' do
+        type_cast_value(12, :date).should == nil
+      end
     end
 
     describe "for time type" do
@@ -39,6 +43,10 @@ describe ValidatesTimeliness::Conversion do
 
       it "should return dummy date with time part for datetime value" do
         type_cast_value(DateTime.civil_from_format(:utc, 2010, 1, 1, 12, 34, 56), :time).should == Time.utc(2000, 1, 1, 12, 34, 56)
+      end
+
+      it 'should return nil for invalid value types' do
+        type_cast_value(12, :time).should == nil
       end
     end
 
@@ -62,6 +70,10 @@ describe ValidatesTimeliness::Conversion do
         result = type_cast_value(value, :datetime)
         result.should == Time.zone.local(2010, 1, 1, 23, 34, 56)
         result.zone.should == 'EST'
+      end
+
+      it 'should return nil for invalid value types' do
+        type_cast_value(12, :datetime).should == nil
       end
     end
 
