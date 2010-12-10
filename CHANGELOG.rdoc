@@ -1,3 +1,6 @@
+= 3.0.3 [2010-12-11]
+* Fix validation of values which don't respond to to_date or to_time (renatoelias)
+
 = 3.0.2 [2010-12-04]
 * Fix AR multiparameter extension for Date columns
 * Update to Timeliness 0.3.2 for zone abbreviation and offset support
