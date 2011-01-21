@@ -70,18 +70,26 @@ describe ValidatesTimeliness::Validator do
     describe "array value" do
       it 'should be split option into :on_or_after and :on_or_before values' do
         on_or_after, on_or_before = Date.new(2010,1,1), Date.new(2010,1,2)
-        Person.validates_time :birth_date, :between => [on_or_after, on_or_before]
+        Person.validates_date :birth_date, :between => [on_or_after, on_or_before]
         Person.validators.first.options[:on_or_after].should == on_or_after
         Person.validators.first.options[:on_or_before].should == on_or_before
+        invalid!(:birth_date, on_or_after - 1, "must be on or after 2010-01-01")
+        invalid!(:birth_date, on_or_before + 1, "must be on or before 2010-01-02")
+        valid!(:birth_date, on_or_after)
+        valid!(:birth_date, on_or_before)
       end
     end
 
     describe "range value" do
       it 'should be split option into :on_or_after and :on_or_before values' do
         on_or_after, on_or_before = Date.new(2010,1,1), Date.new(2010,1,2)
-        Person.validates_time :birth_date, :between => on_or_after..on_or_before
+        Person.validates_date :birth_date, :between => on_or_after..on_or_before
         Person.validators.first.options[:on_or_after].should == on_or_after
         Person.validators.first.options[:on_or_before].should == on_or_before
+        invalid!(:birth_date, on_or_after - 1, "must be on or after 2010-01-01")
+        invalid!(:birth_date, on_or_before + 1, "must be on or before 2010-01-02")
+        valid!(:birth_date, on_or_after)
+        valid!(:birth_date, on_or_before)
       end
     end
   end

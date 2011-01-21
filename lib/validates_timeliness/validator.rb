@@ -27,12 +27,13 @@ module ValidatesTimeliness
     def initialize(options)
       @type = options.delete(:type) || :datetime
       @allow_nil, @allow_blank = options.delete(:allow_nil), options.delete(:allow_blank)
-      @restrictions_to_check = RESTRICTIONS.keys & options.keys
 
       if range = options.delete(:between)
         raise ArgumentError, ":between must be a Range or an Array" unless range.is_a?(Range) || range.is_a?(Array)
         options[:on_or_after], options[:on_or_before] = range.first, range.last
       end
+
+      @restrictions_to_check = RESTRICTIONS.keys & options.keys
       super
     end
 
