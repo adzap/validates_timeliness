@@ -3,7 +3,7 @@ module ValidatesTimeliness
     extend ActiveSupport::Concern
 
     included do
-      class_inheritable_accessor :timeliness_validated_attributes
+      class_attribute :timeliness_validated_attributes
       self.timeliness_validated_attributes = []
     end
 
