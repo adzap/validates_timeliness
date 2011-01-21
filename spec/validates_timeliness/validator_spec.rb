@@ -12,10 +12,10 @@ describe ValidatesTimeliness::Validator do
     ValidatesTimeliness::Validator.kind.should == :timeliness 
   end
 
-  describe "Model.validates :timeliness option" do
+  describe "Model.validates with :timeliness option" do
     it 'should use plugin validator class' do
       Person.validates :birth_date, :timeliness => {:is_at => Date.new(2010,1,1), :type => :date}
-      Person.validators.should have(1).kind_of(TimelinessValidator)
+      Person.validators.should have(1).kind_of(ActiveModel::Validations::TimelinessValidator)
       invalid!(:birth_date, Date.new(2010,1,2))
       valid!(:birth_date, Date.new(2010,1,1))
     end

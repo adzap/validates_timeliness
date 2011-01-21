@@ -86,4 +86,4 @@ module ValidatesTimeliness
 end
 
 # Compatibility with ActiveModel validates method which matches option keys to their validator class
-TimelinessValidator = ValidatesTimeliness::Validator
+ActiveModel::Validations::TimelinessValidator = ValidatesTimeliness::Validator
