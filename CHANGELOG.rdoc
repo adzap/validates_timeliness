@@ -1,3 +1,8 @@
+= 3.0.4 [2011-01-22]
+* Fix :between option which was being ignored (ebeigarts)
+* Use class_attribute to remove deprecated class_inheritable_accessor
+* Namespace copied validator class to ActiveModel::Validations::Timeliness for :timeliness option
+
 = 3.0.3 [2010-12-11]
 * Fix validation of values which don't respond to to_date or to_time (renatoelias)
 
