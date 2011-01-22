@@ -3,15 +3,14 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'ZenTest'
-gem 'rails', '3.0.0'
-gem 'rspec', '>= 2.0.0.beta.17'
-gem 'rspec-rails', '>= 2.0.0.beta.17'
+gem 'rails', '3.0.3'
+gem 'rspec', '~> 2.4'
+gem 'rspec-rails', '~> 2.4'
 gem 'timecop'
 gem 'rspec_tag_matchers'
 
 group :mongoid do
-  gem 'mongoid', '2.0.0.beta.19'
-  gem 'bson_ext', '1.0.4'
+  gem 'mongoid', '2.0.0.rc.6'
 end
 
 group :active_record do
