@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ValidatesTimeliness::Validator do
-  include ModelHelpers
   NIL = [nil]
 
   before do

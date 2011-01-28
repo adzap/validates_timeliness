@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe ValidatesTimeliness::Validator, ":before option" do
-  include ModelHelpers 
-
   describe "for date type" do
     before do
       Person.validates_date :birth_date, :before => Date.new(2010, 1, 1)

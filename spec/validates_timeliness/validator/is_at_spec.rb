@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe ValidatesTimeliness::Validator, ":is_at option" do
-  include ModelHelpers 
-
   before do
     Timecop.freeze(Time.local_time(2010, 1, 1, 0, 0, 0))
   end
