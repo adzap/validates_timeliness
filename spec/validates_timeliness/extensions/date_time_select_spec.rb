@@ -4,9 +4,7 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
   include ActionView::Helpers::DateHelper
   attr_reader :person, :params
 
-  before :all do
-    ValidatesTimeliness.use_plugin_parser = true
-  end
+  with_config(:use_plugin_parser, true)
 
   before do
     @person = Person.new
@@ -176,9 +174,5 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
       output.should_not have_tag('select[id=person_birth_time_5i] option[selected=selected]')
       output.should_not have_tag('select[id=person_birth_time_6i] option[selected=selected]')
     end
-  end
-
-  after :all do
-    ValidatesTimeliness.use_plugin_parser = false
   end
 end

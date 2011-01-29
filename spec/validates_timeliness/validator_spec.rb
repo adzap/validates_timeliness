@@ -117,9 +117,7 @@ describe ValidatesTimeliness::Validator do
 
     let(:person) { PersonWithFormatOption.new }
 
-    before(:all) do
-      ValidatesTimeliness.use_plugin_parser = true
-    end
+    with_config(:use_plugin_parser, true)
 
     it "should be valid when value matches format" do
       person.birth_date = '11-12-1913'
@@ -132,10 +130,6 @@ describe ValidatesTimeliness::Validator do
       person.valid?
       person.errors[:birth_date].should include('is not a valid date')
     end
-
-    after(:all) do
-      ValidatesTimeliness.use_plugin_parser = false
-    end
   end
 
   describe "restriction value errors" do
@@ -146,19 +140,17 @@ describe ValidatesTimeliness::Validator do
     end
 
     it "should be added when ignore_restriction_errors is false" do
-      ValidatesTimeliness.ignore_restriction_errors = false
-      person.valid?
-      person.errors[:birth_date].first.should match("Error occurred validating birth_date for :is_at restriction")
+      with_config(:ignore_restriction_errors, false) do
+        person.valid?
+        person.errors[:birth_date].first.should match("Error occurred validating birth_date for :is_at restriction")
+      end
     end
 
     it "should not be added when ignore_restriction_errors is true" do
-      ValidatesTimeliness.ignore_restriction_errors = true
-      person.valid?
-      person.errors[:birth_date].should be_empty
-    end
-
-    after :all do
-      ValidatesTimeliness.ignore_restriction_errors = false
+      with_config(:ignore_restriction_errors, true) do
+        person.valid?
+        person.errors[:birth_date].should be_empty
+      end
     end
   end
 

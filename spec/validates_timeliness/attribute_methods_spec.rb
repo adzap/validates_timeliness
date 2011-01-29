@@ -41,6 +41,8 @@ describe ValidatesTimeliness::AttributeMethods do
     end
 
     context "with plugin parser" do
+      with_config(:use_plugin_parser, true)
+
       class PersonWithParser
         include TestModel
         include TestModelShim
@@ -50,10 +52,6 @@ describe ValidatesTimeliness::AttributeMethods do
         validates_date :birth_date
         validates_time :birth_time
         validates_datetime :birth_datetime
-      end
-
-      before :all do
-        ValidatesTimeliness.use_plugin_parser = true
       end
 
       it 'should parse a string value' do
@@ -66,10 +64,6 @@ describe ValidatesTimeliness::AttributeMethods do
         r = PersonWithParser.new
         r.birth_datetime = '2010-01-01 12:00'
         r.birth_datetime.zone == Time.zone.name
-      end
-
-      after :all do
-        ValidatesTimeliness.use_plugin_parser = false
       end
     end
   end

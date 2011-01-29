@@ -114,17 +114,10 @@ describe ValidatesTimeliness::Conversion do
     end
 
     describe "with custom dummy date" do
-      before do
-        @original_dummy_date = ValidatesTimeliness.dummy_date_for_time_type
-        ValidatesTimeliness.dummy_date_for_time_type = [2010, 1, 1] 
-      end
-
       it 'should return dummy time with custom dummy date' do
-        dummy_time(Time.utc(1999, 11, 22, 12, 34, 56)).should == Time.utc(2010, 1, 1, 12, 34, 56)
-      end
-
-      after do
-        ValidatesTimeliness.dummy_date_for_time_type = @original_dummy_date
+        with_config(:dummy_date_for_time_type, [2010, 1, 1] ) do
+          dummy_time(Time.utc(1999, 11, 22, 12, 34, 56)).should == Time.utc(2010, 1, 1, 12, 34, 56)
+        end
       end
     end
   end
@@ -209,9 +202,7 @@ describe ValidatesTimeliness::Conversion do
 
   describe "#parse" do
     context "use_plugin_parser setting is true" do
-      around do |example|
-        with_config(:use_plugin_parser, true, &example)
-      end
+      with_config(:use_plugin_parser, true)
 
       it 'should use timeliness' do
         Timeliness::Parser.should_receive(:parse)
@@ -220,9 +211,7 @@ describe ValidatesTimeliness::Conversion do
     end
 
     context "use_plugin_parser setting is false" do
-      around do |example|
-        with_config(:use_plugin_parser, false, &example)
-      end
+      with_config(:use_plugin_parser, false)
 
       it 'should use Time.zone.parse attribute is timezone aware' do
         @timezone_aware = true
