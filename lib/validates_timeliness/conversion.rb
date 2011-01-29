@@ -56,6 +56,7 @@ module ValidatesTimeliness
     end
 
     def parse(value)
+      return nil if value.nil?
       if ValidatesTimeliness.use_plugin_parser
         Timeliness::Parser.parse(value, @type, :zone => (:current if @timezone_aware), :format => options[:format], :strict => false)
       else

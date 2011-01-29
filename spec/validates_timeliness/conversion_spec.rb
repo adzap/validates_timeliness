@@ -3,13 +3,13 @@ require 'spec_helper'
 describe ValidatesTimeliness::Conversion do
   include ValidatesTimeliness::Conversion
 
+  let(:options) { Hash.new }
+
   before do
     Timecop.freeze(Time.mktime(2010, 1, 1, 0, 0, 0))
   end
 
   describe "#type_cast_value" do
-    let(:options) { Hash.new }
-
     describe "for date type" do
       it "should return same value for date value" do
         type_cast_value(Date.new(2010, 1, 1), :date).should == Date.new(2010, 1, 1)
@@ -204,6 +204,42 @@ describe ValidatesTimeliness::Conversion do
         person.stub!(:now).and_return(time)
         evaluate_option_value(:now, person).should == time
       end
+    end
+  end
+
+  describe "#parse" do
+    context "use_plugin_parser setting is true" do
+      around do |example|
+        with_config(:use_plugin_parser, true, &example)
+      end
+
+      it 'should use timeliness' do
+        Timeliness::Parser.should_receive(:parse)
+        parse('2000-01-01')
+      end
+    end
+
+    context "use_plugin_parser setting is false" do
+      around do |example|
+        with_config(:use_plugin_parser, false, &example)
+      end
+
+      it 'should use Time.zone.parse attribute is timezone aware' do
+        @timezone_aware = true
+        Time.zone.should_receive(:parse)
+        parse('2000-01-01')
+      end
+
+      it 'should use value#to_time if use_plugin_parser setting is false and attribute is not timezone aware' do
+        @timezone_aware = false
+        value = '2000-01-01'
+        value.should_receive(:to_time)
+        parse(value)
+      end
+    end
+
+    it 'should return nil if value is nil' do
+      parse(nil).should be_nil
     end
   end
 end

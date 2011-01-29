@@ -11,6 +11,7 @@ require 'validates_timeliness'
 
 require 'support/test_model'
 require 'support/model_helpers'
+require 'support/config_helper'
 
 ValidatesTimeliness.setup do |c|
   c.extend_orms = [ :active_record ]
@@ -89,6 +90,7 @@ Rspec.configure do |c|
   c.mock_with :rspec
   c.include(RspecTagMatchers)
   c.include(ModelHelpers)
+  c.include(ConfigHelper)
   c.before do
     Person.reset_callbacks(:validate)
     PersonWithShim.timeliness_validated_attributes = []
