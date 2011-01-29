@@ -1,3 +1,6 @@
+= 3.0.5 [2011-01-29]
+* Fix for Conversion#parse when given nil value (closes issue #34)
+
 = 3.0.4 [2011-01-22]
 * Fix :between option which was being ignored (ebeigarts)
 * Use class_attribute to remove deprecated class_inheritable_accessor
