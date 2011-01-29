@@ -12,26 +12,28 @@ spec = Gem::Specification.new do |s|
   s.name = GEM_NAME
   s.version = GEM_VERSION
   s.platform = Gem::Platform::RUBY
-  s.rubyforge_project = "validates_timeliness"
-  s.has_rdoc = true
-  s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc", "LICENSE"]
   s.summary = %q{Date and time validation plugin for Rails which allows custom formats}
   s.description = s.summary
   s.author = "Adam Meehan"
   s.email = "adam.meehan@gmail.com"
   s.homepage = "http://github.com/adzap/validates_timeliness"
   s.require_path = 'lib'
-  s.files = %w(validates_timeliness.gemspec LICENSE CHANGELOG.rdoc README.rdoc Rakefile) + Dir.glob("{lib,spec}/**/*")
+
   s.add_runtime_dependency 'timeliness', '~> 0.3.2'
+
+  s.files       = `git ls-files`.split("\n") - %w{ .rspec .gitignore autotest/discover.rb Gemfile Gemfile.lock }
+  s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+
+  s.has_rdoc = true
+  s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc", "LICENSE"]
 end
 
 desc 'Default: run specs.'
 task :default => :spec
 
 desc "Run specs"
-RSpec::Core::RakeTask.new do |t|
-  t.pattern = "./spec/**/*_spec.rb" # don't need this, it's default.
-end
+RSpec::Core::RakeTask.new(:spec)
 
 desc "Generate code coverage"
 RSpec::Core::RakeTask.new(:coverage) do |t|
