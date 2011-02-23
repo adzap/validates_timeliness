@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'ZenTest'
-gem 'rails', '3.0.3'
+gem 'rails', '3.0.4'
 gem 'rspec', '~> 2.4'
 gem 'rspec-rails', '~> 2.4'
 gem 'timecop'
