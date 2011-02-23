@@ -136,7 +136,7 @@ describe ValidatesTimeliness::Validator do
     let(:person) { Person.new(:birth_date => Date.today) }
 
     before do
-      Person.validates_time :birth_date, :is_at => lambda { raise }
+      Person.validates_time :birth_date, :is_at => lambda { raise }, :before => lambda { raise }
     end
 
     it "should be added when ignore_restriction_errors is false" do
@@ -150,6 +150,13 @@ describe ValidatesTimeliness::Validator do
       with_config(:ignore_restriction_errors, true) do
         person.valid?
         person.errors[:birth_date].should be_empty
+      end
+    end
+
+    it 'should exit on first error' do
+      with_config(:ignore_restriction_errors, false) do
+        person.valid?
+        person.errors[:birth_date].should have(1).items
       end
     end
   end

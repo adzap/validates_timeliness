@@ -20,6 +20,8 @@ module ValidatesTimeliness
       :datetime => '%Y-%m-%d %H:%M:%S'
     }.freeze
 
+    RESTRICTION_ERROR_MESSAGE = "Error occurred validating %s for %s restriction:\n%s"
+
     def self.kind
       :timeliness
     end
@@ -45,17 +47,22 @@ module ValidatesTimeliness
       value = parse(raw_value) if value.is_a?(String) || options[:format]
       value = type_cast_value(value, @type)
 
-      return add_error(record, attr_name, :"invalid_#{@type}") if value.blank?
+      add_error(record, attr_name, :"invalid_#{@type}") and return if value.blank?
 
+      validate_restrictions(record, attr_name, value)
+    end
+
+    def validate_restrictions(record, attr_name, value)
       @restrictions_to_check.each do |restriction|
         begin
           restriction_value = type_cast_value(evaluate_option_value(options[restriction], record), @type)
           unless value.send(RESTRICTIONS[restriction], restriction_value)
-            return add_error(record, attr_name, restriction, restriction_value)
+            add_error(record, attr_name, restriction, restriction_value) and break
           end
         rescue => e
           unless ValidatesTimeliness.ignore_restriction_errors
-            add_error(record, attr_name, "Error occurred validating #{attr_name} for #{restriction.inspect} restriction:\n#{e.message}")
+            message = RESTRICTION_ERROR_MESSAGE % [ attr_name, restriction.inspect, e.message ]
+            add_error(record, attr_name, message) and break
           end
         end
       end
