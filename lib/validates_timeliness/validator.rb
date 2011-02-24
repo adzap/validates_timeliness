@@ -22,10 +22,6 @@ module ValidatesTimeliness
 
     RESTRICTION_ERROR_MESSAGE = "Error occurred validating %s for %s restriction:\n%s"
 
-    def self.kind
-      :timeliness
-    end
-
     def initialize(options)
       @type = options.delete(:type) || :datetime
       @allow_nil, @allow_blank = options.delete(:allow_nil), options.delete(:allow_blank)

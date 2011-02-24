@@ -20,7 +20,7 @@ module ActiveModel
           self.timeliness_validated_attributes ||= []
           self.timeliness_validated_attributes += (attr_names - self.timeliness_validated_attributes)
         end
-        validates_with ValidatesTimeliness::Validator, options
+        validates_with TimelinessValidator, options
       end
     end
 

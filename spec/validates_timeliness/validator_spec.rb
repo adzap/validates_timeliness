@@ -7,10 +7,6 @@ describe ValidatesTimeliness::Validator do
     Timecop.freeze(Time.local_time(2010, 1, 1, 0, 0, 0))
   end
 
-  it 'should return validator kind as :timeliness' do
-    ValidatesTimeliness::Validator.kind.should == :timeliness 
-  end
-
   describe "Model.validates with :timeliness option" do
     it 'should use plugin validator class' do
       Person.validates :birth_date, :timeliness => {:is_at => Date.new(2010,1,1), :type => :date}
