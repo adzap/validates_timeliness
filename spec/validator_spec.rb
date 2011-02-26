@@ -25,10 +25,6 @@ describe ValidatesTimeliness::Validator do
   end
 
   describe "option keys validation" do
-    before(:all) do
-      ActiveSupport::Deprecation.silenced = true
-    end
-
     before do
       keys = ValidatesTimeliness::Validator::VALID_OPTION_KEYS - [:invalid_date_message, :invalid_time_message, :with_date, :with_time]
       @valid_options = keys.inject({}) {|hash, opt| hash[opt] = nil; hash }
@@ -41,15 +37,6 @@ describe ValidatesTimeliness::Validator do
 
     it "should not raise error if option keys are valid" do
       lambda { Person.validates_datetime(@valid_options) }.should_not raise_error(ArgumentError)
-    end
-
-    it "should display deprecation notice for :equal_to" do
-      ::ActiveSupport::Deprecation.should_receive(:warn)
-      Person.validates_datetime :equal_to => Time.now
-    end
-
-    after(:all) do
-      ActiveSupport::Deprecation.silenced = false
     end
   end
 
@@ -429,7 +416,6 @@ describe ValidatesTimeliness::Validator do
   end
 
   describe "instance with :with_time option" do
-
     it "should validate date attribute as datetime combining value of :with_time against restrictions " do
       configure_validator(:type => :date, :with_time => '12:31', :on_or_before => Time.mktime(2000,1,1,12,30))
       validate_with(:birth_date, "2000-01-01")

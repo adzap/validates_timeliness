@@ -1,4 +1,3 @@
-#TODO remove deprecated option :equal_to
 module ValidatesTimeliness
 
   class Validator
@@ -8,7 +7,6 @@ module ValidatesTimeliness
 
     RESTRICTION_METHODS = {
       :is_at        => :==,
-      :equal_to     => :==,
       :before       => :<,
       :after        => :>,
       :on_or_before => :<=,
@@ -143,12 +141,6 @@ module ValidatesTimeliness
     end
 
     def validate_options(options)
-      if options.key?(:equal_to)
-        ::ActiveSupport::Deprecation.warn("ValidatesTimeliness :equal_to option is deprecated due to clash with a default Rails option. Use :is_at instead. You will need to fix any I18n error message references to this option date/time attributes now.")
-        options[:is_at] = options.delete(:equal_to)
-        options[:is_at_message] = options.delete(:equal_to_message)
-      end
-
       invalid_for_type = ([:time, :date, :datetime] - [type]).map {|k| "invalid_#{k}_message".to_sym }
       invalid_for_type << :with_date unless type == :time
       invalid_for_type << :with_time unless type == :date
