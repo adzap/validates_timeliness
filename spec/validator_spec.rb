@@ -442,6 +442,12 @@ describe ValidatesTimeliness::Validator do
       should_have_no_error(:birth_date, :on_or_before)
     end
 
+    it "should skip restriction validation if :with_time value evaluates to nil" do
+      configure_validator(:type => :date, :with_time => lambda { nil }, :on_or_before => Time.mktime(2000,1,1,12,30))
+      validate_with(:birth_date, "2000-01-01")
+      should_have_no_error(:birth_date, :on_or_before)
+    end
+
     it "should should ignore usec value on combined value if :ignore_usec option is true" do
       configure_validator(:type => :date, :with_time => Time.mktime(2000,1,1,12,30,0,500), :is_at => Time.mktime(2000,1,1,12,30), :ignore_usec => true)
       validate_with(:birth_date, "2000-01-01")
@@ -459,6 +465,12 @@ describe ValidatesTimeliness::Validator do
 
     it "should skip restriction validation if :with_date value is nil" do
       configure_validator(:type => :time, :with_date => nil, :on_or_before => Time.mktime(2000,1,1,12,30))
+      validate_with(:birth_time, "12:30")
+      should_have_no_error(:birth_time, :on_or_before)
+    end
+
+    it "should skip restriction validation if :with_date value is nil" do
+      configure_validator(:type => :time, :with_date => lambda { nil }, :on_or_before => Time.mktime(2000,1,1,12,30))
       validate_with(:birth_time, "12:30")
       should_have_no_error(:birth_time, :on_or_before)
     end

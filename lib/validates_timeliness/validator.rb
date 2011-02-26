@@ -60,6 +60,7 @@ module ValidatesTimeliness
     def validate_restrictions(record, attr_name, value)
       if configuration[:with_time] || configuration[:with_date]
         value = combine_date_and_time(value, record)
+        return if value.nil?
       end
 
       value = self.class.type_cast_value(value, implied_type, configuration[:ignore_usec])
