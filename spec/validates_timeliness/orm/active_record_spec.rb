@@ -47,10 +47,32 @@ describe ValidatesTimeliness, 'ActiveRecord' do
         r.birth_date = '2010-01-01'
       end
 
-      it 'should parse string as current timezone' do
-        r = EmployeeWithParser.new
-        r.birth_datetime = '2010-06-01 12:00'
-        r.birth_datetime.utc_offset.should == 10.hours
+      context "for a date column" do
+        it 'should store a date value after parsing string' do
+          r = EmployeeWithParser.new
+          r.birth_date = '2010-01-01'
+
+          r.birth_date.should be_kind_of(Date)
+          r.birth_date.should == Date.new(2010, 1, 1)
+        end
+      end
+
+      context "for a datetime column" do
+        with_config(:default_timezone, 'Australia/Melbourne')
+
+        it 'should parse string into Time value' do
+          r = EmployeeWithParser.new
+          r.birth_datetime = '2010-01-01 12:00'
+
+          r.birth_datetime.should be_kind_of(Time)
+        end
+
+        it 'should parse string as current timezone' do
+          r = EmployeeWithParser.new
+          r.birth_datetime = '2010-06-01 12:00'
+
+          r.birth_datetime.utc_offset.should == Time.zone.utc_offset
+        end
       end
     end
   end

@@ -60,11 +60,6 @@ describe ValidatesTimeliness::AttributeMethods do
         r.birth_date = '2010-01-01'
       end
 
-      it 'should parse string as current timezone' do
-        r = PersonWithParser.new
-        r.birth_datetime = '2010-01-01 12:00'
-        r.birth_datetime.zone == Time.zone.name
-      end
     end
   end
 

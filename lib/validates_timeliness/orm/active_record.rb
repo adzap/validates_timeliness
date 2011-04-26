@@ -18,6 +18,18 @@ module ValidatesTimeliness
         def timeliness_attribute_type(attr_name)
           columns_hash[attr_name.to_s].type
         end
+
+        def timeliness_type_cast_code(attr_name)
+          type = timeliness_attribute_type(attr_name)
+          timezone_aware = timeliness_attribute_timezone_aware?(attr_name)
+
+          <<-END
+          if value.is_a?(String)
+            value = Timeliness::Parser.parse(value, :#{type}, :zone => (:current if #{timezone_aware}))
+            value = value.to_date if value && :#{type} == :date
+          end
+          END
+        end
       end
 
       module InstanceMethods

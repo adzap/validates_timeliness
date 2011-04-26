@@ -60,10 +60,24 @@ describe ValidatesTimeliness, 'Mongoid' do
         r.publish_date = '2010-01-01'
       end
 
-      it 'should parse string into Time value' do
-        r = Article.new
-        r.publish_datetime = '2010-01-01 12:00'
-        r.publish_datetime.should == Time.utc(2010,1,1,12,0)
+      context "for a date column" do
+        it 'should store a date value after parsing string' do
+          r = Article.new
+          r.publish_date = '2010-01-01'
+
+          r.publish_date.should be_kind_of(Date)
+          r.publish_date.should == Date.new(2010, 1, 1)
+        end
+      end
+
+      context "for a datetime column" do
+        it 'should parse string into Time value' do
+          r = Article.new
+          r.publish_datetime = '2010-01-01 12:00'
+
+          r.publish_datetime.should be_kind_of(Time)
+          r.publish_datetime.should == Time.utc(2010,1,1,12,0)
+        end
       end
     end
   end
@@ -79,7 +93,7 @@ describe ValidatesTimeliness, 'Mongoid' do
 
   context "before_type_cast method" do
     it 'should not be defined if ORM does not support it' do
-      Article.new.should_not respond_to(:birth_datetime_before_type_cast)
+      Article.new.should_not respond_to(:publish_datetime_before_type_cast)
     end
   end
 end
