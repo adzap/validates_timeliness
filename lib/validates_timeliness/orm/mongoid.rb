@@ -16,17 +16,10 @@ module ValidatesTimeliness
           attr_names.each { |attr_name| define_timeliness_write_method(attr_name) }
         end
 
-        def define_timeliness_write_method(attr_name)
+        def timeliness_type_cast_code(attr_name, var_name)
           type = timeliness_attribute_type(attr_name)
-          method_body, line = <<-EOV, __LINE__ + 1
-            def #{attr_name}=(value)
-              @timeliness_cache ||= {}
-              @timeliness_cache["#{attr_name}"] = value
-              #{ "value = Timeliness::Parser.parse(value, :#{type}) if value.is_a?(String)" if ValidatesTimeliness.use_plugin_parser }
-              write_attribute(:#{attr_name}, value)
-            end
-          EOV
-          class_eval(method_body, __FILE__, line)
+
+          "#{var_name} = Timeliness::Parser.parse(value, :#{type})"
         end
 
         def timeliness_attribute_type(attr_name)

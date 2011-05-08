@@ -35,7 +35,8 @@ module ValidatesTimeliness
           def #{attr_name}=(value)
             @timeliness_cache ||= {}
             @timeliness_cache["#{attr_name}"] = value
-            #{ timeliness_type_cast_code(attr_name) if ValidatesTimeliness.use_plugin_parser }
+
+            #{ "if value.is_a?(String)\n#{timeliness_type_cast_code(attr_name, 'value')}\nend" if ValidatesTimeliness.use_plugin_parser }
             super
           end
         EOV
@@ -51,11 +52,12 @@ module ValidatesTimeliness
         generated_timeliness_methods.module_eval(method_body, __FILE__, line)
       end
 
-      def timeliness_type_cast_code(attr_name)
+      def timeliness_type_cast_code(attr_name, var_name)
         type = timeliness_attribute_type(attr_name)
         timezone_aware = timeliness_attribute_timezone_aware?(attr_name)
+        timezone = :current if timezone_aware
 
-        "value = Timeliness::Parser.parse(value, :#{type}, :zone => (:current if #{timezone_aware})) if value.is_a?(String)"
+        "#{var_name} = Timeliness::Parser.parse(#{var_name}, :#{type}, :zone => #{timezone.inspect})"
       end
 
       def generated_timeliness_methods
