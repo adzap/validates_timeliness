@@ -54,7 +54,7 @@ NOTE: You may wish to enable the plugin parser and the extensions to start. Plea
 
   validates_datetime :occurred_at
 
-  validates_date :date_of_birth :before => lambda { 18.years.ago },
+  validates_date :date_of_birth, :before => lambda { 18.years.ago },
                                 :before_message => "must be at least 18 years old"
 
   validates_datetime :finish_time, :after => :start_time # Method symbol
