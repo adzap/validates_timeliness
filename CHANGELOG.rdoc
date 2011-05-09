@@ -1,3 +1,7 @@
+= 3.0.6 [2011-05-09]
+* Fix for AR type conversion for date columns when using plugin parser.
+* Add timeliness_type_cast_code for ORM specific type casting after parsing.
+
 = 3.0.5 [2011-01-29]
 * Fix for Conversion#parse when given nil value (closes issue #34)
 
