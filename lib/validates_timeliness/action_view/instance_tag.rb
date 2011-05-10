@@ -40,7 +40,7 @@ module ValidatesTimeliness
 
         values = pairs.map do |(param, value)|
           position = param.scan(/\(([0-9]*).*\)/).first.first
-          [position, value]
+          [position, value.to_i]
         end.sort {|a,b| a[0] <=> b[0] }.map {|v| v[1] }
 
         TimelinessDateTime.new(*values)
