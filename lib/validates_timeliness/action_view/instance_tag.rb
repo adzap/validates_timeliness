@@ -28,7 +28,7 @@ class TimelinessDateTime
           attr_accessor :year, :month, :day, :hour, :min, :sec
 
 
-          def initialize(year, month, day, hour, min, sec)
+          def initialize(year=nil, month=nil, day=nil, hour=nil, min=nil, sec=nil)
 
             @year  = year
             @month = month
