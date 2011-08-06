@@ -49,9 +49,7 @@ class Person
   attribute :birth_date, :date
   attribute :birth_time, :time
   attribute :birth_datetime, :datetime
-  validates_date :birth_date
-  validates_time :birth_time
-  validates_datetime :birth_datetime
+
   define_attribute_methods model_attributes.keys
 end
 
@@ -73,9 +71,6 @@ ActiveRecord::Schema.define(:version => 1) do
 end
 
 class Employee < ActiveRecord::Base
-  validates_date :birth_date
-  validates_time :birth_time
-  validates_datetime :birth_datetime
   define_attribute_methods
 
   attr_accessor :redefined_birth_date_called
