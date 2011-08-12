@@ -14,12 +14,12 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
   describe "datetime_select" do
     it "should use param values when attribute is nil" do
       @params["person"] = {
-        "birth_datetime(1i)" => 2009,
-        "birth_datetime(2i)" => 2,
-        "birth_datetime(3i)" => 29,
-        "birth_datetime(4i)" => 12,
-        "birth_datetime(5i)" => 13,
-        "birth_datetime(6i)" => 14,
+        "birth_datetime(1i)" => "2009",
+        "birth_datetime(2i)" => "2",
+        "birth_datetime(3i)" => "29",
+        "birth_datetime(4i)" => "12",
+        "birth_datetime(5i)" => "13",
+        "birth_datetime(6i)" => "14",
       }
       person.birth_datetime = nil
       @output = datetime_select(:person, :birth_datetime, :include_blank => true, :include_seconds => true)
@@ -28,12 +28,12 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
 
     it "should override object values and use params if present" do
       @params["person"] = {
-        "birth_datetime(1i)" => 2009,
-        "birth_datetime(2i)" => 2,
-        "birth_datetime(3i)" => 29,
-        "birth_datetime(4i)" => 12,
-        "birth_datetime(5i)" => 13,
-        "birth_datetime(6i)" => 14,
+        "birth_datetime(1i)" => "2009",
+        "birth_datetime(2i)" => "2",
+        "birth_datetime(3i)" => "29",
+        "birth_datetime(4i)" => "12",
+        "birth_datetime(5i)" => "13",
+        "birth_datetime(6i)" => "14",
       }
       person.birth_datetime = "2010-01-01 15:16:17"
       @output = datetime_select(:person, :birth_datetime, :include_blank => true, :include_seconds => true)
@@ -63,9 +63,9 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
   describe "date_select" do
     it "should use param values when attribute is nil" do
       @params["person"] = {
-        "birth_date(1i)" => 2009,
-        "birth_date(2i)" => 2,
-        "birth_date(3i)" => 29,
+        "birth_date(1i)" => "2009",
+        "birth_date(2i)" => "2",
+        "birth_date(3i)" => "29",
       }
       person.birth_date = nil
       @output = date_select(:person, :birth_date, :include_blank => true, :include_seconds => true)
@@ -74,9 +74,9 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
 
     it "should override object values and use params if present" do
       @params["person"] = {
-        "birth_date(1i)" => 2009,
-        "birth_date(2i)" => 2,
-        "birth_date(3i)" => 29,
+        "birth_date(1i)" => "2009",
+        "birth_date(2i)" => "2",
+        "birth_date(3i)" => "29",
       }
       person.birth_date = "2009-03-01"
       @output = date_select(:person, :birth_date, :include_blank => true, :include_seconds => true)
@@ -110,12 +110,12 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
 
     it "should use param values when attribute is nil" do
       @params["person"] = {
-        "birth_time(1i)" => 2000,
-        "birth_time(2i)" => 1,
-        "birth_time(3i)" => 1,
-        "birth_time(4i)" => 12,
-        "birth_time(5i)" => 13,
-        "birth_time(6i)" => 14,
+        "birth_time(1i)" => "2000",
+        "birth_time(2i)" => "1",
+        "birth_time(3i)" => "1",
+        "birth_time(4i)" => "12",
+        "birth_time(5i)" => "13",
+        "birth_time(6i)" => "14",
       }
       person.birth_time = nil
       @output = time_select(:person, :birth_time, :include_blank => true, :include_seconds => true)
