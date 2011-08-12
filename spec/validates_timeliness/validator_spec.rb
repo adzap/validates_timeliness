@@ -132,7 +132,7 @@ describe ValidatesTimeliness::Validator do
     let(:person) { Person.new(:birth_date => Date.today) }
 
     before do
-      Person.validates_time :birth_date, :is_at => lambda { raise }, :before => lambda { raise }
+      Person.validates_time :birth_date, :is_at => lambda { raise }
     end
 
     it "should be added when ignore_restriction_errors is false" do
