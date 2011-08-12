@@ -32,7 +32,7 @@ module ValidatesTimeliness
           values = [nil] * 6
           pairs.map do |(param, value)|
             position = param.scan(/\(([0-9]*).*\)/).first.first
-            values[position.to_i-1] = value
+            values[position.to_i-1] = value.to_i
           end
 
           TimelinessDateTime.new(*values)

@@ -1,3 +1,6 @@
+= 3.0.7 [2011-08-12] (atzkey)
+* Fix for DateTimeSelect: attributes of TimelinessDateTime should be integers, not strings
+
 = 3.0.6 [2011-05-09]
 * Fix for AR type conversion for date columns when using plugin parser.
 * Add timeliness_type_cast_code for ORM specific type casting after parsing.
