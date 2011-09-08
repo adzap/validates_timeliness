@@ -37,6 +37,7 @@ module ValidatesTimeliness
       def execute_callstack_for_multiparameter_attributes_with_timeliness(callstack)
         errors = []
         callstack.each do |name, values_with_empty_parameters|
+          values_with_empty_parameters = values_with_empty_parameters.to_a.sort_by(&:first).collect(&:second)
           begin
             klass = (self.class.reflect_on_aggregation(name.to_sym) || column_for_attribute(name)).klass
             values = values_with_empty_parameters.reject { |v| v.nil? }
