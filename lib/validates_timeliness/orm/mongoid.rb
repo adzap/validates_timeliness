@@ -36,18 +36,8 @@ module ValidatesTimeliness
 end
  
 module Mongoid::Document
-  # Due to how Mongoid misuses ActiveSupport::Concern,
-  # the only way to override a core component method is 
-  # using an append_features hook.
-  #
-  module TimelinessConcern
-    def append_features(base)
-      super
-      base.send :include, ValidatesTimeliness::AttributeMethods
-      base.send :include, ValidatesTimeliness::ORM::Mongoid
-    end
-  end
-  extend TimelinessConcern
+  include ValidatesTimeliness::AttributeMethods
+  include ValidatesTimeliness::ORM::Mongoid
 
   def reload_with_timeliness
     _clear_timeliness_cache
