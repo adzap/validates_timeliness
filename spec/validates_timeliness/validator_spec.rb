@@ -138,7 +138,7 @@ describe ValidatesTimeliness::Validator do
     it "should be added when ignore_restriction_errors is false" do
       with_config(:ignore_restriction_errors, false) do
         person.valid?
-        person.errors[:birth_date].first.should match("Error occurred validating birth_date for :is_at restriction")
+        person.errors[:birth_date].first.should match("Error occurred validating birth_date")
       end
     end
 

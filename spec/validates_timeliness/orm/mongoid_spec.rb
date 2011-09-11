@@ -15,15 +15,15 @@ end
 describe ValidatesTimeliness, 'Mongoid' do
 
   class Article
-    ::ValidatesTimeliness.use_plugin_parser = true
     include Mongoid::Document
+    ValidatesTimeliness.use_plugin_parser = true
     field :publish_date, :type => Date
     field :publish_time, :type => Time
     field :publish_datetime, :type => DateTime
     validates_date :publish_date, :allow_nil => true
     validates_time :publish_time, :allow_nil => true
     validates_datetime :publish_datetime, :allow_nil => true
-    ::ValidatesTimeliness.use_plugin_parser = false
+    ValidatesTimeliness.use_plugin_parser = false
   end
 
   context "validation methods" do
@@ -52,7 +52,7 @@ describe ValidatesTimeliness, 'Mongoid' do
     end
 
     context "with plugin parser" do
-      with_config(:use_plugin_parser, false)
+      with_config(:use_plugin_parser, true)
 
       it 'should parse a string value' do
         Timeliness::Parser.should_receive(:parse)
@@ -60,12 +60,20 @@ describe ValidatesTimeliness, 'Mongoid' do
         r.publish_date = '2010-01-01'
       end
 
+      it 'should parse an invalid value as nil' do
+        Timeliness::Parser.should_receive(:parse)
+        r = Article.new
+        r.publish_date = 'bad value'
+
+        r.publish_date.should be_nil
+      end
+
       context "for a date column" do
-        it 'should store a date value after parsing string' do
+        it 'should store a Time value after parsing string' do
           r = Article.new
           r.publish_date = '2010-01-01'
 
-          r.publish_date.should be_kind_of(Date)
+          r.publish_date.should be_kind_of(Time)
           r.publish_date.should == Date.new(2010, 1, 1)
         end
       end
