@@ -1,3 +1,4 @@
 pkg/
 .bundle/
 .rvmrc
+Gemfile.lock
