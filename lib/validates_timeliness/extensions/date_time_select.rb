@@ -14,8 +14,32 @@ module ValidatesTimeliness
 
       module InstanceMethods
 
-        TimelinessDateTime = Struct.new(:year, :month, :day, :hour, :min, :sec)
-
+        class TimelinessDateTime
+          
+          attr_accessor :year, :month, :day, :hour, :min, :sec
+          
+          def initialize(year, month, day, hour, min, sec)
+            @year  = year
+            @month = month
+            @day   = day
+            @hour  = hour
+            @min   = min
+            @sec   = sec
+          end
+          
+          # adapted from activesupport/lib/active_support/core_ext/date_time/calculations.rb, line 36 (3.0.7)
+          def change(options)
+            TimelinessDateTime.new(
+              options[:year]  || year,
+              options[:month] || month,
+              options[:day]   || day,
+              options[:hour]  || hour,
+              options[:min]   || (options[:hour] ? 0 : min),
+              options[:sec]   || ((options[:hour] || options[:min]) ? 0 : sec)
+            )
+          end        
+        end
+        
         def datetime_selector_with_timeliness(*args)
           @timeliness_date_or_time_tag = true
           datetime_selector_without_timeliness(*args)
@@ -32,7 +56,7 @@ module ValidatesTimeliness
           values = [nil] * 6
           pairs.map do |(param, value)|
             position = param.scan(/\(([0-9]*).*\)/).first.first
-            values[position.to_i-1] = value
+            values[position.to_i-1] = value.to_i
           end
 
           TimelinessDateTime.new(*values)

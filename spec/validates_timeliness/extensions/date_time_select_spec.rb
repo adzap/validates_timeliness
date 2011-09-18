@@ -101,6 +101,20 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
       @output = date_select(:person, :birth_date, :include_blank => true, :include_seconds => true)
       should_not_have_datetime_selected(:birth_time, :year, :month, :day)
     end
+    
+    it "should support discarding of the day part" do
+      # this doesn't make sense for birthdays, but it does for credit card expirations, for example
+      @params["person"] = {
+        "birth_date(1i)" => 2009,
+        "birth_date(2i)" => 2,
+      }
+      person.birth_date = nil
+      @output = date_select(:person, :birth_date, :discard_day => true)
+      should_have_datetime_selected(:birth_date, :year => 2009, :month => 'February')
+      should_not_have_datetime_selected(:birth_date, :day)
+      @output.should have_tag("input[id=person_birth_date_3i][type=hidden][value='1']")
+    end
+
   end
 
   describe "time_select" do
