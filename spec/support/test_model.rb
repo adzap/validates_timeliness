@@ -31,7 +31,7 @@ module TestModel
   end
 
   def initialize(attributes = nil)
-    @attributes = self.class.model_attributes.inject({}) do |hash, column|
+    @attributes = self.class.model_attributes.keys.inject({}) do |hash, column|
       hash[column.to_s] = nil
       hash
     end
@@ -39,7 +39,7 @@ module TestModel
   end
 
   def attributes
-    @attributes.keys
+    @attributes
   end
 
   def attributes=(new_attributes={})
@@ -49,14 +49,12 @@ module TestModel
   end
 
   def method_missing(method_id, *args, &block)
-    if !self.class.attribute_methods_generated?
-      self.class.define_attribute_methods self.class.model_attributes.keys.map(&:to_s)
-      method_name = method_id.to_s
+    if match_attribute_method?(method_id.to_s)
+      self.class.define_attribute_methods self.class.model_attributes.keys
       send(method_id, *args, &block)
     else
       super
     end
   end
-
 end
 

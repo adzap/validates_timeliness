@@ -16,16 +16,10 @@ module ValidatesTimeliness
       module InstanceMethods
 
         class TimelinessDateTime
-          
           attr_accessor :year, :month, :day, :hour, :min, :sec
           
           def initialize(year, month, day, hour, min, sec)
-            @year  = year
-            @month = month
-            @day   = day
-            @hour  = hour
-            @min   = min
-            @sec   = sec
+            @year, @month, @day, @hour, @min, @sec = year, month, day, hour, min, sec
           end
           
           # adapted from activesupport/lib/active_support/core_ext/date_time/calculations.rb, line 36 (3.0.7)
@@ -46,13 +40,15 @@ module ValidatesTimeliness
           datetime_selector_without_timeliness(*args)
         end
 
-        def value(object)
+        def value_with_timeliness(object)
           unless @timeliness_date_or_time_tag && @template_object.params[@object_name]
-            return super
+            return value_without_timeliness(object)
           end
+          
+          @template_object.params[@object_name]
 
           pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
-          return super if pairs.empty?
+          return value_without_timeliness(object) if pairs.empty?
 
           values = [nil] * 6
           pairs.map do |(param, value)|
