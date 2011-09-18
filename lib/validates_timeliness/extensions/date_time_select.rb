@@ -10,6 +10,7 @@ module ValidatesTimeliness
 
       included do
         alias_method_chain :datetime_selector, :timeliness
+        alias_method_chain :value, :timeliness
       end
 
       module InstanceMethods
@@ -55,7 +56,7 @@ module ValidatesTimeliness
 
           values = [nil] * 6
           pairs.map do |(param, value)|
-            position = param.scan(/\(([0-9]*).*\)/).first.first
+            position = param.scan(/\((\d+)\w+\)/).first.first
             values[position.to_i-1] = value.to_i
           end
 
