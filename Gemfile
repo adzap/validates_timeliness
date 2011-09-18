@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gemspec
 
-gem 'rails', '3.0.10'
+gem 'rails', '3.1.0'
 gem 'rspec', '~> 2.6'
 gem 'rspec-rails', '~> 2.6'
 gem 'timecop'
@@ -12,6 +12,7 @@ gem 'ruby-debug19', :platforms => [:ruby_19]
 
 group :mongoid do
   gem 'mongoid', '2.2.0'
+  gem 'bson_ext'
   gem 'system_timer', :platforms => [:ruby_18]
 end
 
