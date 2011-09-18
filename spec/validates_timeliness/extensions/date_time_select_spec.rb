@@ -68,7 +68,7 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
         "birth_date(3i)" => '29',
       }
       person.birth_date = nil
-      @output = date_select(:person, :birth_date, :include_blank => true, :include_seconds => true)
+      @output = date_select(:person, :birth_date, :include_blank => true)
       should_have_datetime_selected(:birth_date, :year => 2009, :month => 'February', :day => 29)
     end
 
@@ -79,42 +79,40 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
         "birth_date(3i)" => '29',
       }
       person.birth_date = "2009-03-01"
-      @output = date_select(:person, :birth_date, :include_blank => true, :include_seconds => true)
+      @output = date_select(:person, :birth_date, :include_blank => true)
       should_have_datetime_selected(:birth_date, :year => 2009, :month => 'February', :day => 29)
     end
 
     it "should select attribute values from object if no params" do
       person.birth_date = "2009-01-02"
-      @output = date_select(:person, :birth_date, :include_blank => true, :include_seconds => true)
+      @output = date_select(:person, :birth_date, :include_blank => true)
       should_have_datetime_selected(:birth_date, :year => 2009, :month => 'January', :day => 2)
     end
 
     it "should select attribute values if params does not contain attribute params" do
       person.birth_date = "2009-01-02"
       @params["person"] = { }
-      @output = date_select(:person, :birth_date, :include_blank => true, :include_seconds => true)
+      @output = date_select(:person, :birth_date, :include_blank => true)
       should_have_datetime_selected(:birth_date, :year => 2009, :month => 'January', :day => 2)
     end
 
     it "should not select values when attribute value is nil and has no param values" do
       person.birth_date = nil
-      @output = date_select(:person, :birth_date, :include_blank => true, :include_seconds => true)
+      @output = date_select(:person, :birth_date, :include_blank => true)
       should_not_have_datetime_selected(:birth_time, :year, :month, :day)
     end
-    
-    it "should support discarding of the day part" do
-      # this doesn't make sense for birthdays, but it does for credit card expirations, for example
+
+    it "should allow the day part to be discarded" do
       @params["person"] = {
-        "birth_date(1i)" => 2009,
-        "birth_date(2i)" => 2,
+        "birth_date(1i)" => '2009',
+        "birth_date(2i)" => '2',
       }
-      person.birth_date = nil
-      @output = date_select(:person, :birth_date, :discard_day => true)
+
+      @output = date_select(:person, :birth_date, :include_blank => true, :discard_day => true)
       should_have_datetime_selected(:birth_date, :year => 2009, :month => 'February')
-      should_not_have_datetime_selected(:birth_date, :day)
+      should_not_have_datetime_selected(:birth_time, :day)
       @output.should have_tag("input[id=person_birth_date_3i][type=hidden][value='1']")
     end
-
   end
 
   describe "time_select" do
