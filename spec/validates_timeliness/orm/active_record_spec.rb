@@ -82,6 +82,7 @@ describe ValidatesTimeliness, 'ActiveRecord' do
       r = Employee.create!
       r.birth_date = '2010-01-01'
       r.reload
+
       r._timeliness_raw_value_for(:birth_date).should be_nil
     end
   end
@@ -94,7 +95,16 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     it 'should return original value' do
       r = Employee.new
       r.birth_datetime = date_string = '2010-01-01'
+
       r.birth_datetime_before_type_cast.should == date_string
+    end
+
+    it 'should return attribute if no attribute assignment has been made' do
+      datetime = Time.zone.local(2010,01,01)
+      Employee.create(:birth_datetime => datetime)
+
+      r = Employee.last
+      r.birth_datetime_before_type_cast.should match(/2010-01-01 00:00:00/)
     end
   end
 end

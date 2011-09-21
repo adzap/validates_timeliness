@@ -71,9 +71,10 @@ ActiveRecord::Schema.define(:version => 1) do
 end
 
 class Employee < ActiveRecord::Base
-  define_attribute_methods
-
   attr_accessor :redefined_birth_date_called
+  validates_date :birth_date, :allow_nil => true
+  validates_date :birth_time, :allow_nil => true
+  validates_date :birth_datetime, :allow_nil => true
 
   def birth_date=(value)
     self.redefined_birth_date_called = true
@@ -90,8 +91,5 @@ RSpec.configure do |c|
     Person.reset_callbacks(:validate)
     PersonWithShim.timeliness_validated_attributes = []
     Person._validators.clear
-    Employee.reset_callbacks(:validate)
-    Employee.timeliness_validated_attributes = []
-    Employee._validators.clear
   end
 end

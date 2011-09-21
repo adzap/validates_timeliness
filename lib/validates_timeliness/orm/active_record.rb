@@ -7,7 +7,8 @@ module ValidatesTimeliness
         def define_attribute_methods
           super
           # Define write method and before_type_cast method
-          define_timeliness_methods(true)
+          use_before_type_cast = ::ActiveRecord::VERSION::STRING < '3.1.0'
+          define_timeliness_methods(use_before_type_cast)
         end
 
         def timeliness_attribute_timezone_aware?(attr_name)
