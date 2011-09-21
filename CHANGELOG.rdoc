@@ -1,3 +1,10 @@
+= 3.0.7 [2011-09-21]
+* Fix ActiveRecord before_type_cast extension for non-dirty attributes.
+* Don't override AR before_type_cast for >= 3.1.0 which now has it's own implementation for date/time attributes.
+* Fix DateTimeSelect extension to convert params to integers (#45)
+* Add #change method to DateTimeSelect extension (@trusche, #45)
+* Cleanup Mongoid shim.
+
 = 3.0.6 [2011-05-09]
 * Fix for AR type conversion for date columns when using plugin parser.
 * Add timeliness_type_cast_code for ORM specific type casting after parsing.
