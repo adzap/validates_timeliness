@@ -11,7 +11,7 @@ gem 'ruby-debug', :platforms => [:ruby_18, :jruby]
 gem 'ruby-debug19', :platforms => [:ruby_19]
 
 group :mongoid do
-  gem 'mongoid', '2.2.0'
+  gem 'mongoid', '2.3.2'
   gem 'bson_ext'
   gem 'system_timer', :platforms => [:ruby_18]
 end

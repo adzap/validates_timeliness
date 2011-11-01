@@ -38,7 +38,9 @@ end
 module Mongoid::Document
   include ValidatesTimeliness::AttributeMethods
   include ValidatesTimeliness::ORM::Mongoid
+end
 
+module Mongoid::Reloading
   def reload_with_timeliness
     _clear_timeliness_cache
     reload_without_timeliness
