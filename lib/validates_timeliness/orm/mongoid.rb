@@ -31,6 +31,10 @@ module ValidatesTimeliness
         end
       end
 
+      def reload
+        _clear_timeliness_cache
+        super
+      end
     end
   end
 end
@@ -39,9 +43,12 @@ module Mongoid::Document
   include ValidatesTimeliness::AttributeMethods
   include ValidatesTimeliness::ORM::Mongoid
 
-  def reload_with_timeliness
-    _clear_timeliness_cache
-    reload_without_timeliness
+  # Pre-2.3 reload
+  if instance_methods.include?('reload')
+    def reload_with_timeliness
+      _clear_timeliness_cache
+      reload_without_timeliness
+    end
+    alias_method_chain :reload, :timeliness
   end
-  alias_method_chain :reload, :timeliness
 end

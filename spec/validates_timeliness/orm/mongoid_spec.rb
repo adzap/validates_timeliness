@@ -69,22 +69,22 @@ describe ValidatesTimeliness, 'Mongoid' do
       end
 
       context "for a date column" do
-        it 'should store a Time value after parsing string' do
+        it 'should store a Date value after parsing string' do
           r = Article.new
           r.publish_date = '2010-01-01'
 
-          r.publish_date.should be_kind_of(Time)
+          r.publish_date.should be_kind_of(Date)
           r.publish_date.should == Date.new(2010, 1, 1)
         end
       end
 
       context "for a datetime column" do
-        it 'should parse string into Time value' do
+        it 'should parse string into DateTime value' do
           r = Article.new
           r.publish_datetime = '2010-01-01 12:00'
 
-          r.publish_datetime.should be_kind_of(Time)
-          r.publish_datetime.should == Time.utc(2010,1,1,12,0)
+          r.publish_datetime.should be_kind_of(DateTime)
+          r.publish_datetime.should == DateTime.new(2010,1,1,12,0)
         end
       end
     end
@@ -108,6 +108,6 @@ end
 
 rescue LoadError
   puts "Mongoid specs skipped. Mongoid not installed"
-rescue StandardError
-  puts "Mongoid specs skipped. MongoDB connection failed."
+rescue StandardError => e
+  puts "Mongoid specs skipped. MongoDB connection failed with error: #{e.message}"
 end
