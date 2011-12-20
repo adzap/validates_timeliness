@@ -65,15 +65,12 @@ module ValidatesTimeliness
       end
     end
 
-    module InstanceMethods
-      def _timeliness_raw_value_for(attr_name)
-        @timeliness_cache && @timeliness_cache[attr_name.to_s]
-      end
-
-      def _clear_timeliness_cache
-        @timeliness_cache = {}
-      end
+    def _timeliness_raw_value_for(attr_name)
+      @timeliness_cache && @timeliness_cache[attr_name.to_s]
     end
 
+    def _clear_timeliness_cache
+      @timeliness_cache = {}
+    end
   end
 end
