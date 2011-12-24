@@ -1,5 +1,5 @@
 = 3.0.8 [2011-12-24]
-* Remove deprecated InstanceMethods module when using AS::Concern
+* Remove deprecated InstanceMethods module when using AS::Concern (carlosantoniodasilva)
 * Update Mongoid shim for v2.3 compatability.
 
 = 3.0.7 [2011-09-21]
