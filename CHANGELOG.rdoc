@@ -1,3 +1,7 @@
+= 3.0.8 [2011-12-24]
+* Remove deprecated InstanceMethods module when using AS::Concern
+* Update Mongoid shim for v2.3 compatability.
+
 = 3.0.7 [2011-09-21]
 * Fix ActiveRecord before_type_cast extension for non-dirty attributes.
 * Don't override AR before_type_cast for >= 3.1.0 which now has it's own implementation for date/time attributes.
