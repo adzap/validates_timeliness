@@ -28,9 +28,8 @@ module ValidatesTimeliness
       end
 
       def instantiate_date_object(name, values)
-        values = values.map { |v| v.nil? ? 1 : v }
         Date.new(*values)
-      rescue ArgumentError => ex
+      rescue ArgumentError, NoMethodError => ex
         invalid_multiparameter_date_or_time_as_string(values)
       end
 
