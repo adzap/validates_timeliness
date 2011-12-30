@@ -39,6 +39,7 @@ module ValidatesTimeliness
         callstack.each do |name, values_with_empty_parameters|
           begin
             klass = (self.class.reflect_on_aggregation(name.to_sym) || column_for_attribute(name)).klass
+            values_with_empty_parameters = values_with_empty_parameters.to_a.sort_by { |v| v.first }.map { |v| v.last } if Hash === values_with_empty_parameters
             values = values_with_empty_parameters.reject { |v| v.nil? }
 
             if values.empty?
