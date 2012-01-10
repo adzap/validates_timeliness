@@ -119,4 +119,10 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     end
 
   end
+
+  context "define_attribute_methods" do
+    it "returns a falsy value if the attribute methods have already been generated" do
+      Employee.define_attribute_methods.should be_false
+    end
+  end
 end

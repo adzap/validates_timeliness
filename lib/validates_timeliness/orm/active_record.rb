@@ -18,9 +18,10 @@ module ValidatesTimeliness
 
       module ClassMethods
         def define_attribute_methods
-          super
-          use_before_type_cast = ValidatesTimeliness::ORM::ActiveRecord.use_plugin_cache?
-          define_timeliness_methods use_before_type_cast
+          super.tap do |attribute_methods_generated|
+            use_before_type_cast = ValidatesTimeliness::ORM::ActiveRecord.use_plugin_cache?
+            define_timeliness_methods use_before_type_cast
+          end
         end
 
         def define_timeliness_methods(before_type_cast=false)
