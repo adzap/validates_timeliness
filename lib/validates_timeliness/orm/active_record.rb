@@ -5,10 +5,11 @@ module ValidatesTimeliness
 
       module ClassMethods
         def define_attribute_methods
-          super
-          # Define write method and before_type_cast method
-          use_before_type_cast = ::ActiveRecord::VERSION::STRING < '3.1.0'
-          define_timeliness_methods(use_before_type_cast)
+          super.tap do |attribute_methods_generated|
+            # Define write method and before_type_cast method
+            use_before_type_cast = ::ActiveRecord::VERSION::STRING < '3.1.0'
+            define_timeliness_methods(use_before_type_cast)
+          end
         end
 
         def timeliness_attribute_timezone_aware?(attr_name)

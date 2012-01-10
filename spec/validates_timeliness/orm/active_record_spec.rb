@@ -107,4 +107,10 @@ describe ValidatesTimeliness, 'ActiveRecord' do
       r.birth_datetime_before_type_cast.should match(/2010-01-01 00:00:00/)
     end
   end
+
+  context "define_attribute_methods" do
+    it "returns a falsy value if the attribute methods have already been generated" do
+      Employee.define_attribute_methods.should be_false
+    end
+  end
 end
