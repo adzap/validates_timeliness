@@ -29,7 +29,7 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     it 'should cache attribute raw value' do
       r = EmployeeWithCache.new
       r.birth_datetime = date_string = '2010-01-01'
-      r._timeliness_raw_value_for(:birth_datetime).should == date_string
+      r._timeliness_raw_value_for('birth_datetime').should == date_string
     end
 
     context "with plugin parser" do
@@ -83,7 +83,7 @@ describe ValidatesTimeliness, 'ActiveRecord' do
       r.birth_date = '2010-01-01'
       r.reload
 
-      r._timeliness_raw_value_for(:birth_date).should be_nil
+      r._timeliness_raw_value_for('birth_date').should be_nil
     end
   end
 
@@ -106,5 +106,17 @@ describe ValidatesTimeliness, 'ActiveRecord' do
       r = Employee.last
       r.birth_datetime_before_type_cast.should match(/2010-01-01 00:00:00/)
     end
+
+    context "with plugin parser" do
+      with_config(:use_plugin_parser, true)
+
+      it 'should return original value' do
+        r = Employee.new
+        r.birth_datetime = date_string = '2010-01-31'
+
+        r.birth_datetime_before_type_cast.should == date_string
+      end
+    end
+
   end
 end

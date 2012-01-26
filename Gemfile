@@ -2,9 +2,9 @@ source 'http://rubygems.org'
 
 gemspec
 
-gem 'rails', '3.1.0'
-gem 'rspec', '~> 2.6'
-gem 'rspec-rails', '~> 2.6'
+gem 'rails', '3.1.3'
+gem 'rspec', '~> 2.8'
+gem 'rspec-rails', '~> 2.8'
 gem 'timecop'
 gem 'rspec_tag_matchers'
 gem 'ruby-debug', :platforms => [:ruby_18, :jruby]

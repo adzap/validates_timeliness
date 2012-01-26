@@ -33,11 +33,13 @@ module ValidatesTimeliness
       def define_timeliness_write_method(attr_name)
         method_body, line = <<-EOV, __LINE__ + 1
           def #{attr_name}=(value)
+            original_value = value
             @timeliness_cache ||= {}
-            @timeliness_cache["#{attr_name}"] = value
+            @timeliness_cache["#{attr_name}"] = original_value
 
             #{ "if value.is_a?(String)\n#{timeliness_type_cast_code(attr_name, 'value')}\nend" if ValidatesTimeliness.use_plugin_parser }
-            super
+            
+            super(value)
           end
         EOV
         generated_timeliness_methods.module_eval(method_body, __FILE__, line)

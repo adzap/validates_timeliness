@@ -31,7 +31,7 @@ describe ValidatesTimeliness::AttributeMethods do
     it 'should cache attribute raw value' do
       r = PersonWithCache.new
       r.birth_datetime = date_string = '2010-01-01'
-      r._timeliness_raw_value_for(:birth_datetime).should == date_string
+      r._timeliness_raw_value_for('birth_datetime').should == date_string
     end
 
     it 'should not overwrite user defined methods' do
