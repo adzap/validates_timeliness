@@ -46,6 +46,11 @@ describe ValidatesTimeliness::Validator do
       Person.validates_date :birth_date, :allow_nil => true
       valid!(:birth_date, NIL)
     end
+
+    it "should not be valid with incorrect format" do
+      Person.validates_date :birth_date, :allow_nil => true
+      invalid!(:birth_date, 'wrongdateformat')
+    end
   end
 
   describe ":allow_blank option" do
@@ -58,6 +63,11 @@ describe ValidatesTimeliness::Validator do
     it 'should allow blank when true' do
       Person.validates_date :birth_date, :allow_blank => true
       valid!(:birth_date, '')
+    end
+
+    it "should not be valid with incorrect format" do
+      Person.validates_date :birth_date, :allow_blank => true
+      invalid!(:birth_date, 'wrongdateformat')
     end
   end
 
