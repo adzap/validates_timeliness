@@ -46,6 +46,17 @@ describe ValidatesTimeliness::Validator do
       Person.validates_date :birth_date, :allow_nil => true
       valid!(:birth_date, NIL)
     end
+
+    context "with raw value cache" do
+      it "should not be valid with an invalid format" do
+        PersonWithShim.validates_date :birth_date, :allow_nil => true
+
+        p = PersonWithShim.new
+        p.birth_date = 'bogus'
+
+        p.should_not be_valid
+      end
+    end
   end
 
   describe ":allow_blank option" do
@@ -58,6 +69,17 @@ describe ValidatesTimeliness::Validator do
     it 'should allow blank when true' do
       Person.validates_date :birth_date, :allow_blank => true
       valid!(:birth_date, '')
+    end
+
+    context "with raw value cache" do
+      it "should not be valid with an invalid format" do
+        PersonWithShim.validates_date :birth_date, :allow_blank => true
+
+        p = PersonWithShim.new
+        p.birth_date = 'bogus'
+
+        p.should_not be_valid
+      end
     end
   end
 
