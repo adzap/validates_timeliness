@@ -20,6 +20,11 @@ module ValidatesTimeliness
         :datetime
       end
 
+      def undefine_attribute_methods
+        super
+        undefine_timeliness_attribute_methods
+      end
+
       protected
 
       def define_timeliness_methods(before_type_cast=false)
@@ -64,6 +69,12 @@ module ValidatesTimeliness
 
       def generated_timeliness_methods
         @generated_timeliness_methods ||= Module.new.tap { |m| include(m) }
+      end
+
+      def undefine_timeliness_attribute_methods
+        generated_timeliness_methods.module_eval do
+          instance_methods.each { |m| undef_method(m) }
+        end
       end
     end
 

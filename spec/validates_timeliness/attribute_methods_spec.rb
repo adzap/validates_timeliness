@@ -40,6 +40,21 @@ describe ValidatesTimeliness::AttributeMethods do
       e.redefined_birth_date_called.should be_true
     end
 
+    it 'should be undefined if model class has dynamic attribute methods reset' do
+      # Force method definitions
+      PersonWithShim.validates_date :birth_date
+      r = PersonWithShim.new
+      r.birth_date = Time.now
+
+      write_method = RUBY_VERSION < '1.9' ? 'birth_date=' : :birth_date=
+
+      PersonWithShim.send(:generated_timeliness_methods).instance_methods.should include(write_method)
+
+      PersonWithShim.undefine_attribute_methods 
+
+      PersonWithShim.send(:generated_timeliness_methods).instance_methods.should_not include(write_method)
+    end
+
     context "with plugin parser" do
       with_config(:use_plugin_parser, true)
 

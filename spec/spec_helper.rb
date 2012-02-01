@@ -88,8 +88,7 @@ RSpec.configure do |c|
   c.include(ModelHelpers)
   c.include(ConfigHelper)
   c.before do
-    Person.reset_callbacks(:validate)
-    PersonWithShim.timeliness_validated_attributes = []
-    Person._validators.clear
+    reset_validation_setup_for(Person)
+    reset_validation_setup_for(PersonWithShim)
   end
 end
