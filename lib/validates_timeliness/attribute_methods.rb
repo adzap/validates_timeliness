@@ -41,7 +41,6 @@ module ValidatesTimeliness
             original_value = value
             @timeliness_cache ||= {}
             @timeliness_cache["#{attr_name}"] = original_value
-
             #{ "if value.is_a?(String)\n#{timeliness_type_cast_code(attr_name, 'value')}\nend" if ValidatesTimeliness.use_plugin_parser }
             
             super(value)
