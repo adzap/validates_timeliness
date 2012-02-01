@@ -47,7 +47,7 @@ describe ValidatesTimeliness, 'ActiveRecord' do
         r.birth_date = '2010-01-01'
       end
 
-      context "for a date column" do
+      context "for a date column", :active_record => '3.0' do
         it 'should store a date value after parsing string' do
           r = EmployeeWithParser.new
           r.birth_date = '2010-01-01'
