@@ -45,6 +45,11 @@ module ValidatesTimeliness
   mattr_accessor :use_plugin_parser
   @@use_plugin_parser = false
 
+  # Require all date fields, used to force the user to pick a value in all the select fields for the date
+  mattr_accessor :require_all_date_fields
+  @@require_all_date_fields= false
+
+
   # Default timezone
   self.default_timezone = :utc
 

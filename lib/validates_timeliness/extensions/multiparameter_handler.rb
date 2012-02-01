@@ -39,12 +39,10 @@ module ValidatesTimeliness
         callstack.each do |name, values_with_empty_parameters|
           begin
             klass = (self.class.reflect_on_aggregation(name.to_sym) || column_for_attribute(name)).klass
-            values = values_with_empty_parameters.reject { |v| v.nil? }
-
-            if values.empty?
+            values = values_with_empty_parameters.reject { |v| v.nil? || (ValidatesTimeliness.require_all_date_fields && v.zero? ) }
+            if values.empty? || (ValidatesTimeliness.require_all_date_fields && values.size < 3)
               send(name + "=", nil)
             else
-
               value = if Time == klass
                 instantiate_time_object(name, values)
               elsif Date == klass

@@ -17,6 +17,9 @@ ValidatesTimeliness.setup do |config|
   # Handle multiparameter date/time values strictly
   # config.enable_multiparameter_extension!
   #
+  # Force the date_select to require all date/time fields (meaning not accepting blank, empty or nil) but redisplay invalid values when available.
+  # config.require_all_date_fields = true
+  #
   # Shorthand date and time symbols for restrictions
   # config.restriction_shorthand_symbols.update(
   #   :now   => lambda { Time.current },
