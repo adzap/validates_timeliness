@@ -1,6 +1,8 @@
 require 'bundler'
 Bundler::GemHelper.install_tasks
 
+Bundler.setup
+
 require 'rake/rdoctask'
 require 'rspec/core/rake_task'
 
