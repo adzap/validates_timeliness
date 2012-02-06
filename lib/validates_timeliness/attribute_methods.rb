@@ -30,9 +30,13 @@ module ValidatesTimeliness
       def define_timeliness_methods(before_type_cast=false)
         return if timeliness_validated_attributes.blank?
         timeliness_validated_attributes.each do |attr_name|
-          define_timeliness_write_method(attr_name)
-          define_timeliness_before_type_cast_method(attr_name) if before_type_cast
+          define_attribute_timeliness_methods(attr_name, before_type_cast)
         end
+      end
+
+      def define_attribute_timeliness_methods(attr_name, before_type_cast=false)
+        define_timeliness_write_method(attr_name)
+        define_timeliness_before_type_cast_method(attr_name) if before_type_cast
       end
 
       def define_timeliness_write_method(attr_name)

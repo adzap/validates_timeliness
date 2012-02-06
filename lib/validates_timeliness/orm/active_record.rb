@@ -17,6 +17,17 @@ module ValidatesTimeliness
       end
 
       module ClassMethods
+        public
+
+        def timeliness_attribute_timezone_aware?(attr_name)
+          attr_name = attr_name.to_s
+          create_time_zone_conversion_attribute?(attr_name, columns_hash[attr_name])
+        end
+
+        def timeliness_attribute_type(attr_name)
+          columns_hash[attr_name.to_s].type
+        end
+
         def define_attribute_methods
           super.tap do |attribute_methods_generated|
             use_before_type_cast = ValidatesTimeliness::ORM::ActiveRecord.use_plugin_cache?
@@ -24,16 +35,14 @@ module ValidatesTimeliness
           end
         end
 
-        def define_timeliness_methods(before_type_cast=false)
-          return if timeliness_validated_attributes.blank?
+        protected
 
-          timeliness_validated_attributes.each do |attr_name|
-            if before_type_cast
-              define_timeliness_write_method(attr_name)
-              define_timeliness_before_type_cast_method(attr_name)
-            elsif ValidatesTimeliness.use_plugin_parser
-              define_timeliness_write_method_without_cache(attr_name)
-            end
+        def define_attribute_timeliness_methods(attr_name, before_type_cast=false)
+          if before_type_cast
+            define_timeliness_write_method(attr_name)
+            define_timeliness_before_type_cast_method(attr_name)
+          elsif ValidatesTimeliness.use_plugin_parser
+            define_timeliness_write_method_without_cache(attr_name)
           end
         end
 
@@ -47,15 +56,6 @@ module ValidatesTimeliness
             end
           EOV
           generated_timeliness_methods.module_eval(method_body, __FILE__, line)
-        end
-
-        def timeliness_attribute_timezone_aware?(attr_name)
-          attr_name = attr_name.to_s
-          create_time_zone_conversion_attribute?(attr_name, columns_hash[attr_name])
-        end
-
-        def timeliness_attribute_type(attr_name)
-          columns_hash[attr_name.to_s].type
         end
 
         def timeliness_type_cast_code(attr_name, var_name)
