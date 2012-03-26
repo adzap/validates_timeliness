@@ -21,18 +21,24 @@ module ValidatesTimeliness
       end
 
       def instantiate_time_object_with_timeliness(name, values)
-        if Date.valid_civil?(*values[0..2])
+        validate_multiparameter_date_values(values) {
           instantiate_time_object_without_timeliness(name, values)
-        else
-          invalid_multiparameter_date_or_time_as_string(values)
-        end
+        }
       end
 
       def instantiate_date_object(name, values)
-        values = values.map { |v| v.nil? ? 1 : v }
-        Date.new(*values)
-      rescue ArgumentError => ex
-        invalid_multiparameter_date_or_time_as_string(values)
+        validate_multiparameter_date_values(values) {
+          Date.new(*values)
+        }
+      end
+
+      # Yield if date values are valid
+      def validate_multiparameter_date_values(values)
+        if values[0..2].all?{ |v| v.present? } && Date.valid_civil?(*values[0..2])
+          yield
+        else
+          invalid_multiparameter_date_or_time_as_string(values)
+        end
       end
 
       def read_value_from_parameter_with_timeliness(name, values_from_param)
