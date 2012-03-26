@@ -1,3 +1,7 @@
+= 3.0.9 [2012-03-26]
+* ActiveRecord 3.1+ suport
+* Fixes for multiparameter extension with empty date values (thanks @mogox, @Sharagoz)
+
 = 3.0.8 [2011-12-24]
 * Remove deprecated InstanceMethods module when using AS::Concern (carlosantoniodasilva)
 * Update Mongoid shim for v2.3 compatability.
