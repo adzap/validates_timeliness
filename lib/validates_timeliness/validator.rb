@@ -77,7 +77,7 @@ module ValidatesTimeliness
 
     def attribute_raw_value(record, attr_name)
       record.respond_to?(:_timeliness_raw_value_for) &&
-        record._timeliness_raw_value_for(attr_name)
+        record._timeliness_raw_value_for(attr_name.to_s)
     end
 
     def timezone_aware?(record, attr_name)

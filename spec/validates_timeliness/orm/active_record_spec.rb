@@ -14,6 +14,30 @@ describe ValidatesTimeliness, 'ActiveRecord' do
       Employee.new.should respond_to(:validates_time)
       Employee.new.should respond_to(:validates_datetime)
     end
+
+    it "should validate a valid value string" do
+      r = Employee.new
+      r.birth_date = '2012-01-01'
+
+      r.valid?
+      r.errors[:birth_date].should be_empty
+    end
+
+    it "should validate a invalid value string" do
+      r = Employee.new
+      r.birth_date = 'not a date'
+
+      r.valid?
+      r.errors[:birth_date].should_not be_empty
+    end
+
+    it "should validate a nil value" do
+      r = Employee.new
+      r.birth_date = nil
+
+      r.valid?
+      r.errors[:birth_date].should be_empty
+    end
   end
 
   it 'should determine type for attribute' do
@@ -23,13 +47,26 @@ describe ValidatesTimeliness, 'ActiveRecord' do
   context "attribute write method" do
     class EmployeeWithCache < ActiveRecord::Base
       set_table_name 'employees'
-      validates_datetime :birth_datetime
+      validates_date :birth_date, :allow_blank => true
+      validates_datetime :birth_datetime, :allow_blank => true
     end
 
-    it 'should cache attribute raw value' do
-      r = EmployeeWithCache.new
-      r.birth_datetime = date_string = '2010-01-01'
-      r._timeliness_raw_value_for('birth_datetime').should == date_string
+    context 'value cache' do
+      context 'for datetime column' do
+        it 'should store raw value' do
+          r = EmployeeWithCache.new
+          r.birth_datetime = date_string = '2010-01-01'
+          r._timeliness_raw_value_for('birth_datetime').should == date_string
+        end
+      end
+
+      context 'for date column' do
+        it 'should store raw value' do
+          r = EmployeeWithCache.new
+          r.birth_date = date_string = '2010-01-01'
+          r._timeliness_raw_value_for('birth_date').should == date_string
+        end
+      end
     end
 
     context "with plugin parser" do
@@ -37,8 +74,8 @@ describe ValidatesTimeliness, 'ActiveRecord' do
 
       class EmployeeWithParser < ActiveRecord::Base
         set_table_name 'employees'
-        validates_date :birth_date
-        validates_datetime :birth_datetime
+        validates_date :birth_date, :allow_blank => true
+        validates_datetime :birth_datetime, :allow_blank => true
       end
 
       it 'should parse a string value' do
@@ -47,7 +84,13 @@ describe ValidatesTimeliness, 'ActiveRecord' do
         r.birth_date = '2010-01-01'
       end
 
-      context "for a date column", :active_record => '3.0' do
+      it 'should parse a invalid string value as nil' do
+        Timeliness::Parser.should_receive(:parse)
+        r = EmployeeWithParser.new
+        r.birth_date = 'not a date'
+      end
+
+      context "for a date column" do
         it 'should store a date value after parsing string' do
           r = EmployeeWithParser.new
           r.birth_date = '2010-01-01'
@@ -77,10 +120,11 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     end
   end
 
-  context "cached value" do
-    it 'should be cleared on reload' do
+  context "reload" do
+    it 'should clear cache value' do
       r = Employee.create!
       r.birth_date = '2010-01-01'
+      
       r.reload
 
       r._timeliness_raw_value_for('birth_date').should be_nil

@@ -38,6 +38,30 @@ describe ValidatesTimeliness, 'Mongoid' do
       Article.new.should respond_to(:validates_time)
       Article.new.should respond_to(:validates_datetime)
     end
+
+    it "should validate a valid value string" do
+      r = Article.new
+      r.publish_date = '2012-01-01'
+
+      r.valid?
+      r.errors[:publish_date].should be_empty
+    end
+
+    it "should validate a invalid value string" do
+      r = Article.new
+      r.publish_date = 'not a date'
+
+      r.valid?
+      r.errors[:publish_date].should_not be_empty
+    end
+
+    it "should validate a nil value" do
+      r = Article.new
+      r.publish_date = nil
+
+      r.valid?
+      r.errors[:publish_date].should be_empty
+    end
   end
 
   it 'should determine type for attribute' do
@@ -48,7 +72,7 @@ describe ValidatesTimeliness, 'Mongoid' do
     it 'should cache attribute raw value' do
       r = Article.new
       r.publish_datetime = date_string = '2010-01-01'
-      r._timeliness_raw_value_for(:publish_datetime).should == date_string
+      r._timeliness_raw_value_for('publish_datetime').should == date_string
     end
 
     context "with plugin parser" do
@@ -95,7 +119,7 @@ describe ValidatesTimeliness, 'Mongoid' do
       r = Article.create!
       r.publish_date = '2010-01-01'
       r.reload
-      r._timeliness_raw_value_for(:publish_date).should be_nil
+      r._timeliness_raw_value_for('publish_date').should be_nil
     end
   end
 

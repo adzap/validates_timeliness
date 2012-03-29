@@ -82,7 +82,7 @@ module ValidatesTimeliness
     end
 
     def _timeliness_raw_value_for(attr_name)
-      @timeliness_cache && @timeliness_cache[attr_name.to_s]
+      @timeliness_cache && @timeliness_cache[attr_name]
     end
 
     def _clear_timeliness_cache
