@@ -1,3 +1,6 @@
+= 3.0.10 [2012-03-26]
+* Fix for ActiveRecord shim and validation with :allow_blank => true in AR 3.1+. Fixes issue#52.
+
 = 3.0.9 [2012-03-26]
 * ActiveRecord 3.1+ suport
 * Fixes for multiparameter extension with empty date values (thanks @mogox, @Sharagoz)
