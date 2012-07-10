@@ -21,7 +21,7 @@ module ValidatesTimeliness
 
         def timeliness_attribute_timezone_aware?(attr_name)
           attr_name = attr_name.to_s
-          create_time_zone_conversion_attribute?(attr_name, columns_hash[attr_name])
+          create_time_zone_conversion_attribute?(attr_name, columns_hash[attr_name]) if columns_hash[attr_name]
         end
 
         def timeliness_attribute_type(attr_name)
