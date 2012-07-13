@@ -92,10 +92,7 @@ RSpec.configure do |c|
     reset_validation_setup_for(PersonWithShim)
   end
 
-  RSpec.configure do |c|
-    c.filter_run_excluding :active_record => lambda {|version|
-      !(::ActiveRecord::VERSION::STRING.to_s =~ /^#{version.to_s}/)
-    }
-  end
-  
+  c.filter_run_excluding :active_record => lambda {|version|
+    !(::ActiveRecord::VERSION::STRING.to_s =~ /^#{version.to_s}/)
+  }
 end
