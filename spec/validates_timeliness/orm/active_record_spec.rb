@@ -43,10 +43,36 @@ describe ValidatesTimeliness, 'ActiveRecord' do
   it 'should determine type for attribute' do
     Employee.timeliness_attribute_type(:birth_date).should == :date
   end
+
+  context 'attribute timezone awareness' do
+    let(:klass) {
+      Class.new(ActiveRecord::Base) do
+        self.table_name = 'employees'
+        attr_accessor :some_date
+        attr_accessor :some_datetime
+        validates_date :some_date
+        validates_datetime :some_datetime
+      end
+    }
+
+    context 'for column attribute' do
+      it 'should be detected from column type' do
+        klass.timeliness_attribute_timezone_aware?(:birth_date).should be_false
+        klass.timeliness_attribute_timezone_aware?(:birth_datetime).should be_true
+      end
+    end
+
+    context 'for non-column attribute' do
+      it 'should be detected from the validation type' do
+        klass.timeliness_attribute_timezone_aware?(:some_date).should be_false
+        klass.timeliness_attribute_timezone_aware?(:some_datetime).should be_true
+      end
+    end
+  end
   
   context "attribute write method" do
     class EmployeeWithCache < ActiveRecord::Base
-      set_table_name 'employees'
+      self.table_name = 'employees'
       validates_date :birth_date, :allow_blank => true
       validates_datetime :birth_datetime, :allow_blank => true
     end
@@ -73,7 +99,7 @@ describe ValidatesTimeliness, 'ActiveRecord' do
       with_config(:use_plugin_parser, true)
 
       class EmployeeWithParser < ActiveRecord::Base
-        set_table_name 'employees'
+        self.table_name = 'employees'
         validates_date :birth_date, :allow_blank => true
         validates_datetime :birth_datetime, :allow_blank => true
       end

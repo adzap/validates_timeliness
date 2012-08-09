@@ -20,12 +20,18 @@ module ValidatesTimeliness
         public
 
         def timeliness_attribute_timezone_aware?(attr_name)
-          attr_name = attr_name.to_s
-          create_time_zone_conversion_attribute?(attr_name, columns_hash[attr_name])
+          create_time_zone_conversion_attribute?(attr_name, timeliness_column_for_attribute(attr_name))
         end
 
         def timeliness_attribute_type(attr_name)
-          columns_hash[attr_name.to_s].type
+          timeliness_column_for_attribute(attr_name).type
+        end
+
+        def timeliness_column_for_attribute(attr_name)
+          columns_hash.fetch(attr_name.to_s) do |attr_name|
+            validation_type = _validators[attr_name.to_sym].find {|v| v.kind == :timeliness }.type
+            ::ActiveRecord::ConnectionAdapters::Column.new(attr_name, nil, validation_type.to_s)
+          end
         end
 
         def define_attribute_methods
