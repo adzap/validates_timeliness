@@ -58,7 +58,7 @@ module ValidatesTimeliness
               original_value = value
               if value.is_a?(String)\n#{timeliness_type_cast_code(attr_name, 'value')}\nend
               super(value)
-              @attributes['#{attr_name}'] = original_value
+              write_attribute '#{attr_name}', value
             end
           EOV
           generated_timeliness_methods.module_eval(method_body, __FILE__, line)
