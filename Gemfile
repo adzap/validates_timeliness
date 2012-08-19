@@ -9,6 +9,8 @@ gem 'timecop'
 gem 'rspec_tag_matchers'
 gem 'ruby-debug', :platforms => [:ruby_18, :jruby]
 gem 'debugger', :platforms => [:ruby_19]
+gem 'appraisal'
+gem 'sqlite3'
 
 group :mongoid do
   gem 'mongoid', '~> 2.3.0'

@@ -1,7 +1,9 @@
 require 'bundler'
-Bundler::GemHelper.install_tasks
+require 'bundler/setup'
 
-Bundler.setup
+require 'appraisal'
+
+Bundler::GemHelper.install_tasks
 
 require 'rake/rdoctask'
 require 'rspec/core/rake_task'
