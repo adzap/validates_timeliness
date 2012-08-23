@@ -1,3 +1,6 @@
+= 3.0.14 [2012-08-23]
+* Fix for using validates :timeliness => {} form to correctly add attributes to timeliness validated attributes.
+
 = 3.0.13 [2012-08-21]
 * Fix ActiveRecord issues with using plugin parser by using old way of caching values.
 * Allow any ActiveRecord non-column attribute to be validated

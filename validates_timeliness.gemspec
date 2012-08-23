@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = %q{http://github.com/adzap/validates_timeliness}
 
   s.require_paths    = ["lib"]
-  s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock autotest/discover.rb }
+  s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock autotest/discover.rb Appraisals Travis.yml } - Dir['gemsfiles/*']
   s.test_files       = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc", "LICENSE"]
 
