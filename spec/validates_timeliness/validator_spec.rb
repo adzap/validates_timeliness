@@ -19,6 +19,14 @@ describe ValidatesTimeliness::Validator do
       Person.validates :birth_datetime, :timeliness => {:is_at => Time.mktime(2010,1,1)}
       Person.validators.first.type.should == :datetime
     end
+
+    it 'should add attribute to timeliness attributes set' do
+      PersonWithShim.timeliness_validated_attributes.should_not include(:birth_time)
+
+      PersonWithShim.validates :birth_time, :timeliness => {:is_at => "12:30"}
+
+      PersonWithShim.timeliness_validated_attributes.should include(:birth_time)
+    end
   end
 
   it 'should not be valid for value which not valid date or time value' do

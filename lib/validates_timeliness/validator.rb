@@ -39,6 +39,13 @@ module ValidatesTimeliness
       super
     end
 
+    def setup(model)
+      if model.respond_to?(:timeliness_validated_attributes)
+        model.timeliness_validated_attributes ||= []
+        model.timeliness_validated_attributes |= @attributes
+      end
+    end
+
     def validate_each(record, attr_name, value)
       raw_value = attribute_raw_value(record, attr_name) || value
       return if (@allow_nil && raw_value.nil?) || (@allow_blank && raw_value.blank?)

@@ -21,7 +21,7 @@ module ValidatesTimeliness
         def timeliness_attribute_type(attr_name)
           {
             Date => :date,
-            Time => :datetime,
+            Time => :time,
             DateTime => :datetime
           }[fields[attr_name.to_s].type] || :datetime
         end

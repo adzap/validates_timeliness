@@ -15,12 +15,7 @@ module ActiveModel
       end
 
       def timeliness_validation_for(attr_names, type)
-        options = _merge_attributes(attr_names).merge(:type => type)
-        if respond_to?(:timeliness_validated_attributes)
-          self.timeliness_validated_attributes ||= []
-          self.timeliness_validated_attributes += (attr_names - self.timeliness_validated_attributes)
-        end
-        validates_with TimelinessValidator, options
+        validates_with TimelinessValidator, _merge_attributes(attr_names).merge(:type => type)
       end
     end
 
