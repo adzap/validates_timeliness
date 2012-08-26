@@ -3,6 +3,8 @@ require 'spec_helper'
 describe ValidatesTimeliness, 'ActiveRecord' do
 
   context "validation methods" do
+    let(:record) { Employee.new }
+
     it 'should be defined for the class' do
       ActiveRecord::Base.should respond_to(:validates_date)
       ActiveRecord::Base.should respond_to(:validates_time)
@@ -10,33 +12,30 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     end
 
     it 'should defines for the instance' do
-      Employee.new.should respond_to(:validates_date)
-      Employee.new.should respond_to(:validates_time)
-      Employee.new.should respond_to(:validates_datetime)
+      record.should respond_to(:validates_date)
+      record.should respond_to(:validates_time)
+      record.should respond_to(:validates_datetime)
     end
 
     it "should validate a valid value string" do
-      r = Employee.new
-      r.birth_date = '2012-01-01'
+      record.birth_date = '2012-01-01'
 
-      r.valid?
-      r.errors[:birth_date].should be_empty
+      record.valid?
+      record.errors[:birth_date].should be_empty
     end
 
     it "should validate a invalid value string" do
-      r = Employee.new
-      r.birth_date = 'not a date'
+      record.birth_date = 'not a date'
 
-      r.valid?
-      r.errors[:birth_date].should_not be_empty
+      record.valid?
+      record.errors[:birth_date].should_not be_empty
     end
 
     it "should validate a nil value" do
-      r = Employee.new
-      r.birth_date = nil
+      record.birth_date = nil
 
-      r.valid?
-      r.errors[:birth_date].should be_empty
+      record.valid?
+      record.errors[:birth_date].should be_empty
     end
   end
 
@@ -83,36 +82,36 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     end
 
     context 'value cache' do
+      let(:record) { EmployeeWithCache.new }
+
       context 'for datetime column' do
         it 'should store raw value' do
-          r = EmployeeWithCache.new
-          r.birth_datetime = datetime_string = '2010-01-01 12:30'
+          record.birth_datetime = datetime_string = '2010-01-01 12:30'
 
-          r._timeliness_raw_value_for('birth_datetime').should eq datetime_string
+          record._timeliness_raw_value_for('birth_datetime').should eq datetime_string
         end
       end
 
       context 'for date column' do
         it 'should store raw value' do
-          r = EmployeeWithCache.new
-          r.birth_date = date_string = '2010-01-01'
+          record.birth_date = date_string = '2010-01-01'
 
-          r._timeliness_raw_value_for('birth_date').should eq date_string
+          record._timeliness_raw_value_for('birth_date').should eq date_string
         end
       end
 
       context 'for time column' do
         it 'should store raw value' do
-          r = EmployeeWithCache.new
-          r.birth_time = time_string = '12:12'
+          record.birth_time = time_string = '12:12'
 
-          r._timeliness_raw_value_for('birth_time').should eq time_string
+          record._timeliness_raw_value_for('birth_time').should eq time_string
         end
       end
     end
 
     context "with plugin parser" do
       with_config(:use_plugin_parser, true)
+      let(:record) { EmployeeWithParser.new }
 
       class EmployeeWithParser < ActiveRecord::Base
         self.table_name = 'employees'
@@ -125,22 +124,20 @@ describe ValidatesTimeliness, 'ActiveRecord' do
         it 'should parse a string value' do
           Timeliness::Parser.should_receive(:parse)
 
-          r = EmployeeWithParser.new
-          r.birth_date = '2010-01-01'
+          record.birth_date = '2010-01-01'
         end
 
         it 'should parse a invalid string value as nil' do
           Timeliness::Parser.should_receive(:parse)
-          r = EmployeeWithParser.new
-          r.birth_date = 'not valid'
+
+          record.birth_date = 'not valid'
         end
 
         it 'should store a Date value after parsing string' do
-          r = EmployeeWithParser.new
-          r.birth_date = '2010-01-01'
+          record.birth_date = '2010-01-01'
 
-          r.birth_date.should be_kind_of(Date)
-          r.birth_date.should eq Date.new(2010, 1, 1)
+          record.birth_date.should be_kind_of(Date)
+          record.birth_date.should eq Date.new(2010, 1, 1)
         end
       end
 
@@ -148,23 +145,20 @@ describe ValidatesTimeliness, 'ActiveRecord' do
         it 'should parse a string value' do
           Timeliness::Parser.should_receive(:parse)
 
-          r = EmployeeWithParser.new
-          r.birth_time = '12:30'
+          record.birth_time = '12:30'
         end
 
         it 'should parse a invalid string value as nil' do
           Timeliness::Parser.should_receive(:parse)
 
-          r = EmployeeWithParser.new
-          r.birth_time = 'not valid'
+          record.birth_time = 'not valid'
         end
 
         it 'should store a Time value after parsing string' do
-          r = EmployeeWithParser.new
-          r.birth_time = '12:30'
+          record.birth_time = '12:30'
 
-          r.birth_time.should be_kind_of(Time)
-          r.birth_time.should eq Time.utc(2000, 1, 1, 12, 30)
+          record.birth_time.should be_kind_of(Time)
+          record.birth_time.should eq Time.utc(2000, 1, 1, 12, 30)
         end
       end
 
@@ -174,29 +168,25 @@ describe ValidatesTimeliness, 'ActiveRecord' do
         it 'should parse a string value' do
           Timeliness::Parser.should_receive(:parse)
 
-          r = EmployeeWithParser.new
-          r.birth_datetime = '2010-01-01 12:00'
+          record.birth_datetime = '2010-01-01 12:00'
         end
 
         it 'should parse a invalid string value as nil' do
           Timeliness::Parser.should_receive(:parse)
 
-          r = EmployeeWithParser.new
-          r.birth_datetime = 'not valid'
+          record.birth_datetime = 'not valid'
         end
 
         it 'should parse string into Time value' do
-          r = EmployeeWithParser.new
-          r.birth_datetime = '2010-01-01 12:00'
+          record.birth_datetime = '2010-01-01 12:00'
 
-          r.birth_datetime.should be_kind_of(Time)
+          record.birth_datetime.should be_kind_of(Time)
         end
 
         it 'should parse string as current timezone' do
-          r = EmployeeWithParser.new
-          r.birth_datetime = '2010-06-01 12:00'
+          record.birth_datetime = '2010-06-01 12:00'
 
-          r.birth_datetime.utc_offset.should eq Time.zone.utc_offset
+          record.birth_datetime.utc_offset.should eq Time.zone.utc_offset
         end
       end
     end
@@ -204,43 +194,43 @@ describe ValidatesTimeliness, 'ActiveRecord' do
 
   context "reload" do
     it 'should clear cache value' do
-      r = Employee.create!
-      r.birth_date = '2010-01-01'
+      record = Employee.create!
+      record.birth_date = '2010-01-01'
       
-      r.reload
+      record.reload
 
-      r._timeliness_raw_value_for('birth_date').should be_nil
+      record._timeliness_raw_value_for('birth_date').should be_nil
     end
   end
 
   context "before_type_cast method" do
+    let(:record) { Employee.new }
+
     it 'should be defined on class if ORM supports it' do
-      Employee.new.should respond_to(:birth_datetime_before_type_cast)
+      record.should respond_to(:birth_datetime_before_type_cast)
     end
 
     it 'should return original value' do
-      r = Employee.new
-      r.birth_datetime = date_string = '2010-01-01'
+      record.birth_datetime = date_string = '2010-01-01'
 
-      r.birth_datetime_before_type_cast.should eq date_string
+      record.birth_datetime_before_type_cast.should eq date_string
     end
 
     it 'should return attribute if no attribute assignment has been made' do
       datetime = Time.zone.local(2010,01,01)
       Employee.create(:birth_datetime => datetime)
 
-      r = Employee.last
-      r.birth_datetime_before_type_cast.should match(/2010-01-01 00:00:00/)
+      record = Employee.last
+      record.birth_datetime_before_type_cast.should match(/2010-01-01 00:00:00/)
     end
 
     context "with plugin parser" do
       with_config(:use_plugin_parser, true)
 
       it 'should return original value' do
-        r = Employee.new
-        r.birth_datetime = date_string = '2010-01-31'
+        record.birth_datetime = date_string = '2010-01-31'
 
-        r.birth_datetime_before_type_cast.should eq date_string
+        record.birth_datetime_before_type_cast.should eq date_string
       end
     end
 
