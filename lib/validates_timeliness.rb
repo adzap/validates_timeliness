@@ -24,36 +24,30 @@ module ValidatesTimeliness
 
   class << self
     delegate :default_timezone, :default_timezone=, :dummy_date_for_time_type, :dummy_date_for_time_type=, :to => Timeliness
+
+    attr_accessor :extend_orms, :ignore_restriction_errors, :restriction_shorthand_symbols, :use_plugin_parser
   end
 
   # Extend ORM/ODMs for full support (:active_record, :mongoid).
-  mattr_accessor :extend_orms
-  @@extend_orms = []
+  self.extend_orms = []
 
   # Ignore errors when restriction options are evaluated
-  mattr_accessor :ignore_restriction_errors
-  @@ignore_restriction_errors = false
+  self.ignore_restriction_errors = false
 
   # Shorthand time and date symbols for restrictions
-  mattr_accessor :restriction_shorthand_symbols
-  @@restriction_shorthand_symbols = {
+  self.restriction_shorthand_symbols = {
     :now   => lambda { Time.current },
     :today => lambda { Date.current }
   }
 
   # Use the plugin date/time parser which is stricter and extensible
-  mattr_accessor :use_plugin_parser
-  @@use_plugin_parser = false
+  self.use_plugin_parser = false
 
   # Default timezone
   self.default_timezone = :utc
 
   # Set the dummy date part for a time type values.
   self.dummy_date_for_time_type = [ 2000, 1, 1 ]
-
-  def self.parser
-    Timeliness
-  end
 
   # Setup method for plugin configuration
   def self.setup
@@ -64,6 +58,8 @@ module ValidatesTimeliness
   def self.load_orms
     extend_orms.each {|orm| require "validates_timeliness/orm/#{orm}" }
   end
+
+  def self.parser; Timeliness end
 end
 
 require 'validates_timeliness/conversion'
