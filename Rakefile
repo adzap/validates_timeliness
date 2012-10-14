@@ -5,7 +5,7 @@ require 'appraisal'
 
 Bundler::GemHelper.install_tasks
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 require 'rspec/core/rake_task'
 
 desc "Run specs"
