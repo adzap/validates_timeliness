@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe ValidatesTimeliness::Validator do
-  NIL = [nil]
-
   before do
     Timecop.freeze(Time.local_time(2010, 1, 1, 0, 0, 0))
   end
@@ -46,13 +44,13 @@ describe ValidatesTimeliness::Validator do
   describe ":allow_nil option" do
     it 'should not allow nil by default' do
       Person.validates_date :birth_date
-      invalid!(:birth_date, NIL, 'is not a valid date')
+      invalid!(:birth_date, [nil], 'is not a valid date')
       valid!(:birth_date, Date.today)
     end
 
     it 'should allow nil when true' do
       Person.validates_date :birth_date, :allow_nil => true
-      valid!(:birth_date, NIL)
+      valid!(:birth_date, [nil])
     end
 
     context "with raw value cache" do
