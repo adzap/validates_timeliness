@@ -4,13 +4,19 @@ require 'spec_helper'
 begin
 
 require 'mongoid'
+require 'mongoid/version'
 require 'validates_timeliness/orm/mongoid'
 
-Mongoid.configure do |config|
-  name = "validates_timeliness_test"
-  host = "localhost"
-  config.master = Mongo::Connection.new.db(name)
-  config.persist_in_safe_mode = false
+if Mongoid::VERSION >= '3.0'
+  Mongoid.load!("spec/support/mongoid.yml", :test)
+else
+  require 'mongo'
+  Mongoid.configure do |config|
+    name = "validates_timeliness_test"
+    host = "localhost"
+    config.master = Mongo::Connection.new.db(name)
+    config.persist_in_safe_mode = false
+  end
 end
 
 describe ValidatesTimeliness, 'Mongoid' do
@@ -47,9 +53,19 @@ describe ValidatesTimeliness, 'Mongoid' do
       record.errors[:publish_date].should be_empty
     end
 
-    it "should validate a invalid value string" do
+    it "should validate an invalid time value string" do
       begin
-        record.publish_date = 'not a date' 
+        record.publish_time = 'not valid'
+      rescue
+      end
+
+      record.valid?
+      record.errors[:publish_time].should_not be_empty
+    end
+
+    it "should validate an invalid date value string" do
+      begin
+        record.publish_date = 'not valid'
       rescue
       end
 
@@ -57,11 +73,35 @@ describe ValidatesTimeliness, 'Mongoid' do
       record.errors[:publish_date].should_not be_empty
     end
 
-    it "should validate a nil value" do
+    it "should validate an invalid datetime value string" do
+      begin
+        record.publish_datetime = 'not valid'
+      rescue
+      end
+
+      record.valid?
+      record.errors[:publish_datetime].should_not be_empty
+    end
+
+    it "should accept a nil time value" do
+      record.publish_date = nil
+
+      record.valid?
+      record.errors[:publish_time].should be_empty
+    end
+
+    it "should accept a nil date value" do
       record.publish_date = nil
 
       record.valid?
       record.errors[:publish_date].should be_empty
+    end
+
+    it "should accept a nil datetime value" do
+      record.publish_datetime = nil
+
+      record.valid?
+      record.errors[:publish_datetime].should be_empty
     end
   end
 
@@ -105,6 +145,8 @@ describe ValidatesTimeliness, 'Mongoid' do
           Timeliness::Parser.should_receive(:parse)
 
           record.publish_date = 'not valid'
+
+          record.publish_date.should be_nil
         end
 
         it 'should store a Date value after parsing string' do
@@ -149,6 +191,8 @@ describe ValidatesTimeliness, 'Mongoid' do
           Timeliness::Parser.should_receive(:parse)
 
           record.publish_datetime = 'not valid'
+
+          record.publish_datetime.should be_nil
         end
 
         it 'should parse string into DateTime value' do
