@@ -1,3 +1,4 @@
+require 'active_model'
 require 'active_model/validator'
 
 module ValidatesTimeliness
