@@ -115,6 +115,19 @@ describe ValidatesTimeliness::Validator do
         valid!(:birth_date, on_or_before)
       end
     end
+
+    describe "range with excluded end value" do
+      it 'should be split option into :on_or_after and :before values' do
+        on_or_after, before = Date.new(2010,1,1), Date.new(2010,1,3)
+        Person.validates_date :birth_date, :between => on_or_after...before
+        Person.validators.first.options[:on_or_after].should == on_or_after
+        Person.validators.first.options[:before].should == before
+        invalid!(:birth_date, on_or_after - 1, "must be on or after 2010-01-01")
+        invalid!(:birth_date, before, "must be before 2010-01-03")
+        valid!(:birth_date, on_or_after)
+        valid!(:birth_date, before - 1)
+      end
+    end
   end
 
   describe ":ignore_usec option" do
@@ -224,7 +237,7 @@ describe ValidatesTimeliness::Validator do
       Person.validates_date :birth_date, :invalid_date_message => 'custom invalid message'
       invalid!(:birth_date, 'asdf', 'custom invalid message')
     end
-  
+
     it 'should be used for invalid restriction' do
       Person.validates_date :birth_date, :before => Time.now, :before_message => 'custom before message'
       invalid!(:birth_date, Time.now, 'custom before message')
