@@ -221,7 +221,7 @@ describe ValidatesTimeliness, 'ActiveRecord' do
       Employee.create(:birth_datetime => datetime)
 
       record = Employee.last
-      record.birth_datetime_before_type_cast.should match(/2010-01-01 00:00:00/)
+      record.birth_datetime_before_type_cast.should match(/#{datetime.utc.to_s[0...-4]}/)
     end
 
     context "with plugin parser" do
