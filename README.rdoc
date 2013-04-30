@@ -55,7 +55,10 @@ NOTE: You may wish to enable the plugin parser and the extensions to start. Plea
   validates_datetime :finish_time, :after => :start_time # Method symbol
 
   validates_date :booked_at, :on => :create, :on_or_after => :today # See Restriction Shorthand.
-  validates_time :booked_at, :between => ['9.00am', '5:00pm']
+
+  validates_time :booked_at, :between => ['9:00am', '5:00pm'] # On or after 9:00AM and on or before 5:00PM
+  validates_time :booked_at, :between => '9:00am'..'5:00pm' # The same as previous example
+  validates_time :booked_at, :between => '9:00am'...'5:00pm' # On or after 9:00AM and strictly before 5:00PM
 
   validates_time :breakfast_time, :on_or_after => '6:00am',
                                   :on_or_after_message => 'must be after opening time',
@@ -173,8 +176,8 @@ You can also use validation options for custom error messages. The following opt
     :after_message
     :on_or_after_message
 
-Note: There is no :between_message option. The between error message should be defined using the 
-:on_or_before and :on_or_after messages.
+Note: There is no :between_message option. The between error message should be defined using the :on_or_after and :on_or_before
+(:before in case when :between argument is a Range with excluded high value, see Examples) messages.
 
 It is highly recommended you use the I18n system for error messages.
 
