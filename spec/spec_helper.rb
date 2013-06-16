@@ -57,6 +57,7 @@ class PersonWithShim < Person
   include TestModelShim
 end
 
+ActiveRecord::Base.default_timezone = :utc
 ActiveRecord::Base.time_zone_aware_attributes = true
 ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})
 ActiveRecord::Migration.verbose = false

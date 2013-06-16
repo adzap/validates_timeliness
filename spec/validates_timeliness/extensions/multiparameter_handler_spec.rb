@@ -10,7 +10,7 @@ describe ValidatesTimeliness::Extensions::MultiparameterHandler do
      
     it 'should assign a Time value for valid datetimes' do
       employee = record_with_multiparameter_attribute(:birth_datetime, [2000, 2, 28, 12, 0, 0])
-      employee.birth_datetime_before_type_cast.should eq Time.local(2000, 2, 28, 12, 0, 0)
+      employee.birth_datetime_before_type_cast.should eq Time.zone.local(2000, 2, 28, 12, 0, 0)
     end
 
     it 'should assign a string value for incomplete time' do
