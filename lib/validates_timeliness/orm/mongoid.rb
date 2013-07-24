@@ -6,7 +6,7 @@ module ValidatesTimeliness
       # It is best to use the plugin parser to avoid errors on a bad
       # field value in Mongoid. Parser will return nil rather than error.
 
-      module ClassMethods 
+      module ClassMethods
         public
 
         # Mongoid has no bulk attribute method definition hook. It defines
@@ -23,7 +23,7 @@ module ValidatesTimeliness
             Date => :date,
             Time => :time,
             DateTime => :datetime
-          }[fields[attr_name.to_s].type] || :datetime
+          }[fields[database_field_name(attr_name)].type] || :datetime
         end
 
         protected
@@ -33,31 +33,17 @@ module ValidatesTimeliness
 
           "#{var_name} = Timeliness::Parser.parse(value, :#{type})"
         end
-
       end
 
-      module Reload
-        def reload(*args)
-          _clear_timeliness_cache
-          super
-        end
+      def reload(*args)
+        _clear_timeliness_cache
+        super
       end
     end
   end
 end
- 
+
 module Mongoid::Document
   include ValidatesTimeliness::AttributeMethods
   include ValidatesTimeliness::ORM::Mongoid
-
-  # Pre-2.3 reload
-  if (instance_methods & ['reload', :reload]).present?
-    def reload_with_timeliness
-      _clear_timeliness_cache
-      reload_without_timeliness
-    end
-    alias_method_chain :reload, :timeliness
-  else
-    include ValidatesTimeliness::ORM::Mongoid::Reload
-  end
 end
