@@ -29,7 +29,7 @@ module ValidatesTimeliness
   end
 
   # Extend ORM/ODMs for full support (:active_record, :mongoid).
-  self.extend_orms = []
+  self.extend_orms = [:active_record, :mongoid]
 
   # Ignore errors when restriction options are evaluated
   self.ignore_restriction_errors = false
@@ -56,7 +56,12 @@ module ValidatesTimeliness
   end
 
   def self.load_orms
-    extend_orms.each {|orm| require "validates_timeliness/orm/#{orm}" }
+    if defined?(::ActiveRecord) && self.extend_orms.include?(:active_record)
+      require 'validates_timeliness/orm/active_record'
+    end
+    if defined?(::Mongoid) && self.extend_orms.include?(:mongoid)
+      require 'validates_timeliness/orm/mongoid'
+    end
   end
 
   def self.parser; Timeliness end
