@@ -15,9 +15,11 @@ describe ValidatesTimeliness::Extensions do
       employee.birth_datetime_before_type_cast.should eq Time.zone.local(2000, 2, 28, 12, 0, 0)
     end
 
-    it 'should assign a string value for incomplete time' do
-      employee = record_with_multiparameter_attribute(:birth_datetime, [2000, nil, nil])
-      employee.birth_datetime_before_type_cast.should eq '2000-00-00'
+    if ActiveRecord::VERSION::MAJOR < 4
+      it 'should assign a string value for incomplete time' do
+        employee = record_with_multiparameter_attribute(:birth_datetime, [2000, nil, nil])
+        employee.birth_datetime_before_type_cast.should eq '2000-00-00'
+      end
     end
   end
 
