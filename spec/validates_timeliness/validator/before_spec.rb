@@ -25,15 +25,15 @@ describe ValidatesTimeliness::Validator, ":before option" do
     end
 
     it "should not be valid for time after restriction" do
-      invalid!(:birth_time, Time.local_time(2000, 1, 1, 12, 00, 01), 'must be before 12:00:00')
+      invalid!(:birth_time, Time.local(2000, 1, 1, 12, 00, 01), 'must be before 12:00:00')
     end
 
     it "should not be valid for same time as restriction" do
-      invalid!(:birth_time, Time.local_time(2000, 1, 1, 12, 0, 0), 'must be before 12:00:00')
+      invalid!(:birth_time, Time.local(2000, 1, 1, 12, 0, 0), 'must be before 12:00:00')
     end
 
     it "should be valid for time before restriction" do
-      valid!(:birth_time, Time.local_time(2000, 1, 1, 11, 59, 59))
+      valid!(:birth_time, Time.local(2000, 1, 1, 11, 59, 59))
     end
   end
 
