@@ -3,7 +3,7 @@ module ValidatesTimeliness
     module MultiparameterHandler
       extend ActiveSupport::Concern
 
-      # Stricter handling of date and time values from multiparameter 
+      # Stricter handling of date and time values from multiparameter
       # assignment from the date/time select view helpers
 
       included do
@@ -66,7 +66,7 @@ module ValidatesTimeliness
           begin
             send(name + "=", read_value_from_parameter(name, values_with_empty_parameters))
           rescue => ex
-            values = values_with_empty_parameters.is_a?(Hash) ? values_with_empty_parameters.values : values_with_empty_parameters 
+            values = values_with_empty_parameters.is_a?(Hash) ? values_with_empty_parameters.values : values_with_empty_parameters
             errors << ActiveRecord::AttributeAssignmentError.new("error on assignment #{values.inspect} to #{name}", ex, name)
           end
         end
