@@ -16,14 +16,15 @@ module ValidatesTimeliness
         errors = []
         callstack.each do |name, values_with_empty_parameters|
           begin
-            send(name + "=", MultipleAttribute.new(self, name, values_with_empty_parameters))
+            send("#{name}=", self.class::MultiparameterAttribute.new(self, name, values_with_empty_parameters).read_value)
           rescue => ex
             values = values_with_empty_parameters.is_a?(Hash) ? values_with_empty_parameters.values : values_with_empty_parameters
-            errors << ActiveRecord::AttributeAssignmentError.new("error on assignment #{values.inspect} to #{name}", ex, name)
+            errors << ActiveRecord::AttributeAssignmentError.new("error on assignment #{values.inspect} to #{name} (#{ex.message})", ex, name)
           end
         end
         unless errors.empty?
-          raise ActiveRecord::MultiparameterAssignmentErrors.new(errors), "#{errors.size} error(s) on assignment of multiparameter attributes"
+          error_descriptions = errors.map { |ex| ex.message }.join(",")
+          raise ActiveRecord::MultiparameterAssignmentErrors.new(errors), "#{errors.size} error(s) on assignment of multiparameter attributes [#{error_descriptions}]"
         end
       end
 
