@@ -11,7 +11,7 @@ appraise "rails_3_2" do
 end
 
 appraise "rails_4_0" do
-  gem "rails", "~> 4.0.0.rc2"
+  gem "rails", "~> 4.0.0"
 end
 
 appraise "mongoid_2_1" do
