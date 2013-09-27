@@ -39,6 +39,37 @@ describe ValidatesTimeliness, 'ActiveRecord' do
     end
   end
 
+  context "validation methods with STI and plugin parser" do
+
+    with_config(:use_plugin_parser, true)
+
+    class Janitor < Employee
+    end
+    
+    let(:record) { Janitor.new }
+
+    it "should validate a valid value string" do
+      record.birth_date = '2012-01-01'
+
+      record.valid?
+      record.errors[:birth_date].should be_empty
+    end
+
+    it "should validate a invalid value string" do
+      record.birth_date = 'not a date'
+
+      record.valid?
+      record.errors[:birth_date].should_not be_empty
+    end
+
+    it "should validate a nil value" do
+      record.birth_date = nil
+
+      record.valid?
+      record.errors[:birth_date].should be_empty
+    end
+  end
+
   it 'should determine type for attribute' do
     Employee.timeliness_attribute_type(:birth_date).should eq :date
   end

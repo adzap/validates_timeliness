@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.date     :birth_date
     t.time     :birth_time
     t.datetime :birth_datetime
+    t.string   :type
   end
 end
 
