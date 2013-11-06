@@ -39,7 +39,7 @@ Then run
   
   $ rails generate validates_timeliness:install
 
-This creates configuration initializer and locale files. In the initializer, you there are a number of config
+This creates configuration initializer and locale files. In the initializer, there are a number of config
 options to customize the plugin.
 
 NOTE: You may wish to enable the plugin parser and the extensions to start. Please read those sections first.
