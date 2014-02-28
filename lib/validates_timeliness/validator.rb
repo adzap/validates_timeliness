@@ -43,13 +43,21 @@ module ValidatesTimeliness
 
       @restrictions_to_check = RESTRICTIONS.keys & options.keys
       super
+      if options[:class].is_a?(Class) && options[:class].respond_to?(:timeliness_validated_attributes)
+        compatible_setup_for(options[:class])
+      end
     end
 
-    def setup(model)
+    def compatible_setup_for(model)
       if model.respond_to?(:timeliness_validated_attributes)
         model.timeliness_validated_attributes ||= []
         model.timeliness_validated_attributes |= @attributes
       end
+    end
+
+    # DEPRECATION WARNING: The `Validator#setup` instance method is deprecated and will be removed on Rails 4.2.
+    if Gem::Version.new(ActiveModel.respond_to?(:version) ? ActiveModel.version : ActiveModel::VERSION::STRING) < Gem::Version.new('4.1.0rc1')
+      alias_method(:setup, :compatible_setup_for)
     end
 
     def validate_each(record, attr_name, value)
