@@ -43,13 +43,18 @@ module ValidatesTimeliness
 
       @restrictions_to_check = RESTRICTIONS.keys & options.keys
       super
+      setup_timeliness_validated_attributes(options[:class]) if options[:class]
     end
 
-    def setup(model)
+    def setup_timeliness_validated_attributes(model)
       if model.respond_to?(:timeliness_validated_attributes)
         model.timeliness_validated_attributes ||= []
         model.timeliness_validated_attributes |= @attributes
       end
+    end
+
+    unless method_defined?(:setup) || private_instance_methods.include?(:deprecated_setup)
+      alias_method :setup, :setup_timeliness_validated_attributes
     end
 
     def validate_each(record, attr_name, value)
