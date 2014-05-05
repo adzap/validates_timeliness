@@ -23,6 +23,10 @@ module ValidatesTimeliness
 
     RESTRICTION_ERROR_MESSAGE = "Error occurred validating %s for %s restriction:\n%s"
 
+    # Prior to version 4.1, Rails will call `#setup`, if defined. This method is deprecated in Rails 4.1 and removed
+    # altogether in 4.2.
+    SETUP_DEPRECATED = ActiveRecord.respond_to?(:version) && ActiveRecord.version >= Gem::Version.new('4.1')
+
     def self.kind
       :timeliness
     end
@@ -53,9 +57,8 @@ module ValidatesTimeliness
       end
     end
 
-    unless method_defined?(:setup) || private_instance_methods.include?(:deprecated_setup)
-      alias_method :setup, :setup_timeliness_validated_attributes
-    end
+    # Provide backwards compatibility for Rails < 4.1, which expects `#setup` to be defined.
+    alias_method :setup, :setup_timeliness_validated_attributes unless SETUP_DEPRECATED
 
     def validate_each(record, attr_name, value)
       raw_value = attribute_raw_value(record, attr_name) || value
