@@ -25,7 +25,7 @@ module ValidatesTimeliness
 
     # Prior to version 4.1, Rails will call `#setup`, if defined. This method is deprecated in Rails 4.1 and removed
     # altogether in 4.2.
-    SETUP_DEPRECATED = ActiveRecord.respond_to?(:version) && ActiveRecord.version >= Gem::Version.new('4.1')
+    SETUP_DEPRECATED = ActiveModel.respond_to?(:version) && ActiveModel.version >= Gem::Version.new('4.1')
 
     def self.kind
       :timeliness
