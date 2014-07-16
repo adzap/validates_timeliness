@@ -5,7 +5,6 @@ module TestModel
   include ActiveModel::AttributeMethods
 
   included do
-    attribute_method_suffix ""
     attribute_method_suffix "="
     cattr_accessor :model_attributes
   end
