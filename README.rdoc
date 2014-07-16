@@ -1,7 +1,7 @@
 = ValidatesTimeliness
 
-* Source:  http://github.com/adzap/validates_timeliness
-* Issues:  http://github.com/adzap/validates_timeliness/issues
+* Source:  http://github.com/johncarney/validates_timeliness
+* Issues:  http://github.com/johncarney/validates_timeliness/issues
 
 == Description
 
@@ -30,13 +30,13 @@ If you a looking for the old version for Rails 2.x go here[http://github.com/adz
 == Installation
 
   # in Gemfile
-  gem 'validates_timeliness', '~> 3.0'
+  gem 'jc-validates_timeliness', '~> 3.1'
 
   # Run bundler
   $ bundle install
 
 Then run
-  
+
   $ rails generate validates_timeliness:install
 
 This creates configuration initializer and locale files. In the initializer, there are a number of config
@@ -97,7 +97,7 @@ Temporal options (or restrictions):
   :on_or_before - Attribute must be equal to or before this value to be valid
   :after        - Attribute must be after this value to be valid
   :on_or_after  - Attribute must be equal to or after this value to be valid
-  :between      - Attribute must be between the values to be valid. Range or Array of 2 values. 
+  :between      - Attribute must be between the values to be valid. Range or Array of 2 values.
 
 Regular validation options:
   :allow_nil    - Allow a nil value to be valid
@@ -199,7 +199,7 @@ using the gem. See the wiki[http://github.com/adzap/validates_timeliness/wiki/Pl
 
 === Restriction Shorthand
 
-It is common to restrict an attribute to being on or before the current time or current day. 
+It is common to restrict an attribute to being on or before the current time or current day.
 To specify this you need to use a lambda as an option value e.g. <tt>lambda { Time.current }</tt>.
 This can be tedious noise amongst your validations for something so common. To combat this the
 plugin allows you to use shorthand symbols for often used relative times or dates.
@@ -220,7 +220,7 @@ symbols are pre-configured. Configure your own like so:
 === Default Timezone
 
 The plugin needs to know the default timezone you are using when parsing or type casting values. If you are using
-ActiveRecord then the default is automatically set to the same default zone as ActiveRecord. If you are using 
+ActiveRecord then the default is automatically set to the same default zone as ActiveRecord. If you are using
 another ORM you may need to change this setting.
 
   # in the setup block
@@ -286,12 +286,14 @@ To activate it, uncomment this line in the initializer:
 
 == Contributors
 
-To see the generous people who have contributed code, take a look at the {contributors list}[http://github.com/adzap/validates_timeliness/contributors].
+This is a fork of the original validates_timeliness gem by {Adam Meehan}[http://github.com/adzap].
+
+To see the generous people who have contributed code, take a look at the {contributors list}[http://github.com/johncarney/validates_timeliness/contributors].
 
 
 == Maintainers
 
-* {Adam Meehan}[http://github.com/adzap]
+* {John Carney}[http://github.com/johncarney]
 
 
 == License
