@@ -1,6 +1,7 @@
 # ValidatesTimeliness
-[![Build status](https://travis-ci.org/johncarney/validates_timeliness.svg?branch=master)](https://travis-ci.org/johncarney/validates_timeliness)
 [![Gem Version](https://badge.fury.io/rb/jc-validates_timeliness.svg)](http://badge.fury.io/rb/jc-validates_timeliness)
+[![Build status](https://travis-ci.org/johncarney/validates_timeliness.svg?branch=master)](https://travis-ci.org/johncarney/validates_timeliness)
+[![Coverage Status](https://coveralls.io/repos/johncarney/validates_timeliness/badge.png?branch=master)](https://coveralls.io/r/johncarney/validates_timeliness?branch=master)
 
 ## Description
 
