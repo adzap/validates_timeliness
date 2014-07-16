@@ -29,22 +29,22 @@ describe ValidatesTimeliness, 'Mongoid' do
     let(:record) { Article.new }
 
     it 'should be defined on the class' do
-      Article.should respond_to(:validates_date)
-      Article.should respond_to(:validates_time)
-      Article.should respond_to(:validates_datetime)
+      expect(Article).to respond_to(:validates_date)
+      expect(Article).to respond_to(:validates_time)
+      expect(Article).to respond_to(:validates_datetime)
     end
 
     it 'should be defined on the instance' do
-      record.should respond_to(:validates_date)
-      record.should respond_to(:validates_time)
-      record.should respond_to(:validates_datetime)
+      expect(record).to respond_to(:validates_date)
+      expect(record).to respond_to(:validates_time)
+      expect(record).to respond_to(:validates_datetime)
     end
 
     it "should validate a valid value string" do
       record.publish_date = '2012-01-01'
 
       record.valid?
-      record.errors[:publish_date].should be_empty
+      expect(record.errors[:publish_date]).to be_empty
     end
 
     it "should validate a invalid value string" do
@@ -54,19 +54,19 @@ describe ValidatesTimeliness, 'Mongoid' do
       end
 
       record.valid?
-      record.errors[:publish_date].should_not be_empty
+      expect(record.errors[:publish_date]).not_to be_empty
     end
 
     it "should validate a nil value" do
       record.publish_date = nil
 
       record.valid?
-      record.errors[:publish_date].should be_empty
+      expect(record.errors[:publish_date]).to be_empty
     end
   end
 
   it 'should determine type for attribute' do
-    Article.timeliness_attribute_type(:publish_date).should == :date
+    expect(Article.timeliness_attribute_type(:publish_date)).to eq(:date)
   end
   
   context "attribute write method" do
@@ -75,7 +75,7 @@ describe ValidatesTimeliness, 'Mongoid' do
     it 'should cache attribute raw value' do
       record.publish_datetime = date_string = '2010-01-01'
 
-      record._timeliness_raw_value_for('publish_datetime').should == date_string
+      expect(record._timeliness_raw_value_for('publish_datetime')).to eq(date_string)
     end
 
     context "with plugin parser" do
@@ -96,13 +96,13 @@ describe ValidatesTimeliness, 'Mongoid' do
 
       context "for a date column" do
         it 'should parse a string value' do
-          Timeliness::Parser.should_receive(:parse)
+          expect(Timeliness::Parser).to receive(:parse)
 
           record.publish_date = '2010-01-01'
         end
 
         it 'should parse a invalid string value as nil' do
-          Timeliness::Parser.should_receive(:parse)
+          expect(Timeliness::Parser).to receive(:parse)
 
           record.publish_date = 'not valid'
         end
@@ -110,20 +110,20 @@ describe ValidatesTimeliness, 'Mongoid' do
         it 'should store a Date value after parsing string' do
           record.publish_date = '2010-01-01'
 
-          record.publish_date.should be_kind_of(Date)
-          record.publish_date.should eq Date.new(2010, 1, 1)
+          expect(record.publish_date).to be_kind_of(Date)
+          expect(record.publish_date).to eq Date.new(2010, 1, 1)
         end
       end
 
       context "for a time column" do
         it 'should parse a string value' do
-          Timeliness::Parser.should_receive(:parse)
+          expect(Timeliness::Parser).to receive(:parse)
 
           record.publish_time = '12:30'
         end
 
         it 'should parse a invalid string value as nil' do
-          Timeliness::Parser.should_receive(:parse)
+          expect(Timeliness::Parser).to receive(:parse)
 
           record.publish_time = 'not valid'
         end
@@ -131,8 +131,8 @@ describe ValidatesTimeliness, 'Mongoid' do
         it 'should store a Time value after parsing string' do
           record.publish_time = '12:30'
 
-          record.publish_time.should be_kind_of(Time)
-          record.publish_time.should eq Time.utc(2000, 1, 1, 12, 30)
+          expect(record.publish_time).to be_kind_of(Time)
+          expect(record.publish_time).to eq Time.utc(2000, 1, 1, 12, 30)
         end
       end
 
@@ -140,13 +140,13 @@ describe ValidatesTimeliness, 'Mongoid' do
         with_config(:default_timezone, 'Australia/Melbourne')
 
         it 'should parse a string value' do
-          Timeliness::Parser.should_receive(:parse)
+          expect(Timeliness::Parser).to receive(:parse)
 
           record.publish_datetime = '2010-01-01 12:00'
         end
 
         it 'should parse a invalid string value as nil' do
-          Timeliness::Parser.should_receive(:parse)
+          expect(Timeliness::Parser).to receive(:parse)
 
           record.publish_datetime = 'not valid'
         end
@@ -154,13 +154,13 @@ describe ValidatesTimeliness, 'Mongoid' do
         it 'should parse string into DateTime value' do
           record.publish_datetime = '2010-01-01 12:00'
 
-          record.publish_datetime.should be_kind_of(DateTime)
+          expect(record.publish_datetime).to be_kind_of(DateTime)
         end
 
         pending 'should parse string as current timezone' do
           record.publish_datetime = '2010-06-01 12:00'
 
-          record.publish_datetime.utc_offset.should eq Time.zone.utc_offset
+          expect(record.publish_datetime.utc_offset).to eq Time.zone.utc_offset
         end
       end
     end
@@ -171,13 +171,13 @@ describe ValidatesTimeliness, 'Mongoid' do
       record = Article.create!
       record.publish_date = '2010-01-01'
       record.reload
-      record._timeliness_raw_value_for('publish_date').should be_nil
+      expect(record._timeliness_raw_value_for('publish_date')).to be_nil
     end
   end
 
   context "before_type_cast method" do
     it 'should not be defined if ORM does not support it' do
-      Article.new.should_not respond_to(:publish_datetime_before_type_cast)
+      expect(Article.new).not_to respond_to(:publish_datetime_before_type_cast)
     end
   end
 end

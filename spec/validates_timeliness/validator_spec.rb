@@ -8,22 +8,22 @@ describe ValidatesTimeliness::Validator do
   describe "Model.validates with :timeliness option" do
     it 'should use plugin validator class' do
       Person.validates :birth_date, :timeliness => {:is_at => Date.new(2010,1,1), :type => :date}
-      Person.validators.should have(1).kind_of(ActiveModel::Validations::TimelinessValidator)
+      expect(Person.validators).to have(1).kind_of(ActiveModel::Validations::TimelinessValidator)
       invalid!(:birth_date, Date.new(2010,1,2))
       valid!(:birth_date, Date.new(2010,1,1))
     end
 
     it 'should use default to :datetime type' do
       Person.validates :birth_datetime, :timeliness => {:is_at => Time.mktime(2010,1,1)}
-      Person.validators.first.type.should == :datetime
+      expect(Person.validators.first.type).to eq(:datetime)
     end
 
     it 'should add attribute to timeliness attributes set' do
-      PersonWithShim.timeliness_validated_attributes.should_not include(:birth_time)
+      expect(PersonWithShim.timeliness_validated_attributes).not_to include(:birth_time)
 
       PersonWithShim.validates :birth_time, :timeliness => {:is_at => "12:30"}
 
-      PersonWithShim.timeliness_validated_attributes.should include(:birth_time)
+      expect(PersonWithShim.timeliness_validated_attributes).to include(:birth_time)
     end
   end
 
@@ -35,10 +35,10 @@ describe ValidatesTimeliness::Validator do
   it 'should not be valid attribute is type cast to nil but raw value is non-nil invalid value' do
     Person.validates_date :birth_date, :allow_nil => true
     record = Person.new
-    record.stub!(:birth_date).and_return(nil)
-    record.stub!(:_timeliness_raw_value_for).and_return("Not a date")
-    record.should_not be_valid
-    record.errors[:birth_date].first.should == 'is not a valid date'
+    allow(record).to receive(:birth_date).and_return(nil)
+    allow(record).to receive(:_timeliness_raw_value_for).and_return("Not a date")
+    expect(record).not_to be_valid
+    expect(record.errors[:birth_date].first).to eq('is not a valid date')
   end
 
   describe ":allow_nil option" do
@@ -60,7 +60,7 @@ describe ValidatesTimeliness::Validator do
         p = PersonWithShim.new
         p.birth_date = 'bogus'
 
-        p.should_not be_valid
+        expect(p).not_to be_valid
       end
     end
   end
@@ -84,7 +84,7 @@ describe ValidatesTimeliness::Validator do
         p = PersonWithShim.new
         p.birth_date = 'bogus'
 
-        p.should_not be_valid
+        expect(p).not_to be_valid
       end
     end
   end
@@ -94,8 +94,8 @@ describe ValidatesTimeliness::Validator do
       it 'should be split option into :on_or_after and :on_or_before values' do
         on_or_after, on_or_before = Date.new(2010,1,1), Date.new(2010,1,2)
         Person.validates_date :birth_date, :between => [on_or_after, on_or_before]
-        Person.validators.first.options[:on_or_after].should == on_or_after
-        Person.validators.first.options[:on_or_before].should == on_or_before
+        expect(Person.validators.first.options[:on_or_after]).to eq(on_or_after)
+        expect(Person.validators.first.options[:on_or_before]).to eq(on_or_before)
         invalid!(:birth_date, on_or_after - 1, "must be on or after 2010-01-01")
         invalid!(:birth_date, on_or_before + 1, "must be on or before 2010-01-02")
         valid!(:birth_date, on_or_after)
@@ -107,8 +107,8 @@ describe ValidatesTimeliness::Validator do
       it 'should be split option into :on_or_after and :on_or_before values' do
         on_or_after, on_or_before = Date.new(2010,1,1), Date.new(2010,1,2)
         Person.validates_date :birth_date, :between => on_or_after..on_or_before
-        Person.validators.first.options[:on_or_after].should == on_or_after
-        Person.validators.first.options[:on_or_before].should == on_or_before
+        expect(Person.validators.first.options[:on_or_after]).to eq(on_or_after)
+        expect(Person.validators.first.options[:on_or_before]).to eq(on_or_before)
         invalid!(:birth_date, on_or_after - 1, "must be on or after 2010-01-01")
         invalid!(:birth_date, on_or_before + 1, "must be on or before 2010-01-02")
         valid!(:birth_date, on_or_after)
@@ -120,8 +120,8 @@ describe ValidatesTimeliness::Validator do
       it 'should be split option into :on_or_after and :before values' do
         on_or_after, before = Date.new(2010,1,1), Date.new(2010,1,3)
         Person.validates_date :birth_date, :between => on_or_after...before
-        Person.validators.first.options[:on_or_after].should == on_or_after
-        Person.validators.first.options[:before].should == before
+        expect(Person.validators.first.options[:on_or_after]).to eq(on_or_after)
+        expect(Person.validators.first.options[:before]).to eq(before)
         invalid!(:birth_date, on_or_after - 1, "must be on or after 2010-01-01")
         invalid!(:birth_date, before, "must be before 2010-01-03")
         valid!(:birth_date, on_or_after)
@@ -159,13 +159,13 @@ describe ValidatesTimeliness::Validator do
     it "should be valid when value matches format" do
       person.birth_date = '11-12-1913'
       person.valid?
-      person.errors[:birth_date].should be_empty
+      expect(person.errors[:birth_date]).to be_empty
     end
 
     it "should not be valid when value does not match format" do
       person.birth_date = '1913-12-11'
       person.valid?
-      person.errors[:birth_date].should include('is not a valid date')
+      expect(person.errors[:birth_date]).to include('is not a valid date')
     end
   end
 
@@ -179,21 +179,21 @@ describe ValidatesTimeliness::Validator do
     it "should be added when ignore_restriction_errors is false" do
       with_config(:ignore_restriction_errors, false) do
         person.valid?
-        person.errors[:birth_date].first.should match("Error occurred validating birth_date")
+        expect(person.errors[:birth_date].first).to match("Error occurred validating birth_date")
       end
     end
 
     it "should not be added when ignore_restriction_errors is true" do
       with_config(:ignore_restriction_errors, true) do
         person.valid?
-        person.errors[:birth_date].should be_empty
+        expect(person.errors[:birth_date]).to be_empty
       end
     end
 
     it 'should exit on first error' do
       with_config(:ignore_restriction_errors, false) do
         person.valid?
-        person.errors[:birth_date].should have(1).items
+        expect(person.errors[:birth_date]).to have(1).items
       end
     end
   end
@@ -202,17 +202,17 @@ describe ValidatesTimeliness::Validator do
     describe "default" do
       it 'should format date error value as yyyy-mm-dd' do
         validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_date], :type => :date)
-        validator.format_error_value(Date.new(2010,1,1)).should == '2010-01-01'
+        expect(validator.format_error_value(Date.new(2010,1,1))).to eq('2010-01-01')
       end
 
       it 'should format time error value as hh:nn:ss' do
         validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_time], :type => :time)
-        validator.format_error_value(Time.mktime(2010,1,1,12,34,56)).should == '12:34:56'
+        expect(validator.format_error_value(Time.mktime(2010,1,1,12,34,56))).to eq('12:34:56')
       end
 
       it 'should format datetime error value as yyyy-mm-dd hh:nn:ss' do
         validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_datetime], :type => :datetime)
-        validator.format_error_value(Time.mktime(2010,1,1,12,34,56)).should == '2010-01-01 12:34:56'
+        expect(validator.format_error_value(Time.mktime(2010,1,1,12,34,56))).to eq('2010-01-01 12:34:56')
       end
     end
 
@@ -223,7 +223,7 @@ describe ValidatesTimeliness::Validator do
 
       it 'should use the default format for the type' do
         validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_date], :type => :date)
-        validator.format_error_value(Date.new(2010,1,1)).should == '2010-01-01'
+        expect(validator.format_error_value(Date.new(2010,1,1))).to eq('2010-01-01')
       end
 
       after :all do
