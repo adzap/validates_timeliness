@@ -1,6 +1,13 @@
 require 'rspec'
 require 'rspec/collection_matchers'
 
+# Coveralls
+require "coveralls"
+
+Coveralls.wear! do
+  add_filter 'spec'
+end
+
 require 'active_model'
 require 'active_model/validations'
 require 'active_record'

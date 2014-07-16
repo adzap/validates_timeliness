@@ -14,7 +14,12 @@ Gem::Specification.new do |s|
   s.require_paths    = ["lib"]
   s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock autotest/discover.rb Appraisals Travis.yml } - Dir['gemsfiles/*']
   s.test_files       = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc", "LICENSE"]
+  s.extra_rdoc_files = ["CHANGELOG.rdoc", "LICENSE"]
 
   s.add_runtime_dependency(%q<timeliness>, ["~> 0.3.7"])
+
+  s.add_development_dependency "coveralls"
+  s.add_development_dependency "rspec", "~> 3.0"
+  s.add_development_dependency "rspec-rails", "~> 3.0"
+  s.add_development_dependency "rspec-collection_matchers"
 end

@@ -3,9 +3,6 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'rails', '~> 3.2.6'
-gem 'rspec', '~> 3.0'
-gem 'rspec-rails', '~> 3.0'
-gem 'rspec-collection_matchers'
 gem 'timecop'
 gem 'ruby-debug', :platforms => [:ruby_18, :jruby]
 gem 'debugger', :platforms => [:ruby_19]
