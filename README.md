@@ -26,7 +26,7 @@ here: [http://github.com/adzap/validates_timeliness/tree/v2.3](http://github.com
 ## Installation
 
     # in Gemfile
-    gem 'jc-validates_timeliness', '~> 3.1'
+    gem 'jc-validates_timeliness', require: 'validates_timeliness'
 
     # Run bundler
     $ bundle install
