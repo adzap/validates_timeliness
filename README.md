@@ -5,11 +5,11 @@
 
 ## Description
 
-Complete validation of dates, times and datetimes for Rails 3.x and ActiveModel.
+Complete validation of dates, times and datetimes for Rails 3.x and
+ActiveModel.
 
-If you a looking for the old version for Rails 2.x go
-here: [http://github.com/adzap/validates_timeliness/tree/v2.3](http://github.com/adzap/validates_timeliness/tree/v2.3).
-
+This is a fork of the [original validates_timeliness gem][original] by
+[Adam Meehan][adzap].
 
 ## Features
 
@@ -26,7 +26,7 @@ here: [http://github.com/adzap/validates_timeliness/tree/v2.3](http://github.com
 ## Installation
 
     # in Gemfile
-    gem 'jc-validates_timeliness', require: 'validates_timeliness'
+    gem 'jc-validates_timeliness'
 
     # Run bundler
     $ bundle install
@@ -35,11 +35,11 @@ Then run
 
     $ rails generate validates_timeliness:install
 
-This creates configuration initializer and locale files. In the initializer, there are a number of config
-options to customize the plugin.
+This creates configuration initializer and locale files. In the initializer,
+there are a number of config options to customize the plugin.
 
-NOTE: You may wish to enable the plugin parser and the extensions to start. Please read those sections first.
-
+NOTE: You may wish to enable the plugin parser and the extensions to start.
+ Please read those sections first.
 
 ## Examples
 
@@ -60,7 +60,6 @@ NOTE: You may wish to enable the plugin parser and the extensions to start. Plea
                                     :on_or_after_message => 'must be after opening time',
                                     :before => :lunchtime,
                                     :before_message => 'must be before lunch time'
-
 
 ## Usage
 
@@ -84,8 +83,8 @@ The list of validation methods available are as follows:
     validates_datetime - validate value as a full date and time
     validates          - use the :timeliness key and set the type in the hash.
 
-The validation methods take the usual options plus some specific ones to restrict
-the valid range of dates or times allowed
+The validation methods take the usual options plus some specific ones to
+restrict the valid range of dates or times allowed
 
 Temporal options (or restrictions):
 
@@ -112,27 +111,30 @@ Special options:
 The temporal restrictions can take 4 different value types:
 
 * Date, Time, or DateTime object value
-* Proc or lambda object which may take an optional parameter, being the record object
+* Proc or lambda object which may take an optional parameter, being the record
+  object
 * A symbol matching a method name in the model
 * String value
 
-When an attribute value is compared to temporal restrictions, they are compared as
-the same type as the validation method type. So using validates_date means all
-values are compared as dates.
-
+When an attribute value is compared to temporal restrictions, they are
+compared as the same type as the validation method type. So using
+validates_date means all values are compared as dates.
 
 ## Configuration
 
 ### ORM/ODM Support
 
-The plugin adds date/time validation to ActiveModel for any ORM/ODM that supports the ActiveModel validations component.
-However, there is an issue with most ORM/ODMs which does not allow 100% date/time validation by default. Specifically, when you
-assign an invalid date/time value to an attribute, most ORM/ODMs will only store a nil value for the attribute. This causes an
-issue for date/time validation, since we need to know that a value was assigned but was invalid. To fix this, we need to cache
-the original invalid value to know that the attribute is not just nil.
+The plugin adds date/time validation to ActiveModel for any ORM/ODM that
+supports the ActiveModel validations component. However, there is an issue
+with most ORM/ODMs which does not allow 100% date/time validation by default.
+Specifically, when you assign an invalid date/time value to an attribute, most
+ORM/ODMs will only store a nil value for the attribute. This causes an issue
+for date/time validation, since we need to know that a value was assigned but
+was invalid. To fix this, we need to cache the original invalid value to know
+that the attribute is not just nil.
 
-Each ORM/ODM requires a specific shim to fix it. The plugin includes a shim for ActiveRecord and Mongoid. You can activate them
-like so
+Each ORM/ODM requires a specific shim to fix it. The plugin includes a shim
+for ActiveRecord and Mongoid. You can activate them like so
 
     ValidatesTimeliness.setup do |config|
 
@@ -245,7 +247,8 @@ reason you can do so as follows
     # in the setup block
     config.dummy_date_for_time_type = [2009, 1, 1]
 
-The value should be an array of 3 values being year, month and day in that order.
+The value should be an array of 3 values being year, month and day in that
+order.
 
 ### Temporal Restriction Errors
 
@@ -278,10 +281,11 @@ To activate it, uncomment this line in the initializer:
 
 ### Display Invalid Values in Select Helpers
 
-The plugin offers an extension for ActionView to allowing invalid date and time values to be
-redisplayed to the user as feedback, instead of a blank field which happens by default in
-Rails. Though the date helpers make this a pretty rare occurrence, given the select dropdowns
-for each date/time component, but it may be something of interest.
+The plugin offers an extension for ActionView to allowing invalid date and
+time values to be redisplayed to the user as feedback, instead of a blank
+field which happens by default in Rails. Though the date helpers make this a
+pretty rare occurrence, given the select dropdowns for each date/time
+component, but it may be something of interest.
 
 To activate it, uncomment this line in the initializer:
 
@@ -290,11 +294,8 @@ To activate it, uncomment this line in the initializer:
 
 ## Contributors
 
-This is a fork of the original validates_timeliness gem by
-[Adam Meehan][adzap].
-
 To see the generous people who have contributed code, take a look at the
-[contributors list](http://github.com/johncarney/validates_timeliness/contributors).
+[contributors list][contributors].
 
 ## Maintainers
 
@@ -309,3 +310,5 @@ Copyright (c) 2008 Adam Meehan, released under the MIT license
 [timeliness]:     http://github.com/adzap/timeliness
 [orm-support]:    http://github.com/adzap/validates_timeliness/wiki/ORM-Support
 [plugin-parser]:  http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser
+[original]:       http://github.com/adzap/validates_timeliness
+[contributors]:   http://github.com/johncarney/validates_timeliness/contributors
