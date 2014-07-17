@@ -1,7 +1,7 @@
 # ValidatesTimeliness
-[![Gem Version](https://badge.fury.io/rb/jc-validates_timeliness.svg)](http://badge.fury.io/rb/jc-validates_timeliness)
-[![Build status](https://travis-ci.org/johncarney/validates_timeliness.svg?branch=master)](https://travis-ci.org/johncarney/validates_timeliness)
-[![Coverage Status](https://coveralls.io/repos/johncarney/validates_timeliness/badge.png?branch=master)](https://coveralls.io/r/johncarney/validates_timeliness?branch=master)
+[![Gem Version][gem-badge]][gem]
+[![Build status][build-badge]][build]
+[![Coverage Status][coverage-badge]][coverage]
 
 ## Description
 
@@ -312,3 +312,9 @@ Copyright (c) 2008 Adam Meehan, released under the MIT license
 [plugin-parser]:  http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser
 [original]:       http://github.com/adzap/validates_timeliness
 [contributors]:   http://github.com/johncarney/validates_timeliness/contributors
+[gem-badge]:      https://badge.fury.io/rb/jc-validates_timeliness.svg
+[gem]:            http://badge.fury.io/rb/jc-validates_timeliness
+[build-badge]:    https://travis-ci.org/johncarney/validates_timeliness.svg?branch=master
+[build]:          https://travis-ci.org/johncarney/validates_timeliness
+[coverage-badge]: https://coveralls.io/repos/johncarney/validates_timeliness/badge.png?branch=master
+[coverage]:       https://coveralls.io/r/johncarney/validates_timeliness?branch=master
