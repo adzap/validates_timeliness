@@ -8,8 +8,8 @@
 Complete validation of dates, times and datetimes for Rails 3.x and
 ActiveModel.
 
-This is a fork of the [original validates_timeliness gem][original] by
-[Adam Meehan][adzap].
+This is a Rails 4-compatible fork of the
+[original validates_timeliness gem][original] by [Adam Meehan][adzap].
 
 ## Features
 
