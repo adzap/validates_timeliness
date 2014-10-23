@@ -3,3 +3,6 @@ pkg/
 .rvmrc
 Gemfile.lock
 gemfiles/*.lock
+.ruby-version
+.ruby-gemset
+coverage/

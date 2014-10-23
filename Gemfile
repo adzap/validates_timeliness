@@ -3,14 +3,12 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'rails', '~> 3.2.6'
-gem 'rspec', '~> 2.8'
-gem 'rspec-rails', '~> 2.8'
 gem 'timecop'
-gem 'rspec_tag_matchers'
 gem 'ruby-debug', :platforms => [:ruby_18, :jruby]
 gem 'debugger', :platforms => [:ruby_19]
 gem 'appraisal'
 gem 'sqlite3'
+gem 'nokogiri'
 
 group :mongoid do
   gem 'mongoid', '~> 2.3.0'

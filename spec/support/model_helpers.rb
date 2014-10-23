@@ -3,15 +3,15 @@ module ModelHelpers
   # Some test helpers from Rails source 
   def invalid!(attr_name, values, error = nil)
     with_each_person_value(attr_name, values) do |record, value|
-      record.should be_invalid
-      record.errors[attr_name].size.should >= 1
-      record.errors[attr_name].first.should == error if error
+      expect(record).to be_invalid
+      expect(record.errors[attr_name].size).to be >= 1
+      expect(record.errors[attr_name].first).to eq(error) if error
     end
   end
 
   def valid!(attr_name, values)
     with_each_person_value(attr_name, values) do |record, value|
-      record.should be_valid
+      expect(record).to be_valid
     end
   end
 

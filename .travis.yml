@@ -1,0 +1,18 @@
+language: ruby
+cache: bundler
+
+services: mongodb
+
+rvm:
+  - 1.9.3
+  - 2.0.0
+
+
+script: 'bundle exec rake'
+
+notifications:
+  email:
+    recipients:
+      - john+timeliness@carney.id.au
+    on_failure: change
+    on_success: never

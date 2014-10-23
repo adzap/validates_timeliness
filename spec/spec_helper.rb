@@ -1,17 +1,25 @@
 require 'rspec'
+require 'rspec/collection_matchers'
+
+# Coveralls
+require "coveralls"
+
+Coveralls.wear! do
+  add_filter 'spec'
+end
 
 require 'active_model'
 require 'active_model/validations'
 require 'active_record'
 require 'action_view'
 require 'timecop'
-require 'rspec_tag_matchers'
 
 require 'validates_timeliness'
 
 require 'support/test_model'
 require 'support/model_helpers'
 require 'support/config_helper'
+require 'support/tag_matcher'
 
 ValidatesTimeliness.setup do |c|
   c.extend_orms = [ :active_record ]
@@ -57,6 +65,8 @@ class PersonWithShim < Person
   include TestModelShim
 end
 
+I18n.enforce_available_locales = false
+
 ActiveRecord::Base.default_timezone = :utc
 ActiveRecord::Base.time_zone_aware_attributes = true
 ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})
@@ -85,9 +95,9 @@ end
 
 RSpec.configure do |c|
   c.mock_with :rspec
-  c.include(RspecTagMatchers)
   c.include(ModelHelpers)
   c.include(ConfigHelper)
+  c.include(TagMatcher)
   c.before do
     reset_validation_setup_for(Person)
     reset_validation_setup_for(PersonWithShim)
