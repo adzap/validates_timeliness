@@ -32,7 +32,7 @@ ValidatesTimeliness.setup do |config|
   # Remove one or more formats making them invalid. e.g. remove_formats(:date, 'dd/mm/yyy')
   # config.parser.remove_formats()
   #
-  # Change the amiguous year threshold when parsing a 2 digit year
+  # Change the ambiguous year threshold when parsing a 2 digit year
   # config.parser.ambiguous_year_threshold =  30
   #
   # Treat ambiguous dates, such as 01/02/1950, as a Non-US date.
