@@ -13,7 +13,7 @@ gem 'appraisal'
 gem 'sqlite3'
 
 group :mongoid do
-  gem 'mongoid', '~> 2.3.0'
+  gem 'mongoid', '>= 3.0'
   gem 'bson_ext'
   gem 'system_timer', :platforms => [:ruby_18]
 end

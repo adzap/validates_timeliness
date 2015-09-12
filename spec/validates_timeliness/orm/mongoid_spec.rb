@@ -7,13 +7,13 @@ require 'mongoid'
 require 'validates_timeliness/orm/mongoid'
 
 Mongoid.configure do |config|
-  name = "validates_timeliness_test"
-  host = "localhost"
-  config.master = Mongo::Connection.new.db(name)
-  config.persist_in_safe_mode = false
+  config.connect_to('validates_timeliness_test')
 end
 
 describe ValidatesTimeliness, 'Mongoid' do
+  after(:each) do
+    Mongoid.purge!
+  end
 
   class Article
     include Mongoid::Document
@@ -47,16 +47,6 @@ describe ValidatesTimeliness, 'Mongoid' do
       record.errors[:publish_date].should be_empty
     end
 
-    it "should validate a invalid value string" do
-      begin
-        record.publish_date = 'not a date' 
-      rescue
-      end
-
-      record.valid?
-      record.errors[:publish_date].should_not be_empty
-    end
-
     it "should validate a nil value" do
       record.publish_date = nil
 
@@ -67,6 +57,8 @@ describe ValidatesTimeliness, 'Mongoid' do
 
   it 'should determine type for attribute' do
     Article.timeliness_attribute_type(:publish_date).should == :date
+    Article.timeliness_attribute_type(:publish_time).should == :time
+    Article.timeliness_attribute_type(:publish_datetime).should == :datetime
   end
   
   context "attribute write method" do
@@ -157,7 +149,7 @@ describe ValidatesTimeliness, 'Mongoid' do
           record.publish_datetime.should be_kind_of(DateTime)
         end
 
-        pending 'should parse string as current timezone' do
+        it 'should parse string as current timezone' do
           record.publish_datetime = '2010-06-01 12:00'
 
           record.publish_datetime.utc_offset.should eq Time.zone.utc_offset
@@ -176,8 +168,50 @@ describe ValidatesTimeliness, 'Mongoid' do
   end
 
   context "before_type_cast method" do
-    it 'should not be defined if ORM does not support it' do
-      Article.new.should_not respond_to(:publish_datetime_before_type_cast)
+    let(:record){ Article.new }
+
+    it 'should be defined on class if ORM supports it' do
+      record.should respond_to(:publish_datetime_before_type_cast)
+    end
+
+    it 'should return original value' do
+      record.publish_datetime = date_string = '2010-01-01'
+
+      record.publish_datetime_before_type_cast.should eq date_string
+    end
+
+    it 'should return attribute if no attribute assignment has been made' do
+      time = Time.zone.local(2010,01,01)
+      Article.create(:publish_datetime => time)
+      record = Article.last
+      record.publish_datetime_before_type_cast.should eq time.to_datetime
+    end
+
+    context "with plugin parser" do
+      with_config(:use_plugin_parser, true)
+
+      it 'should return original value' do
+        record.publish_datetime = date_string = '2010-01-31'
+        record.publish_datetime_before_type_cast.should eq date_string
+      end
+    end
+  end
+
+  context "with aliased fields" do
+    class ArticleWithAliasedFields
+      include Mongoid::Document
+      field :pd, as: :publish_date, :type => Date
+      field :pt, as: :publish_time, :type => Time
+      field :pdt, as: :publish_datetime, :type => DateTime
+      validates_date :publish_date, :allow_nil => true
+      validates_time :publish_time, :allow_nil => true
+      validates_datetime :publish_datetime, :allow_nil => true
+    end
+
+    it 'should determine type for attribute' do
+      ArticleWithAliasedFields.timeliness_attribute_type(:publish_date).should == :date
+      ArticleWithAliasedFields.timeliness_attribute_type(:publish_time).should == :time
+      ArticleWithAliasedFields.timeliness_attribute_type(:publish_datetime).should == :datetime
     end
   end
 end
