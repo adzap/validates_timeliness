@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ValidatesTimeliness::Validator do
   before do
-    Timecop.freeze(Time.local_time(2010, 1, 1, 0, 0, 0))
+    Timecop.freeze(Time.local(2010, 1, 1, 0, 0, 0))
   end
 
   describe "Model.validates with :timeliness option" do
@@ -35,8 +35,8 @@ describe ValidatesTimeliness::Validator do
   it 'should not be valid attribute is type cast to nil but raw value is non-nil invalid value' do
     Person.validates_date :birth_date, :allow_nil => true
     record = Person.new
-    record.stub!(:birth_date).and_return(nil)
-    record.stub!(:_timeliness_raw_value_for).and_return("Not a date")
+    record.stub(:birth_date).and_return(nil)
+    record.stub(:_timeliness_raw_value_for).and_return("Not a date")
     record.should_not be_valid
     record.errors[:birth_date].first.should == 'is not a valid date'
   end

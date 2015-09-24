@@ -52,7 +52,7 @@ describe ValidatesTimeliness::Conversion do
 
     describe "for datetime type" do
       it "should return Date as Time value" do
-        type_cast_value(Date.new(2010, 1, 1), :datetime).should == Time.local_time(2010, 1, 1, 0, 0, 0)
+        type_cast_value(Date.new(2010, 1, 1), :datetime).should == Time.local(2010, 1, 1, 0, 0, 0)
       end
 
       it "should return same Time value" do
@@ -174,7 +174,7 @@ describe ValidatesTimeliness::Conversion do
     end
 
     it 'should return Time value for attribute method symbol which returns string time value' do
-      value = '2010-01-01 12:00:00'
+      value = '2010-01-01 12:00:00 UTC'
       person.birth_time = value
       evaluate_option_value(:birth_time, person).should == Time.utc(2010,1,1,12,0,0)
     end
@@ -194,7 +194,7 @@ describe ValidatesTimeliness::Conversion do
 
       it 'should not use shorthand if symbol if is record method' do
         time = 1.day.from_now
-        person.stub!(:now).and_return(time)
+        person.stub(:now).and_return(time)
         evaluate_option_value(:now, person).should == time
       end
     end
