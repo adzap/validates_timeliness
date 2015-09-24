@@ -23,7 +23,9 @@ module ValidatesTimeliness
 
         def define_attribute_methods
           super.tap do |attribute_methods_generated|
+            return false if @timeliness_methods_generated
             define_timeliness_methods true
+            @timeliness_methods_generated = true
           end
         end
 
