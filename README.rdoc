@@ -132,19 +132,17 @@ assign an invalid date/time value to an attribute, most ORM/ODMs will only store
 issue for date/time validation, since we need to know that a value was assigned but was invalid. To fix this, we need to cache
 the original invalid value to know that the attribute is not just nil.
 
-Each ORM/ODM requires a specific shim to fix it. The plugin includes a shim for ActiveRecord and Mongoid. You can activate them
-like so
+By default, shims will be applied automatically to ActiveRecord and Mongoid ORMs (if you are using them.) It is not required
+that you use a shim, but you will not catch errors when the attribute value is invalid and evaluated to nil.
+
+You can configure the ORM/ODM extension behavior in your initializer:
 
   ValidatesTimeliness.setup do |config|
-
-    # Extend ORM/ODMs for full support (:active_record, :mongoid).
-    config.extend_orms = [ :mongoid ]
-
+    # Extend ORM/ODMs for full support. Options are: :active_record, :mongoid
+    config.extend_orms = [ :active_record ]
   end
 
-By default the plugin extends ActiveRecord if loaded. If you wish to extend another ORM then look at the {wiki page}[http://github.com/adzap/validates_timeliness/wiki/ORM-Support] for more information.
-
-It is not required that you use a shim, but you will not catch errors when the attribute value is invalid and evaluated to nil.
+If you wish to extend another ORM then look at the {wiki page}[http://github.com/adzap/validates_timeliness/wiki/ORM-Support] for more information.
 
 
 === Error Messages
