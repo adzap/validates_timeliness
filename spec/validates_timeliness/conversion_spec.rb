@@ -69,7 +69,7 @@ describe ValidatesTimeliness::Conversion do
         value = Time.utc(2010, 1, 1, 12, 34, 56)
         result = type_cast_value(value, :datetime)
         result.should == Time.zone.local(2010, 1, 1, 23, 34, 56)
-        result.zone.should == 'EST'
+        result.zone.should == 'AEDT'
       end
 
       it 'should return nil for invalid value types' do
@@ -90,7 +90,7 @@ describe ValidatesTimeliness::Conversion do
         value = Time.utc(2010, 1, 1, 12, 34, 56, 10000)
         result = type_cast_value(value, :datetime)
         result.should == Time.zone.local(2010, 1, 1, 23, 34, 56)
-        result.zone.should == 'EST'
+        result.zone.should == 'AEDT'
       end
     end
   end

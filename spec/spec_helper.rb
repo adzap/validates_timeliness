@@ -24,6 +24,7 @@ Time.zone = 'Australia/Melbourne'
 
 LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/../lib/generators/validates_timeliness/templates/en.yml')
 I18n.load_path.unshift(LOCALE_PATH)
+I18n.config.enforce_available_locales = false
 
 # Extend TestModel as you would another ORM/ODM module
 module TestModelShim
