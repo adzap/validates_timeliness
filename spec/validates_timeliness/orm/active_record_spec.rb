@@ -237,6 +237,12 @@ describe ValidatesTimeliness, 'ActiveRecord' do
   end
 
   context "define_attribute_methods" do
+    it "defines the attribute methods once" do
+      expect(Employee).to receive(:define_timeliness_methods).and_call_original
+      Employee.new
+      Employee.new
+    end
+
     it "returns a falsy value if the attribute methods have already been generated" do
       Employee.define_attribute_methods.should be_false
     end
