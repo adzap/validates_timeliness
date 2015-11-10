@@ -8,9 +8,10 @@ gem 'rspec-rails', '~> 2.8'
 gem 'timecop'
 gem 'rspec_tag_matchers'
 gem 'ruby-debug', :platforms => [:ruby_18, :jruby]
-gem 'debugger', :platforms => [:ruby_19]
+gem 'byebug', :platforms => [:ruby_19, :ruby_20, :ruby_21, :ruby_22]
 gem 'appraisal'
 gem 'sqlite3'
+gem 'nokogiri', '1.6.6.2'
 
 group :mongoid do
   gem 'mongoid', '>= 3.0'
