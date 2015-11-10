@@ -5,7 +5,7 @@ module ValidatesTimeliness
   class Validator < ActiveModel::EachValidator
     include Conversion
 
-    attr_reader :type
+    attr_reader :type, :attributes
 
     RESTRICTIONS = {
       :is_at        => :==,
@@ -42,13 +42,14 @@ module ValidatesTimeliness
       end
 
       @restrictions_to_check = RESTRICTIONS.keys & options.keys
-      super
-    end
 
-    def setup(model)
+      super
+
+      model = options[:class]
+
       if model.respond_to?(:timeliness_validated_attributes)
         model.timeliness_validated_attributes ||= []
-        model.timeliness_validated_attributes |= @attributes
+        model.timeliness_validated_attributes |= attributes
       end
     end
 
