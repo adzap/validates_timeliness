@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ValidatesTimeliness::Validator do
   before do
-    Timecop.freeze(Time.local_time(2010, 1, 1, 0, 0, 0))
+    Timecop.freeze(Time.local(2010, 1, 1, 0, 0, 0))
   end
 
   describe "Model.validates with :timeliness option" do

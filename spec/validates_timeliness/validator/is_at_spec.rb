@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ValidatesTimeliness::Validator, ":is_at option" do
   before do
-    Timecop.freeze(Time.local_time(2010, 1, 1, 0, 0, 0))
+    Timecop.freeze(Time.local(2010, 1, 1, 0, 0, 0))
   end
 
   describe "for date type" do
@@ -29,15 +29,15 @@ describe ValidatesTimeliness::Validator, ":is_at option" do
     end
 
     it "should not be valid for time before restriction" do
-      invalid!(:birth_time, Time.local_time(2000, 1, 1, 11, 59, 59), 'must be at 12:00:00')
+      invalid!(:birth_time, Time.local(2000, 1, 1, 11, 59, 59), 'must be at 12:00:00')
     end
 
     it "should not be valid for time after restriction" do
-      invalid!(:birth_time, Time.local_time(2000, 1, 1, 12, 00, 01), 'must be at 12:00:00')
+      invalid!(:birth_time, Time.local(2000, 1, 1, 12, 00, 01), 'must be at 12:00:00')
     end
 
     it "should be valid for same time as restriction" do
-      valid!(:birth_time, Time.local_time(2000, 1, 1, 12, 0, 0))
+      valid!(:birth_time, Time.local(2000, 1, 1, 12, 0, 0))
     end
   end
 
