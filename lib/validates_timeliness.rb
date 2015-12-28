@@ -28,7 +28,7 @@ module ValidatesTimeliness
     attr_accessor :extend_orms, :ignore_restriction_errors, :restriction_shorthand_symbols, :use_plugin_parser
   end
 
-  # Extend ORM/ODMs for full support (:active_record, :mongoid).
+  # Extend ORM/ODMs for full support (:active_record).
   self.extend_orms = []
 
   # Ignore errors when restriction options are evaluated
