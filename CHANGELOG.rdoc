@@ -1,3 +1,8 @@
+= 3.0.15 [2015-12-29]
+* Fixes mongoid 3 support and removes mongoid 2 support(johnnyshields)
+* Some documentation/comments tidying
+* Some general tidying up
+
 = 3.0.14 [2012-08-23]
 * Fix for using validates :timeliness => {} form to correctly add attributes to timeliness validated attributes.
 
