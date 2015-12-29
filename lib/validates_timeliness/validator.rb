@@ -45,12 +45,19 @@ module ValidatesTimeliness
 
       super
 
-      model = options[:class]
+      setup_timeliness_validated_attributes(options[:class]) if options[:class]
+    end
 
+    def setup_timeliness_validated_attributes(model)
       if model.respond_to?(:timeliness_validated_attributes)
         model.timeliness_validated_attributes ||= []
         model.timeliness_validated_attributes |= attributes
       end
+    end
+
+    # Rails 4.0 compatibility for old #setup method with class as arg
+    if ActiveModel.version <= Gem::Version.new('4.1')
+      alias_method(:setup, :setup_timeliness_validated_attributes) 
     end
 
     def validate_each(record, attr_name, value)
@@ -94,8 +101,8 @@ module ValidatesTimeliness
     end
 
     def attribute_raw_value(record, attr_name)
-      record.respond_to?(:_timeliness_raw_value_for) &&
-        record._timeliness_raw_value_for(attr_name.to_s)
+      record.respond_to?(:read_timeliness_attribute_before_type_cast) &&
+        record.read_timeliness_attribute_before_type_cast(attr_name.to_s)
     end
 
     def timezone_aware?(record, attr_name)
