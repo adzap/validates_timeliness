@@ -1,0 +1,21 @@
+language: ruby
+cache: bundler
+
+gemfile:
+  - gemfiles/rails_4.0.gemfile
+  - gemfiles/rails_4.1.gemfile
+  - gemfiles/rails_4.2.gemfile
+
+rbenv:
+  - 2.0.0
+  - 2.2.0
+  - 2.3.0
+
+script: 'bundle exec rspec'
+
+notifications:
+  email:
+    recipients:
+      - adam.meehan@gmail.com
+    on_failure: change
+    on_success: never
