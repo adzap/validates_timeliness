@@ -1,7 +1,6 @@
 module ValidatesTimeliness
   module Extensions
-    autoload :DateTimeSelect,        'validates_timeliness/extensions/date_time_select'
-    autoload :MultiparameterHandler, 'validates_timeliness/extensions/multiparameter_handler'
+    autoload :DateTimeSelect, 'validates_timeliness/extensions/date_time_select'
   end
 
   def self.enable_date_time_select_extension!
@@ -9,6 +8,6 @@ module ValidatesTimeliness
   end
 
   def self.enable_multiparameter_extension!
-    ::ActiveRecord::Base.send(:include, ValidatesTimeliness::Extensions::MultiparameterHandler)
+    require 'validates_timeliness/extensions/multiparameter_handler'
   end
 end

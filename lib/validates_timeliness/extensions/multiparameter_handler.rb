@@ -1,80 +1,74 @@
-module ValidatesTimeliness
-  module Extensions
-    module MultiparameterHandler
-      extend ActiveSupport::Concern
+ActiveRecord::AttributeAssignment::MultiparameterAttribute.class_eval do
+  private
 
-      # Stricter handling of date and time values from multiparameter 
-      # assignment from the date/time select view helpers
-
-      included do
-        alias_method_chain :instantiate_time_object, :timeliness
-        alias_method :execute_callstack_for_multiparameter_attributes, :execute_callstack_for_multiparameter_attributes_with_timeliness
-        alias_method :read_value_from_parameter, :read_value_from_parameter_with_timeliness
-      end
-
-      private
-
-      def invalid_multiparameter_date_or_time_as_string(values)
-        value =  [values[0], *values[1..2].map {|s| s.to_s.rjust(2,"0")} ].join("-")
-        value += ' ' + values[3..5].map {|s| s.to_s.rjust(2, "0") }.join(":") unless values[3..5].empty?
-        value
-      end
-
-      def instantiate_time_object_with_timeliness(name, values)
-        validate_multiparameter_date_values(values) {
-          instantiate_time_object_without_timeliness(name, values)
-        }
-      end
-
-      def instantiate_date_object(name, values)
-        validate_multiparameter_date_values(values) {
-          Date.new(*values)
-        }
-      end
-
-      # Yield if date values are valid
-      def validate_multiparameter_date_values(values)
-        if values[0..2].all?{ |v| v.present? } && Date.valid_civil?(*values[0..2])
-          yield
-        else
-          invalid_multiparameter_date_or_time_as_string(values)
-        end
-      end
-
-      def read_value_from_parameter_with_timeliness(name, values_from_param)
-        klass = (self.class.reflect_on_aggregation(name.to_sym) || column_for_attribute(name)).klass
-        values = values_from_param.is_a?(Hash) ? values_from_param.to_a.sort_by(&:first).map(&:last) : values_from_param
-
-        if values.empty? || values.all?{ |v| v.nil? }
-          nil
-        elsif klass == Time
-          instantiate_time_object(name, values)
-        elsif klass == Date
-          instantiate_date_object(name, values)
-        else
-          if respond_to?(:read_other_parameter_value)
-            read_date_parameter_value(name, values_from_param)
-          else
-            klass.new(*values)
-          end
-        end
-      end
-
-      def execute_callstack_for_multiparameter_attributes_with_timeliness(callstack)
-        errors = []
-        callstack.each do |name, values_with_empty_parameters|
-          begin
-            send(name + "=", read_value_from_parameter(name, values_with_empty_parameters))
-          rescue => ex
-            values = values_with_empty_parameters.is_a?(Hash) ? values_with_empty_parameters.values : values_with_empty_parameters 
-            errors << ActiveRecord::AttributeAssignmentError.new("error on assignment #{values.inspect} to #{name}", ex, name)
-          end
-        end
-        unless errors.empty?
-          raise ActiveRecord::MultiparameterAssignmentErrors.new(errors), "#{errors.size} error(s) on assignment of multiparameter attributes"
-        end
-      end
-
+  # Yield if date values are valid
+  def validate_multiparameter_date_values(set_values)
+    if set_values[0..2].all?{ |v| v.present? } && Date.valid_civil?(*set_values[0..2])
+      yield
+    else
+      invalid_multiparameter_date_or_time_as_string(set_values)
     end
   end
+
+  def invalid_multiparameter_date_or_time_as_string(values)
+    value =  [values[0], *values[1..2].map {|s| s.to_s.rjust(2,"0")} ].join("-")
+    value += ' ' + values[3..5].map {|s| s.to_s.rjust(2, "0") }.join(":") unless values[3..5].empty?
+    value
+  end
+
+  def instantiate_time_object(set_values)
+    raise if set_values.any?(&:nil?)
+
+    validate_multiparameter_date_values(set_values) {
+      set_values = set_values.map {|v| v.is_a?(String) ? v.strip : v }
+
+      if object.class.send(:create_time_zone_conversion_attribute?, name, cast_type_or_column)
+        Time.zone.local(*set_values)
+      else
+        Time.send(object.class.default_timezone, *set_values)
+      end
+    }
+  rescue
+    invalid_multiparameter_date_or_time_as_string(set_values)
+  end
+
+  def read_time
+    # If column is a :time (and not :date or :timestamp) there is no need to validate if
+    # there are year/month/day fields
+    if cast_type_or_column.type == :time
+      # if the column is a time set the values to their defaults as January 1, 1970, but only if they're nil
+      { 1 => 1970, 2 => 1, 3 => 1 }.each do |key,value|
+        values[key] ||= value
+      end
+    end
+
+    max_position = extract_max_param(6)
+    set_values   = values.values_at(*(1..max_position))
+
+    instantiate_time_object(set_values)
+  end
+
+  def read_date
+    set_values = values.values_at(1,2,3).map {|v| v.is_a?(String) ? v.strip : v }
+    
+    if set_values.any? { |v| v.is_a?(String) }
+      Timeliness.parse(set_values.join('-'), :date).try(:to_date) or raise TypeError
+    else
+      Date.new(*set_values)
+    end
+  rescue TypeError, ArgumentError, NoMethodError => ex # if Date.new raises an exception on an invalid date
+    # Date.new with nil values throws NoMethodError
+    raise ex if ex.is_a?(NoMethodError) && ex.message !~ /undefined method `div' for/
+    invalid_multiparameter_date_or_time_as_string(set_values)
+  end
+
+  # Cast type is v4.2 and column before
+  def cast_type_or_column
+    @cast_type || @column
+  end
+
+  def timezone_conversion_attribute?
+    object.class.send(:create_time_zone_conversion_attribute?, name, column)
+  end
+
 end
