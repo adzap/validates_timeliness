@@ -11,7 +11,7 @@ rbenv:
   - 2.2.0
   - 2.3.0
 
-script: 'bundle exec rspec'
+script: 'bundle exec rake'
 
 notifications:
   email:
