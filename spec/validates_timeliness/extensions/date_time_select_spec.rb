@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ValidatesTimeliness::Extensions::DateTimeSelect do
+describe 'ValidatesTimeliness::Extensions::DateTimeSelect' do
   include ActionView::Helpers::DateHelper
   attr_reader :person, :params
 
@@ -150,14 +150,15 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
   def should_have_datetime_selected(field, datetime_hash)
     datetime_hash.each do |key, value|
       index = {:year => 1, :month => 2, :day => 3, :hour => 4, :min => 5, :sec => 6}[key]
-      @output.should have_tag("select[id=person_#{field}_#{index}i] option[selected=selected]", value.to_s)
+      expect(@output).to have_tag("select[id=person_#{field}_#{index}i] option[selected=selected]", value.to_s)
     end
   end
 
   def should_not_have_datetime_selected(field, *attributes)
     attributes.each do |attribute|
       index = {:year => 1, :month => 2, :day => 3, :hour => 4, :min => 5, :sec => 6}[attribute]
-      @output.should_not have_tag("select[id=person_#{attribute}_#{index}i] option[selected=selected]")
+      expect(@output).not_to have_tag("select[id=person_#{attribute}_#{index}i] option[selected=selected]")
     end
   end
+  
 end

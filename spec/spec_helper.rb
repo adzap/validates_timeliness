@@ -5,13 +5,13 @@ require 'active_model/validations'
 require 'active_record'
 require 'action_view'
 require 'timecop'
-require 'rspec_tag_matchers'
 
 require 'validates_timeliness'
 
 require 'support/test_model'
 require 'support/model_helpers'
 require 'support/config_helper'
+require 'support/tag_matcher'
 
 ValidatesTimeliness.setup do |c|
   c.extend_orms = [ :active_record ]
@@ -86,7 +86,7 @@ end
 
 RSpec.configure do |c|
   c.mock_with :rspec
-  c.include(RspecTagMatchers)
+  c.include(TagMatcher)
   c.include(ModelHelpers)
   c.include(ConfigHelper)
   c.before do

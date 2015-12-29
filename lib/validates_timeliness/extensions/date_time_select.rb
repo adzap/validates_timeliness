@@ -9,7 +9,6 @@ module ValidatesTimeliness
       # It's a minor usability improvement which is rarely an issue for the user.
 
       included do
-        alias_method_chain :datetime_selector, :timeliness
         alias_method_chain :value, :timeliness
       end
 
@@ -33,15 +32,8 @@ module ValidatesTimeliness
         end
       end
 
-      def datetime_selector_with_timeliness(*args)
-        @timeliness_date_or_time_tag = true
-        datetime_selector_without_timeliness(*args)
-      end
-
       def value_with_timeliness(object)
-        unless @timeliness_date_or_time_tag && @template_object.params[@object_name]
-          return value_without_timeliness(object)
-        end
+        return value_without_timeliness(object) unless @template_object.params[@object_name]
 
         @template_object.params[@object_name]
 
@@ -56,6 +48,7 @@ module ValidatesTimeliness
 
         TimelinessDateTime.new(*values)
       end
+
     end
   end
 end

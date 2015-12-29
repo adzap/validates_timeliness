@@ -4,7 +4,7 @@ module ValidatesTimeliness
   end
 
   def self.enable_date_time_select_extension!
-    ::ActionView::Helpers::InstanceTag.send(:include, ValidatesTimeliness::Extensions::DateTimeSelect)
+    ::ActionView::Helpers::Tags::DateSelect.send(:include, ValidatesTimeliness::Extensions::DateTimeSelect)
   end
 
   def self.enable_multiparameter_extension!
