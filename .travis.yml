@@ -7,7 +7,6 @@ gemfile:
   - gemfiles/rails_4_2.gemfile
 
 rvm:
-  - "2.0.0"
   - "2.2.0"
   - "2.3.0"
 
