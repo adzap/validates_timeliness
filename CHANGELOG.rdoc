@@ -1,3 +1,15 @@
+= 4.0.0 [2015-12-29]
+* Extracted mongoid support into https://github.com/adzap/validates_timeliness-mongoid which is broken (not supported anymore).
+* Fixed Rails 4.0, 4.1 and 4.2 compatability issues
+* Upgrade specs to RSpec 3
+* Added travis config
+* Huge thanks to @johncarney for keeping it alive with his fork (https://github.com/johncarney/validates_timeliness)
+
+= 3.0.15 [2015-12-29]
+* Fixes mongoid 3 support and removes mongoid 2 support(johnnyshields)
+* Some documentation/comments tidying
+* Some general tidying up
+
 = 3.0.14 [2012-08-23]
 * Fix for using validates :timeliness => {} form to correctly add attributes to timeliness validated attributes.
 
