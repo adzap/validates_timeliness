@@ -14,30 +14,74 @@ module ValidatesTimeliness
           timeliness_column_for_attribute(attr_name).type
         end
 
-        def timeliness_column_for_attribute(attr_name)
-          columns_hash.fetch(attr_name.to_s) do |attr_name|
-            validation_type = _validators[attr_name.to_sym].find {|v| v.kind == :timeliness }.type
-            ::ActiveRecord::ConnectionAdapters::Column.new(attr_name, nil, validation_type.to_s)
+        if ActiveModel.version >= Gem::Version.new('4.2')
+          def timeliness_column_for_attribute(attr_name)
+            columns_hash.fetch(attr_name.to_s) do |attr_name|
+              validation_type = _validators[attr_name.to_sym].find {|v| v.kind == :timeliness }.type.to_s
+              ::ActiveRecord::ConnectionAdapters::Column.new(attr_name, nil, lookup_cast_type(validation_type), validation_type)
+            end
+          end
+          
+          def lookup_cast_type(sql_type)
+            case sql_type
+            when 'datetime' then ::ActiveRecord::Type::DateTime.new 
+            when 'date' then ::ActiveRecord::Type::Date.new 
+            when 'time' then ::ActiveRecord::Type::Time.new 
+            end
+          end
+        else
+          def timeliness_column_for_attribute(attr_name)
+            columns_hash.fetch(attr_name.to_s) do |attr_name|
+              validation_type = _validators[attr_name.to_sym].find {|v| v.kind == :timeliness }.type.to_s
+              ::ActiveRecord::ConnectionAdapters::Column.new(attr_name, nil, validation_type)
+            end
           end
         end
 
         def define_attribute_methods
-          super.tap do |attribute_methods_generated|
-            return false if @timeliness_methods_generated
-            define_timeliness_methods true
-            @timeliness_methods_generated = true
-          end
+          super.tap { 
+            generated_timeliness_methods.synchronize do
+              return if @timeliness_methods_generated
+              define_timeliness_methods true
+              @timeliness_methods_generated = true
+            end
+          }
         end
 
-        protected
-
-        def timeliness_type_cast_code(attr_name, var_name)
-          type = timeliness_attribute_type(attr_name)
-
-          method_body = super
-          method_body << "\n#{var_name} = #{var_name}.to_date if #{var_name}" if type == :date
-          method_body
+        def undefine_attribute_methods
+          super.tap { 
+            generated_timeliness_methods.synchronize do
+              return unless @timeliness_methods_generated
+              undefine_timeliness_attribute_methods 
+              @timeliness_methods_generated = true
+            end
+          }
         end
+        # Override to overwrite methods in ActiveRecord attribute method module because in AR 4+
+        # there is curious code which calls the method directly from the generated methods module
+        # via bind inside method_missing. This means our method in the formerly custom timeliness
+        # methods module was never reached.
+        def generated_timeliness_methods
+          generated_attribute_methods
+        end
+      end
+
+      def write_timeliness_attribute(attr_name, value)
+        @timeliness_cache ||= {}
+        @timeliness_cache[attr_name] = value
+
+        if ValidatesTimeliness.use_plugin_parser
+          type = self.class.timeliness_attribute_type(attr_name)
+          timezone = :current if self.class.timeliness_attribute_timezone_aware?(attr_name)
+          value = Timeliness::Parser.parse(value, type, :zone => timezone)
+          value = value.to_date if value && type == :date
+        end
+
+        write_attribute(attr_name, value)
+      end
+      
+      def read_timeliness_attribute_before_type_cast(attr_name)
+        @timeliness_cache && @timeliness_cache[attr_name] || read_attribute_before_type_cast(attr_name)
       end
 
       def reload(*args)
