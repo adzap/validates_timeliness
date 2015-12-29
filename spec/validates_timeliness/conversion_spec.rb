@@ -176,7 +176,7 @@ describe ValidatesTimeliness::Conversion do
     it 'should return Time value for attribute method symbol which returns string time value' do
       value = '2010-01-01 12:00:00'
       person.birth_time = value
-      expect(evaluate_option_value(:birth_time, person)).to eq(Time.zone.local(2010,1,1,12,0,0))
+      expect(evaluate_option_value(:birth_time, person)).to eq(Time.local(2010,1,1,12,0,0))
     end
 
     context "restriction shorthand" do
