@@ -1,6 +1,6 @@
 ValidatesTimeliness.setup do |config|
-  # Extend ORM/ODMs for full support (:active_record).
-  # config.extend_orms = [ :active_record ]
+  # Extend ORM/ODMs for full support (:active_record included).
+  config.extend_orms = [ :active_record ]
   #
   # Default timezone
   # config.default_timezone = :utc
