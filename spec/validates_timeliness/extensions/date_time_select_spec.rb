@@ -111,7 +111,7 @@ describe ValidatesTimeliness::Extensions::DateTimeSelect do
       @output = date_select(:person, :birth_date, :include_blank => true, :discard_day => true)
       should_have_datetime_selected(:birth_date, :year => 2009, :month => 'February')
       should_not_have_datetime_selected(:birth_time, :day)
-      @output.should have_tag("input[id=person_birth_date_3i][type=hidden][value='1']")
+      expect(@output).to have_tag("input[id=person_birth_date_3i][type=hidden][value='1']")
     end
   end
 
