@@ -3,8 +3,8 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'rails', '~> 4.0.13'
-gem 'rspec', '~> 3.0.0'
-gem 'rspec-rails', '~> 3.0.0'
+gem 'rspec', '~> 3.4.0'
+gem 'rspec-rails', '~> 3.4.0'
 gem 'timecop'
 gem 'byebug'
 gem 'appraisal'
