@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ValidatesTimeliness::AttributeMethods do
+RSpec.describe ValidatesTimeliness::AttributeMethods do
   it 'should define read_timeliness_attribute_before_type_cast instance method' do
     expect(PersonWithShim.new).to respond_to(:read_timeliness_attribute_before_type_cast)
   end

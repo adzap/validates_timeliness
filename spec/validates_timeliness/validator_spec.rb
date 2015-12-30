@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ValidatesTimeliness::Validator do
+RSpec.describe ValidatesTimeliness::Validator do
   before do
     Timecop.freeze(Time.local(2010, 1, 1, 0, 0, 0))
   end

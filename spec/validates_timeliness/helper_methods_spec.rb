@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ValidatesTimeliness, 'HelperMethods' do
+RSpec.describe ValidatesTimeliness, 'HelperMethods' do
   let(:record) { Person.new }
   
   it 'should define class validation methods' do

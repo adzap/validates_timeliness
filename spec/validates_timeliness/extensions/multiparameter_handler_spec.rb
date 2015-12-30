@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe 'ValidatesTimeliness::Extensions::MultiparameterHandler' do
+RSpec.describe 'ValidatesTimeliness::Extensions::MultiparameterHandler' do
 
   context "time column" do
     it 'should assign a string value for invalid date portion' do

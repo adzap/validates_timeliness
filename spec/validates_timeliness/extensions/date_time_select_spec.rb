@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe 'ValidatesTimeliness::Extensions::DateTimeSelect' do
+RSpec.describe 'ValidatesTimeliness::Extensions::DateTimeSelect' do
   include ActionView::Helpers::DateHelper
   attr_reader :person, :params
 

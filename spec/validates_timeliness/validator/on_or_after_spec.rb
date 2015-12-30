@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ValidatesTimeliness::Validator, ":on_or_after option" do
+RSpec.describe ValidatesTimeliness::Validator, ":on_or_after option" do
   describe "for date type" do
     before do
       Person.validates_date :birth_date, :on_or_after => Date.new(2010, 1, 1)

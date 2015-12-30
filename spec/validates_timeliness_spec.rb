@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ValidatesTimeliness do
+RSpec.describe ValidatesTimeliness do
 
   it 'should alias use_euro_formats to remove_us_formats on Timeliness gem' do
     expect(Timeliness).to respond_to(:remove_us_formats) 

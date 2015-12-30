@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ValidatesTimeliness::Conversion do
+RSpec.describe ValidatesTimeliness::Conversion do
   include ValidatesTimeliness::Conversion
 
   let(:options) { Hash.new }

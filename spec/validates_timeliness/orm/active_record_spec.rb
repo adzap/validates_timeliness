@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ValidatesTimeliness, 'ActiveRecord' do
+RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
 
   context "validation methods" do
     let(:record) { Employee.new }
