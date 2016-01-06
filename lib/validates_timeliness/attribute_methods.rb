@@ -74,8 +74,10 @@ module ValidatesTimeliness
       @timeliness_cache[attr_name] = value
 
       if ValidatesTimeliness.use_plugin_parser
+        type = self.class.timeliness_attribute_type(attr_name)
         timezone = :current if self.class.timeliness_attribute_timezone_aware?(attr_name)
-        value = Timeliness::Parser.parse(value, self.class.timeliness_attribute_type(attr_name), :zone => timezone)
+        value = Timeliness::Parser.parse(value, type, :zone => timezone)
+        value = value.to_date if value && type == :date
       end
 
       @attributes[attr_name] = value
