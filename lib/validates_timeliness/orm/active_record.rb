@@ -16,24 +16,24 @@ module ValidatesTimeliness
 
         if ActiveModel.version >= Gem::Version.new('4.2')
           def timeliness_column_for_attribute(attr_name)
-            columns_hash.fetch(attr_name.to_s) do |attr_name|
-              validation_type = _validators[attr_name.to_sym].find {|v| v.kind == :timeliness }.type.to_s
-              ::ActiveRecord::ConnectionAdapters::Column.new(attr_name, nil, lookup_cast_type(validation_type), validation_type)
+            columns_hash.fetch(attr_name.to_s) do |key|
+              validation_type = _validators[key.to_sym].find {|v| v.kind == :timeliness }.type.to_s
+              ::ActiveRecord::ConnectionAdapters::Column.new(key, nil, lookup_cast_type(validation_type), validation_type)
             end
           end
           
           def lookup_cast_type(sql_type)
             case sql_type
-            when 'datetime' then ::ActiveRecord::Type::DateTime.new 
-            when 'date' then ::ActiveRecord::Type::Date.new 
-            when 'time' then ::ActiveRecord::Type::Time.new 
+            when 'datetime' then ::ActiveRecord::Type::DateTime.new
+            when 'date' then ::ActiveRecord::Type::Date.new
+            when 'time' then ::ActiveRecord::Type::Time.new
             end
           end
         else
           def timeliness_column_for_attribute(attr_name)
-            columns_hash.fetch(attr_name.to_s) do |attr_name|
-              validation_type = _validators[attr_name.to_sym].find {|v| v.kind == :timeliness }.type.to_s
-              ::ActiveRecord::ConnectionAdapters::Column.new(attr_name, nil, validation_type)
+            columns_hash.fetch(attr_name.to_s) do |key|
+              validation_type = _validators[key.to_sym].find {|v| v.kind == :timeliness }.type.to_s
+              ::ActiveRecord::ConnectionAdapters::Column.new(key, nil, validation_type)
             end
           end
         end
