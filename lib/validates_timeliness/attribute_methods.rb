@@ -33,15 +33,9 @@ module ValidatesTimeliness
         }.tap { |mod| include mod }
       end
 
-      def undefine_attribute_methods
-        super.tap { undefine_timeliness_attribute_methods }
-      end
-
       def undefine_timeliness_attribute_methods
-        generated_timeliness_methods.synchronize do
-          generated_timeliness_methods.module_eval do
-            instance_methods.each { |m| undef_method(m) } 
-          end
+        generated_timeliness_methods.module_eval do
+          instance_methods.each { |m| undef_method(m) } 
         end
       end
 

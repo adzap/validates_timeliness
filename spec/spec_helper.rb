@@ -7,6 +7,7 @@ require 'action_view'
 require 'timecop'
 
 require 'validates_timeliness'
+require 'validates_timeliness/orm/active_model'
 
 require 'support/test_model'
 require 'support/model_helpers'
@@ -30,14 +31,9 @@ I18n.available_locales = ['en', 'es']
 module TestModelShim
   extend ActiveSupport::Concern
   include ValidatesTimeliness::AttributeMethods
+  include ValidatesTimeliness::ORM::ActiveModel
 
   module ClassMethods
-    # Hook method for attribute method generation
-    def define_attribute_methods(attr_names)
-      super
-      define_timeliness_methods
-    end
-
     # Hook into native time zone handling check, if any
     def timeliness_attribute_timezone_aware?(attr_name)
       false

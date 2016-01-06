@@ -14,7 +14,7 @@ module ValidatesTimeliness
           timeliness_column_for_attribute(attr_name).type
         end
 
-        if ActiveModel.version >= Gem::Version.new('4.2')
+        if ::ActiveModel.version >= Gem::Version.new('4.2')
           def timeliness_column_for_attribute(attr_name)
             columns_hash.fetch(attr_name.to_s) do |key|
               validation_type = _validators[key.to_sym].find {|v| v.kind == :timeliness }.type.to_s
