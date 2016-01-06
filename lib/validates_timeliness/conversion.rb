@@ -12,6 +12,8 @@ module ValidatesTimeliness
         value.to_date
       when :datetime
         value.is_a?(Time) ? value : value.to_time
+      else
+        value
       end
       if options[:ignore_usec] && value.is_a?(Time)
         Timeliness::Parser.make_time(Array(value).reverse[4..9], (:current if @timezone_aware))
