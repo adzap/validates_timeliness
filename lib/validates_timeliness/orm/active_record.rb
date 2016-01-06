@@ -53,7 +53,7 @@ module ValidatesTimeliness
             generated_timeliness_methods.synchronize do
               return unless @timeliness_methods_generated
               undefine_timeliness_attribute_methods 
-              @timeliness_methods_generated = true
+              @timeliness_methods_generated = false
             end
           }
         end
