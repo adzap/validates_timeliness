@@ -241,8 +241,14 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
   end
 
   context "undefine_attribute_methods" do
-    it "returns a falsy value if the attribute methods have already been generated" do
-      expect { Employee.undefine_attribute_methods }.to_not raise_error
+    it "returns remove attribute methods that have already been generated" do
+      Employee.define_attribute_methods
+
+      expect(Employee.instance_methods).to include(:birth_datetime)
+
+      Employee.undefine_attribute_methods
+
+      expect(Employee.instance_methods).to_not include(:birth_datetime)
     end
   end
 end
