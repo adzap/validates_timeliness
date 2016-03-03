@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.date     :birth_date
     t.time     :birth_time
     t.datetime :birth_datetime
+    t.date     :some_other_date
   end
 end
 

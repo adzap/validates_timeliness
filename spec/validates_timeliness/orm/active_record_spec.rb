@@ -37,24 +37,21 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
     end
 
     context 'with hash syntax' do
-      let(:klass) do
-        Class.new(ActiveRecord::Base) do
-          self.table_name = 'employees'
-          validates_date :birth_date, { allow_nil: true, allow_blank: true }
-        end
+      class Employee < ActiveRecord::Base
+        validates_date :some_other_date, { allow_nil: true, allow_blank: true }
       end
 
+      let(:record) { Employee.new }
+
       it 'allows nil' do
-        record = klass.new
-        record[:birth_date] = nil
+        record[:some_other_date] = nil
         expect(record.valid?).to eq(true)
         expect(record.errors.empty?).to eq(true)
       end
 
       it 'allows blank' do
-        record = klass.new
         ['', {}, []].each do |blank_val|
-          record[:birth_date] = blank_val
+          record[:some_other_date] = blank_val
           expect(record.valid?).to eq(true)
           expect(record.errors.empty?).to eq(true)
         end
