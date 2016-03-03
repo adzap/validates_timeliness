@@ -35,6 +35,31 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
       record.valid?
       expect(record.errors[:birth_date]).to be_empty
     end
+
+    context 'with hash syntax' do
+      let(:klass) do
+        Class.new(ActiveRecord::Base) do
+          self.table_name = 'employees'
+          validates_date :birth_date, { allow_nil: true, allow_blank: true }
+        end
+      end
+
+      it 'allows nil' do
+        record = klass.new
+        record[:birth_date] = nil
+        expect(record.valid?).to eq(true)
+        expect(record.errors.empty?).to eq(true)
+      end
+
+      it 'allows blank' do
+        record = klass.new
+        ['', {}, []].each do |blank_val|
+          record[:birth_date] = blank_val
+          expect(record.valid?).to eq(true)
+          expect(record.errors.empty?).to eq(true)
+        end
+      end
+    end
   end
 
   it 'should determine type for attribute' do
