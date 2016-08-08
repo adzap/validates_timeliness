@@ -8,7 +8,11 @@ ValidatesTimeliness.setup do |config|
   # Set the dummy date part for a time type values.
   # config.dummy_date_for_time_type = [ 2000, 1, 1 ]
   #
-  # Ignore errors when restriction options are evaluated
+  # When an exception is raised inside a validation proc, the least surprise
+  # is to raise an exception, but we have other options below.
+  config.reraise_validation_errors = true
+  #
+  # Ignore errors when restriction options are evaluated.   Consider using an :if option to avoid errors and reraising as above
   # config.ignore_restriction_errors = false
   #
   # Re-display invalid values in date/time selects

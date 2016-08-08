@@ -81,6 +81,7 @@ module ValidatesTimeliness
             add_error(record, attr_name, restriction, restriction_value) and break
           end
         rescue => e
+          raise e if ValidatesTimeliness.reraise_validation_errors
           unless ValidatesTimeliness.ignore_restriction_errors
             message = RESTRICTION_ERROR_MESSAGE % [ attr_name, restriction.inspect, e.message ]
             add_error(record, attr_name, message) and break

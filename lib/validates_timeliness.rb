@@ -25,7 +25,7 @@ module ValidatesTimeliness
   class << self
     delegate :default_timezone, :default_timezone=, :dummy_date_for_time_type, :dummy_date_for_time_type=, :to => Timeliness
 
-    attr_accessor :extend_orms, :ignore_restriction_errors, :restriction_shorthand_symbols, :use_plugin_parser
+    attr_accessor :extend_orms, :ignore_restriction_errors, :reraise_validation_errors, :restriction_shorthand_symbols, :use_plugin_parser
   end
 
   # Extend ORM/ODMs for full support (:active_record).
