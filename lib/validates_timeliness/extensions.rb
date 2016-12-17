@@ -1,7 +1,7 @@
+require 'validates_timeliness/extensions/date_time_select'
+
 module ValidatesTimeliness
-  module Extensions
-    autoload :DateTimeSelect, 'validates_timeliness/extensions/date_time_select'
-  end
+  prepend Extensions::DateTimeSelect
 
   def self.enable_date_time_select_extension!
     ::ActionView::Helpers::Tags::DateSelect.send(:include, ValidatesTimeliness::Extensions::DateTimeSelect)

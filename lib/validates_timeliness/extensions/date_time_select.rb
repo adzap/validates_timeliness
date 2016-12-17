@@ -8,10 +8,6 @@ module ValidatesTimeliness
       # values to be redisplayed instead of blanks to aid correction by the user.
       # It's a minor usability improvement which is rarely an issue for the user.
 
-      included do
-        alias_method_chain :value, :timeliness
-      end
-
       class TimelinessDateTime
         attr_accessor :year, :month, :day, :hour, :min, :sec
 
@@ -32,13 +28,13 @@ module ValidatesTimeliness
         end
       end
 
-      def value_with_timeliness(object)
-        return value_without_timeliness(object) unless @template_object.params[@object_name]
+      def value(object)
+        return super(object) unless @template_object.params[@object_name]
 
         @template_object.params[@object_name]
 
         pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
-        return value_without_timeliness(object) if pairs.empty?
+        return super(object) if pairs.empty?
 
         values = [nil] * 6
         pairs.map do |(param, value)|
