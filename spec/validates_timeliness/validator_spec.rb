@@ -212,6 +212,17 @@ RSpec.describe ValidatesTimeliness::Validator do
         validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_datetime], :type => :datetime)
         expect(validator.format_error_value(Time.mktime(2010,1,1,12,34,56))).to eq('2010-01-01 12:34:56')
       end
+
+      it 'should format date error value as %d %B %Y in the right locale' do
+        locale = I18n.locale
+        begin
+          I18n.locale = :fr
+          validator = ValidatesTimeliness::Validator.new(:attributes => [:birth_date], :type => :date)
+          expect(validator.format_error_value(Date.new(2010,1,1))).to eq('01 janvier 2010')
+        ensure
+          I18n.locale = locale
+        end
+      end
     end
 
     describe "with missing translation" do

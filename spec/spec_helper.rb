@@ -24,8 +24,10 @@ end
 Time.zone = 'Australia/Melbourne'
 
 LOCALE_PATH = File.expand_path(File.dirname(__FILE__) + '/../lib/generators/validates_timeliness/templates/en.yml')
+LOCALE_PATH_FR = File.expand_path(File.dirname(__FILE__) + '/../lib/generators/validates_timeliness/templates/fr.yml')
 I18n.load_path.unshift(LOCALE_PATH)
-I18n.available_locales = ['en', 'es']
+I18n.load_path.unshift(LOCALE_PATH_FR)
+I18n.available_locales = ['en', 'es', 'fr']
 
 # Extend TestModel as you would another ORM/ODM module
 module TestModelShim
