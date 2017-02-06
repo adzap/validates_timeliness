@@ -62,7 +62,7 @@ module ValidatesTimeliness
           # Hack to get around instance_method_already_implemented? caching the
           # methods in the ivar. It then appears to subsequent calls that the
           # methods defined here, have not been and get defined again.
-          @_defined_class_methods = nil
+          @_defined_class_methods = Set.new
 
           define_attribute_methods_without_timeliness
           # add generated methods which is a Set object hence no += method
