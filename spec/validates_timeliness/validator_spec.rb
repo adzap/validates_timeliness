@@ -140,6 +140,43 @@ RSpec.describe ValidatesTimeliness::Validator do
     end
   end
 
+  context ":restriction_value option" do
+    describe "when not Proc" do
+      before do
+        Person.validates_datetime :birth_datetime, :on_or_before => Time.now, :restriction_value => 5000
+      end
+      let(:person) { Person.new(:birth_datetime => Time.now + 1000.seconds) }
+      it "should obey restriction_value" do
+        person.valid?
+        person.errors[:birth_datetime].should eq(["must be on or before 5000"])
+      end
+    end
+    describe "when Proc" do
+      before do
+        Person.validates_datetime :birth_datetime, :on_or_before => Time.now, :restriction_value => Proc.new{ "dummy restriction value" }
+      end
+      let(:person) { Person.new(:birth_datetime => Time.now + 1000.seconds) }
+      it "should obey restriction_value" do
+        person.valid?
+        person.errors[:birth_datetime].should eq(["must be on or before dummy restriction value"])
+      end
+    end
+  end
+
+  context ":add_to_base option" do
+    before do
+      Person.validates_datetime :birth_datetime,
+                                :on_or_before => Time.now,
+                                :add_to_base => true
+    end
+    let(:person) { Person.new(:birth_datetime => Time.now + 1000.seconds) }
+    it "should obey restriction_value" do
+      person.valid?
+      person.errors[:birth_datetime].should eq([])
+      person.errors[:base].should eq(["must be on or before 2010-01-01 00:00:00"])
+    end
+  end
+
   describe ":format option" do
     class PersonWithFormatOption
       include TestModel

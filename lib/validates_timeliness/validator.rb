@@ -90,9 +90,9 @@ module ValidatesTimeliness
     end
 
     def add_error(record, attr_name, message, value=nil)
-      value = format_error_value(value) if value
+      value = determine_value(options[:restriction_value], record) || (format_error_value(value) if value)
       message_options = { :message => options[:"#{message}_message"], :restriction => value }
-      record.errors.add(attr_name, message, message_options)
+      add_errors_accordingly(record, attr_name, message, message_options)
     end
 
     def format_error_value(value)
@@ -108,6 +108,25 @@ module ValidatesTimeliness
     def timezone_aware?(record, attr_name)
       record.class.respond_to?(:timeliness_attribute_timezone_aware?) &&
         record.class.timeliness_attribute_timezone_aware?(attr_name)
+    end
+
+    private
+
+    def determine_value(value, record)
+      case value
+      when Proc
+        value.arity > 0 ? value.call(record) : value.call
+      else
+        value
+      end
+    end
+
+    def add_errors_accordingly(record, attr_name, message, message_options)
+      if options[:add_to_base]
+        record.errors[:base] << record.errors.generate_message(attr_name, message, message_options)
+      else
+        record.errors.add(attr_name, message, message_options)
+      end
     end
 
   end
