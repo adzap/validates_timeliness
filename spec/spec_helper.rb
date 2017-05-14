@@ -71,8 +71,8 @@ end
 class Employee < ActiveRecord::Base
   attr_accessor :redefined_birth_date_called
   validates_date :birth_date, :allow_nil => true
-  validates_date :birth_time, :allow_nil => true
-  validates_date :birth_datetime, :allow_nil => true
+  validates_time :birth_time, :allow_nil => true
+  validates_datetime :birth_datetime, :allow_nil => true
 
   def birth_date=(value)
     self.redefined_birth_date_called = true
