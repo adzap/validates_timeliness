@@ -1,7 +1,5 @@
 source 'http://rubygems.org'
 
-ruby '2.3.3'
-
 gemspec
 
 gem 'rails', '~> 4.2.8'
