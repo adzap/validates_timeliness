@@ -56,7 +56,7 @@ module ValidatesTimeliness
     end
 
     # Rails 4.0 compatibility for old #setup method with class as arg
-    if ActiveModel.version <= Gem::Version.new('4.1')
+    if Gem::Version.new(ActiveModel::VERSION::STRING) <= Gem::Version.new('4.1')
       alias_method(:setup, :setup_timeliness_validated_attributes) 
     end
 
