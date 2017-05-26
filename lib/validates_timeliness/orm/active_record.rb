@@ -3,6 +3,11 @@ module ValidatesTimeliness
     module ActiveRecord
       extend ActiveSupport::Concern
 
+      included do
+        # Just use the built-in before_type_cast retrieval
+        alias_method :_timeliness_raw_value_for, :read_attribute_before_type_cast
+      end
+
       module ClassMethods
         public
 
