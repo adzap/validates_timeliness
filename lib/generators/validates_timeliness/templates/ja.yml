@@ -1,0 +1,16 @@
+en:
+  errors:
+    messages:
+      invalid_date: "は有効な日付ではありません"
+      invalid_time: "は有効な時刻ではありません"
+      invalid_datetime: "は有効な日時ではありません"
+      is_at: "必ず %{restriction} にしてください"
+      before: "必ず %{restriction} より前にしてください"
+      on_or_before: "必ず %{restriction} 以前にしてください"
+      after: "必ず %{restriction} より後にしてください"
+      on_or_after: "必ず %{restriction} 以降にしてください"
+  validates_timeliness:
+    error_value_formats:
+      date: '%Y/%m/%d'
+      time: '%H:%M:%S'
+      datetime: '%Y/%m/%d %H:%M:%S'
