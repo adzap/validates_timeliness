@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.description = %q{Adds validation methods to ActiveModel for validating dates and times. Works with multiple ORMS.}
   s.email       = %q{adam.meehan@gmail.com}
   s.homepage    = %q{http://github.com/adzap/validates_timeliness}
+  s.license     = "MIT"
 
   s.require_paths    = ["lib"]
   s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock autotest/discover.rb Appraisals Travis.yml } - Dir['gemsfiles/*']
