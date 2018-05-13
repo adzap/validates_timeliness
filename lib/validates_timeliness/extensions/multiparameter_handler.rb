@@ -1,4 +1,4 @@
-ActiveRecord::AttributeAssignment::MultiparameterAttribute.class_eval do
+ActiveRecord::AttributeAssignment.class_eval do
   private
 
   # Yield if date values are valid
