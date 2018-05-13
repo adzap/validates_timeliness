@@ -22,7 +22,7 @@ If you a looking for the old version for Rails 3.x go here[http://github.com/adz
 
 * Adds extensions to fix Rails date/time select issues (See Extensions)
 
-* Supports I18n for the error messages
+* Supports I18n for the error messages. For multi-language support try {timeliness-i18n gem}[https://github.com/pedrofurtado/timeliness-i18n].
 
 * Supports all the Rubies (that any sane person would be using in production).
 
