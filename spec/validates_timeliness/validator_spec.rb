@@ -87,6 +87,20 @@ RSpec.describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe ':message options' do
+    it 'should allow message option too' do
+      Person.validates_date :birth_date, on_or_after: :today, message: 'cannot be in past'
+      invalid!(:birth_date, Date.today - 5.days, 'cannot be in past')
+      valid!(:birth_date, Date.today)
+    end
+
+    it 'should first allow the defined message' do
+      Person.validates_date :birth_date, on_or_after: :today, on_or_after_message: 'cannot be in past', message: 'dummy message'
+      invalid!(:birth_date, Date.today - 5.days, 'cannot be in past')
+      valid!(:birth_date, Date.today)
+    end
+  end
+
   describe ":between option" do
     describe "array value" do
       it 'should be split option into :on_or_after and :on_or_before values' do
