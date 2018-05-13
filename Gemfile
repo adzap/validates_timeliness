@@ -10,7 +10,7 @@ gem 'timecop'
 gem 'byebug'
 gem 'appraisal'
 gem 'sqlite3'
-gem 'nokogiri'
+gem 'nokogiri', '~> 1.8'
 
 group :active_record do
   gem 'sqlite3-ruby', :require => 'sqlite3'
