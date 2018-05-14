@@ -1,4 +1,4 @@
-ActiveRecord::AttributeAssignment.class_eval do
+ActiveModel::AttributeAssignment.class_eval do
   private
 
   # Yield if date values are valid
@@ -50,7 +50,7 @@ ActiveRecord::AttributeAssignment.class_eval do
 
   def read_date
     set_values = values.values_at(1,2,3).map {|v| v.is_a?(String) ? v.strip : v }
-    
+
     if set_values.any? { |v| v.is_a?(String) }
       Timeliness.parse(set_values.join('-'), :date).try(:to_date) or raise TypeError
     else
