@@ -1,54 +1,31 @@
 module ValidatesTimeliness
   module Extensions
-    module DateTimeSelect
-      extend ActiveSupport::Concern
-
+    module TimelinessDateTimeSelect
       # Intercepts the date and time select helpers to reuse the values from
       # the params rather than the parsed value. This allows invalid date/time
       # values to be redisplayed instead of blanks to aid correction by the user.
       # It's a minor usability improvement which is rarely an issue for the user.
+      attr_accessor :object_name, :method_name, :template_object, :options, :html_options
 
-      included do
-        alias_method_chain :value, :timeliness
+      def initialize(object_name, method_name, template_object, options, html_options)
+        @object_name, @method_name = object_name.to_s.dup, method_name.to_s.dup
+        @template_object, @options, @html_options = template_object, options, html_options
       end
 
-      class TimelinessDateTime
-        attr_accessor :year, :month, :day, :hour, :min, :sec
-
-        def initialize(year, month, day, hour, min, sec)
-          @year, @month, @day, @hour, @min, @sec = year, month, day, hour, min, sec
-        end
-
-        # adapted from activesupport/lib/active_support/core_ext/date_time/calculations.rb, line 36 (3.0.7)
-        def change(options)
-          TimelinessDateTime.new(
-            options[:year]  || year,
-            options[:month] || month,
-            options[:day]   || day,
-            options[:hour]  || hour,
-            options[:min]   || (options[:hour] ? 0 : min),
-            options[:sec]   || ((options[:hour] || options[:min]) ? 0 : sec)
-          )
-        end
-      end
-
-      def value_with_timeliness(object)
-        return value_without_timeliness(object) unless @template_object.params[@object_name]
-
-        @template_object.params[@object_name]
+      def value
+        return super unless @template_object.params[@object_name]
 
         pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
-        return value_without_timeliness(object) if pairs.empty?
+        return super if pairs.empty?
 
-        values = [nil] * 6
-        pairs.map do |(param, value)|
-          position = param.scan(/\((\d+)\w+\)/).first.first
-          values[position.to_i-1] = value.to_i
+        values = {}
+        pairs.each_pair do |key, value|
+          position = key[/\((\d+)\w+\)/, 1]
+          values[::ActionView::Helpers::DateTimeSelector::POSITION.key(position.to_i)] = value.to_i
         end
 
-        TimelinessDateTime.new(*values)
+        values
       end
-
     end
   end
 end
