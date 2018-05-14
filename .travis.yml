@@ -1,5 +1,6 @@
 language: ruby
 before_install: gem install bundler
+install: bundle install
 cache: bundler
 
 gemfile:
