@@ -7,6 +7,10 @@ module ValidatesTimeliness
       # It's a minor usability improvement which is rarely an issue for the user.
       attr_accessor :object_name, :method_name, :template_object, :options, :html_options
 
+      POSITION = {
+        :year => 1, :month => 2, :day => 3, :hour => 4, :min => 5, :sec => 6
+      }.freeze
+
       def initialize(object_name, method_name, template_object, options, html_options)
         @object_name, @method_name = object_name.to_s.dup, method_name.to_s.dup
         @template_object, @options, @html_options = template_object, options, html_options
@@ -21,7 +25,7 @@ module ValidatesTimeliness
         values = {}
         pairs.each_pair do |key, value|
           position = key[/\((\d+)\w+\)/, 1]
-          values[::ActionView::Helpers::DateTimeSelector::POSITION.key(position.to_i)] = value.to_i
+          values[POSITION.key(position.to_i)] = value.to_i
         end
 
         values
