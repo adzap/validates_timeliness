@@ -16,19 +16,36 @@ module ValidatesTimeliness
         @template_object, @options, @html_options = template_object, options, html_options
       end
 
-      def value(object)
-        return super unless @template_object.params[@object_name]
+      if Rails.version.to_f < 5.2
+        def value(object)
+          return super(object) unless @template_object.params[@object_name]
 
-        pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
-        return super if pairs.empty?
+          pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
+          return super(object) if pairs.empty?
 
-        values = {}
-        pairs.each_pair do |key, value|
-          position = key[/\((\d+)\w+\)/, 1]
-          values[POSITION.key(position.to_i)] = value.to_i
+          values = {}
+          pairs.each_pair do |key, value|
+            position = key[/\((\d+)\w+\)/, 1]
+            values[POSITION.key(position.to_i)] = value.to_i
+          end
+
+          values
         end
+      else
+        def value
+          return super unless @template_object.params[@object_name]
 
-        values
+          pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
+          return super if pairs.empty?
+
+          values = {}
+          pairs.each_pair do |key, value|
+            position = key[/\((\d+)\w+\)/, 1]
+            values[POSITION.key(position.to_i)] = value.to_i
+          end
+
+          values
+        end
       end
     end
   end
