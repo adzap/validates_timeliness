@@ -12,7 +12,7 @@ module ValidatesTimeliness
         @template_object, @options, @html_options = template_object, options, html_options
       end
 
-      def value
+      def value(object)
         return super unless @template_object.params[@object_name]
 
         pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
