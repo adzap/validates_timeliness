@@ -1,13 +1,13 @@
-= ValidatesTimeliness
+= ValidatesTimeliness {<img src="https://travis-ci.org/adzap/validates_timeliness.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/adzap/validates_timeliness]
 
 * Source:  http://github.com/adzap/validates_timeliness
 * Issues:  http://github.com/adzap/validates_timeliness/issues
 
 == Description
 
-Complete validation of dates, times and datetimes for Rails 4.x and ActiveModel.
+Complete validation of dates, times and datetimes for Rails 5.0.x and ActiveModel.
 
-If you a looking for the old version for Rails 3.x go here[http://github.com/adzap/validates_timeliness/tree/v3.x].
+If you a looking for the old version for Rails 4.x go here [https://github.com/adzap/validates_timeliness/tree/4-0-stable].
 
 
 == Features
@@ -30,7 +30,7 @@ If you a looking for the old version for Rails 3.x go here[http://github.com/adz
 == Installation
 
   # in Gemfile
-  gem 'validates_timeliness', '~> 4.0'
+  gem 'validates_timeliness', '~> 5.0.0.pre'
 
   # Run bundler
   $ bundle install
