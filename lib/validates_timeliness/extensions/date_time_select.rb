@@ -11,9 +11,23 @@ module ValidatesTimeliness
         :year => 1, :month => 2, :day => 3, :hour => 4, :min => 5, :sec => 6
       }.freeze
 
-      def initialize(object_name, method_name, template_object, options, html_options)
-        @object_name, @method_name = object_name.to_s.dup, method_name.to_s.dup
-        @template_object, @options, @html_options = template_object, options, html_options
+      class DateTimeValue
+        attr_accessor :year, :month, :day, :hour, :min, :sec
+
+        def initialize(year:, month:, day: nil, hour: nil, min: nil, sec: nil)
+          @year, @month, @day, @hour, @min, @sec = year, month, day, hour, min, sec
+        end
+
+        def change(options)
+          self.class.new(
+            year:  options.fetch(:year, year),
+            month: options.fetch(:month, month),
+            day:   options.fetch(:day, day),
+            hour:  options.fetch(:hour, hour),
+            min:   options.fetch(:min) { options[:hour] ? 0 : min },
+            sec:   options.fetch(:sec) { options[:hour] || options[:min] ? 0 : sec }
+          )
+        end
       end
 
       # Splat args to support Rails 5.0 which expects object, and 5.2 which doesn't
@@ -29,7 +43,7 @@ module ValidatesTimeliness
           values[POSITION.key(position.to_i)] = value.to_i
         end
 
-        values
+        DateTimeValue.new(values)
       end
     end
   end
