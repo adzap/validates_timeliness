@@ -48,7 +48,7 @@ module TestModel
   end
 
   def method_missing(method_id, *args, &block)
-    if attribute_method?(method_id.to_s)
+    if !matched_attribute_method(method_id.to_s).nil?
       self.class.define_attribute_methods self.class.model_attributes.keys
       send(method_id, *args, &block)
     else
