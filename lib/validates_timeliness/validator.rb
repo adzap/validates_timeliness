@@ -55,11 +55,6 @@ module ValidatesTimeliness
       end
     end
 
-    # Rails 4.0 compatibility for old #setup method with class as arg
-    if Gem::Version.new(ActiveModel::VERSION::STRING) <= Gem::Version.new('4.1')
-      alias_method(:setup, :setup_timeliness_validated_attributes) 
-    end
-
     def validate_each(record, attr_name, value)
       raw_value = attribute_raw_value(record, attr_name) || value
       return if (@allow_nil && raw_value.nil?) || (@allow_blank && raw_value.blank?)
