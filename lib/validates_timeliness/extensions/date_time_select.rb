@@ -32,10 +32,10 @@ module ValidatesTimeliness
 
       # Splat args to support Rails 5.0 which expects object, and 5.2 which doesn't
       def value(*object)
-        return super unless @template_object.params[@object_name]
+        return super(*object) unless @template_object.params[@object_name]
 
         pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
-        return super if pairs.empty?
+        return super(*object) if pairs.empty?
 
         values = {}
         pairs.each_pair do |key, value|
