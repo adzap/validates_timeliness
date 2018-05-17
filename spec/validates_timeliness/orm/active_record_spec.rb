@@ -156,7 +156,7 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
           record.birth_time = '12:30'
 
           expect(record.birth_time).to be_kind_of(Time)
-          expect(record.birth_time).to eq Time.utc(2000, 1, 1, 12, 30)
+          expect(record.birth_time).to eq Time.zone.local(2000, 1, 1, 12, 30)
         end
       end
 
