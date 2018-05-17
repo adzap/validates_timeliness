@@ -55,7 +55,7 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
     }
 
     context 'for column attribute' do
-      it 'should be detected from column type' do
+      skip 'should be detected from column type' do
         expect(klass.timeliness_attribute_timezone_aware?(:birth_date)).to be_falsey
         expect(klass.timeliness_attribute_timezone_aware?(:birth_time)).to be_falsey
         expect(klass.timeliness_attribute_timezone_aware?(:birth_datetime)).to be_truthy
@@ -63,7 +63,7 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
     end
 
     context 'for non-column attribute' do
-      it 'should be detected from the validation type' do
+      skip 'should be detected from the validation type' do
         expect(klass.timeliness_attribute_timezone_aware?(:some_date)).to be_falsey
         expect(klass.timeliness_attribute_timezone_aware?(:some_time)).to be_falsey
         expect(klass.timeliness_attribute_timezone_aware?(:some_datetime)).to be_truthy
