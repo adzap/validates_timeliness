@@ -57,6 +57,7 @@ end
 ActiveRecord::Base.default_timezone = :utc
 ActiveRecord::Base.time_zone_aware_attributes = true
 ActiveRecord::Base.establish_connection({:adapter => 'sqlite3', :database => ':memory:'})
+ActiveRecord::Base.time_zone_aware_types = [:datetime, :time]
 ActiveRecord::Migration.verbose = false
 ActiveRecord::Schema.define(:version => 1) do
   create_table :employees, :force => true do |t|

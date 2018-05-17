@@ -1,6 +1,6 @@
 = [UNRELEASED]
-* Fix removed namespace ActionRecord::AttributeAssignment::MultiparameterAttribute (AquisTech)
 * Fix DateTimeSelect extension support (AquisTech)
+* Update Multiparameter extension to use ActiveRecord type classes with multiparameter handling
 
 = 4.0.2 [2016-01-07]
 * Fix undefine_generated_methods ivar guard setting to false

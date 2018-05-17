@@ -1,36 +1,36 @@
 RSpec.describe 'ValidatesTimeliness::Extensions::MultiparameterHandler' do
 
   context "time column" do
-    it 'should assign a string value for invalid date portion' do
+    it 'should be nil invalid date portion' do
       employee = record_with_multiparameter_attribute(:birth_datetime, [2000, 2, 31, 12, 0, 0])
-      expect(employee.birth_datetime_before_type_cast).to eq '2000-02-31 12:00:00'
+      expect(employee.birth_datetime).to be_nil
     end
      
     it 'should assign a Time value for valid datetimes' do
       employee = record_with_multiparameter_attribute(:birth_datetime, [2000, 2, 28, 12, 0, 0])
-      expect(employee.birth_datetime_before_type_cast).to eq Time.zone.local(2000, 2, 28, 12, 0, 0)
+      expect(employee.birth_datetime).to eq Time.zone.local(2000, 2, 28, 12, 0, 0)
     end
 
-    it 'should assign a string value for incomplete time' do
+    it 'should be nil for incomplete date portion' do
       employee = record_with_multiparameter_attribute(:birth_datetime, [2000, nil, nil])
-      expect(employee.birth_datetime_before_type_cast).to eq '2000-00-00'
+      expect(employee.birth_datetime).to be_nil
     end
   end
 
   context "date column" do
-    it 'should assign a string value for invalid date' do
+    it 'should assign nil for invalid date' do
       employee = record_with_multiparameter_attribute(:birth_date, [2000, 2, 31])
-      expect(employee.birth_date_before_type_cast).to eq '2000-02-31'
+      expect(employee.birth_date).to be_nil
     end
 
     it 'should assign a Date value for valid date' do
       employee = record_with_multiparameter_attribute(:birth_date, [2000, 2, 28])
-      expect(employee.birth_date_before_type_cast).to eq Date.new(2000, 2, 28)
+      expect(employee.birth_date).to eq Date.new(2000, 2, 28)
     end
 
-    it 'should assign a string value for incomplete date' do
+    it 'should assign hash values for incomplete date' do
       employee = record_with_multiparameter_attribute(:birth_date, [2000, nil, nil])
-      expect(employee.birth_date_before_type_cast).to eq '2000-00-00'
+      expect(employee.birth_date).to be_nil
     end
   end
 
