@@ -32,6 +32,7 @@ module ValidatesTimeliness
         def define_attribute_methods
           super.tap { 
             generated_timeliness_methods.synchronize do
+              @timeliness_methods_generated ||= @timeliness_methods_generated
               return if @timeliness_methods_generated
               define_timeliness_methods true
               @timeliness_methods_generated = true
