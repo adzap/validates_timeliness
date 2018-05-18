@@ -32,6 +32,7 @@ module ValidatesTimeliness
         def define_attribute_methods
           super.tap { 
             generated_timeliness_methods.synchronize do
+              @timeliness_methods_generated ||= nil
               return if @timeliness_methods_generated
               define_timeliness_methods true
               @timeliness_methods_generated = true
@@ -72,6 +73,7 @@ module ValidatesTimeliness
       end
       
       def read_timeliness_attribute_before_type_cast(attr_name)
+        @timeliness_cache ||= {}
         @timeliness_cache && @timeliness_cache[attr_name] || read_attribute_before_type_cast(attr_name)
       end
 
