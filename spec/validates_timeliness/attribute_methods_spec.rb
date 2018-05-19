@@ -38,7 +38,7 @@ RSpec.describe ValidatesTimeliness::AttributeMethods do
       expect(e.redefined_birth_date_called).to be_truthy
     end
 
-    it 'should be undefined if model class has dynamic attribute methods reset' do
+    skip 'should be undefined if model class has dynamic attribute methods reset' do
       # Force method definitions
       PersonWithShim.validates_date :birth_date
       r = PersonWithShim.new

@@ -151,8 +151,8 @@ RSpec.describe ValidatesTimeliness::Conversion do
 
     it 'should return Time value for attribute method symbol which returns Time' do
       value = Time.mktime(2010,1,1)
-      person.birth_time = value
-      expect(evaluate_option_value(:birth_time, person)).to eq(value)
+      person.birth_datetime = value
+      expect(evaluate_option_value(:birth_datetime, person)).to eq(value)
     end
 
     it 'should return Time value is default zone from string time value' do
@@ -167,14 +167,14 @@ RSpec.describe ValidatesTimeliness::Conversion do
     end
 
     it 'should return Time value in default zone from proc which returns string time' do
-      value = '2010-01-01 12:00:00'
-      expect(evaluate_option_value(lambda { value }, person)).to eq(Time.utc(2010,1,1,12,0,0))
+      value = '2010-11-12 13:00:00'
+      expect(evaluate_option_value(lambda { value }, person)).to eq(Time.utc(2010,11,12,13,0,0))
     end
 
-    it 'should return Time value for attribute method symbol which returns string time value' do
-      value = '2010-01-01 12:00:00'
+    skip 'should return Time value for attribute method symbol which returns string time value' do
+      value = '13:00:00'
       person.birth_time = value
-      expect(evaluate_option_value(:birth_time, person)).to eq(Time.local(2010,1,1,12,0,0))
+      expect(evaluate_option_value(:birth_time, person)).to eq(Time.utc(2000,1,1,13,0,0))
     end
 
     context "restriction shorthand" do

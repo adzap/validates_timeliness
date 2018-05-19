@@ -25,7 +25,9 @@ module TestModel
 
     def type_cast(attr_name, value)
       return value unless value.is_a?(String)
-      value.send("to_#{model_attributes[attr_name.to_sym]}") rescue nil
+      type_name = model_attributes[attr_name.to_sym]
+      type = ActiveModel::Type.lookup(type_name)
+      type.cast(value)
     end
   end
 

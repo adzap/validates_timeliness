@@ -101,10 +101,9 @@ module ValidatesTimeliness
     end
 
     def timezone_aware?(record, attr_name)
-      record.class.respond_to?(:timeliness_attribute_timezone_aware?) &&
-        record.class.timeliness_attribute_timezone_aware?(attr_name)
+      record.class.respond_to?(:skip_time_zone_conversion_for_attributes) &&
+        !record.class.skip_time_zone_conversion_for_attributes.include?(attr_name.to_sym)
     end
-
   end
 end
 
