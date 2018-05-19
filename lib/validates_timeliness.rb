@@ -62,7 +62,7 @@ module ValidatesTimeliness
   def self.parser; Timeliness end
 end
 
-require 'validates_timeliness/conversion'
+require 'validates_timeliness/converter'
 require 'validates_timeliness/validator'
 require 'validates_timeliness/helper_methods'
 require 'validates_timeliness/attribute_methods'

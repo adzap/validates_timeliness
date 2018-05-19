@@ -3,9 +3,7 @@ require 'active_model/validator'
 
 module ValidatesTimeliness
   class Validator < ActiveModel::EachValidator
-    include Conversion
-
-    attr_reader :type, :attributes
+    attr_reader :type, :attributes, :converter
 
     RESTRICTIONS = {
       :is_at        => :==,
@@ -59,9 +57,10 @@ module ValidatesTimeliness
       raw_value = attribute_raw_value(record, attr_name) || value
       return if (@allow_nil && raw_value.nil?) || (@allow_blank && raw_value.blank?)
 
-      @timezone_aware = timezone_aware?(record, attr_name)
-      value = parse(raw_value) if value.is_a?(String) || options[:format]
-      value = type_cast_value(value, @type)
+      @converter = initialize_converter(record, attr_name)
+
+      value = @converter.parse(raw_value) if value.is_a?(String) || options[:format]
+      value = @converter.type_cast_value(value)
 
       add_error(record, attr_name, :"invalid_#{@type}") and return if value.blank?
 
@@ -71,7 +70,7 @@ module ValidatesTimeliness
     def validate_restrictions(record, attr_name, value)
       @restrictions_to_check.each do |restriction|
         begin
-          restriction_value = type_cast_value(evaluate_option_value(options[restriction], record), @type)
+          restriction_value = @converter.type_cast_value(@converter.evaluate(options[restriction], record))
           unless value.send(RESTRICTIONS[restriction], restriction_value)
             add_error(record, attr_name, restriction, restriction_value) and break
           end
@@ -100,10 +99,20 @@ module ValidatesTimeliness
         record.read_timeliness_attribute_before_type_cast(attr_name.to_s)
     end
 
-    def timezone_aware?(record, attr_name)
+    def time_zone_aware?(record, attr_name)
       record.class.respond_to?(:skip_time_zone_conversion_for_attributes) &&
         !record.class.skip_time_zone_conversion_for_attributes.include?(attr_name.to_sym)
     end
+
+    def initialize_converter(record, attr_name)
+      ValidatesTimeliness::Converter.new(
+        type: @type,
+        time_zone_aware: time_zone_aware?(record, attr_name),
+        format: options[:format],
+        ignore_usec: options[:ignore_usec]
+      )
+    end
+
   end
 end
 
