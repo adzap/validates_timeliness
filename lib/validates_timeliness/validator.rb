@@ -61,7 +61,7 @@ module ValidatesTimeliness
 
       @timezone_aware = timezone_aware?(record, attr_name)
       value = parse(raw_value) if value.is_a?(String) || options[:format]
-      value = type_cast_value(value, @type)
+      value = type_cast_value(raw_value, @type)
 
       add_error(record, attr_name, :"invalid_#{@type}") and return if value.blank?
 
