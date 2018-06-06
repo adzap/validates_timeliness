@@ -1,6 +1,10 @@
 = [UNRELEASED]
 * Fix DateTimeSelect extension support (AquisTech)
+
+Breaking Changes
 * Update Multiparameter extension to use ActiveRecord type classes with multiparameter handling
+  which stores a hash of multiparamter values as the value before type cast, no longer a mushed datetime string
+* Removed all custom plugin attribute methods and method overrides in favour using ActiveModel type system
 
 = 4.0.2 [2016-01-07]
 * Fix undefine_generated_methods ivar guard setting to false
