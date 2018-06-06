@@ -1,5 +1,4 @@
 RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
-
   context "validation methods" do
     let(:record) { Employee.new }
 
@@ -50,22 +49,6 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
         validates_datetime :some_datetime
       end
     }
-
-    context 'for column attribute' do
-      skip 'should be detected from column type' do
-        expect(klass.timeliness_attribute_timezone_aware?(:birth_date)).to be_falsey
-        expect(klass.timeliness_attribute_timezone_aware?(:birth_time)).to be_falsey
-        expect(klass.timeliness_attribute_timezone_aware?(:birth_datetime)).to be_truthy
-      end
-    end
-
-    context 'for non-column attribute' do
-      skip 'should be detected from the validation type' do
-        expect(klass.timeliness_attribute_timezone_aware?(:some_date)).to be_falsey
-        expect(klass.timeliness_attribute_timezone_aware?(:some_time)).to be_falsey
-        expect(klass.timeliness_attribute_timezone_aware?(:some_datetime)).to be_truthy
-      end
-    end
   end
   
   context "attribute write method" do
