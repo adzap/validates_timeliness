@@ -11,8 +11,9 @@ end
 
 ActiveModel::Type::Date.class_eval do
   # Module.new do |m|
+    alias_method :_cast_value, :cast_value
     def cast_value(value)
-      return super unless ValidatesTimeliness.use_plugin_parser
+      return _cast_value(value) unless ValidatesTimeliness.use_plugin_parser
 
       if value.is_a?(::String)
         return if value.empty?
