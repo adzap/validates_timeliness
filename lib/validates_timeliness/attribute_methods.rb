@@ -9,36 +9,36 @@ module ValidatesTimeliness
   end
 end
 
-ActiveModel::Type::Date.class_eval do
-  # Module.new do |m|
-    def cast_value(value)
-      return super unless ValidatesTimeliness.use_plugin_parser
+ActiveModel::Type::Date.prepend Module.new {
+  def cast_value(value)
+    return super unless ValidatesTimeliness.use_plugin_parser
 
-      if value.is_a?(::String)
-        return if value.empty?
-        value = Timeliness::Parser.parse(value, :date)
-        value.to_date if value
-      elsif value.respond_to?(:to_date)
-        value.to_date
-      else
-        value
-      end
+    if value.is_a?(::String)
+      return if value.empty?
+      value = Timeliness::Parser.parse(value, :date)
+      value.to_date if value
+    elsif value.respond_to?(:to_date)
+      value.to_date
+    else
+      value
     end
-  # end.tap { |mod| include mod }
-end
+  end
+}
 
-ActiveModel::Type::Time.class_eval do
+ActiveModel::Type::Time.prepend Module.new {
   def user_input_in_time_zone(value)
-    if value.is_a?(String) && ValidatesTimeliness.use_plugin_parser
+    return super unless ValidatesTimeliness.use_plugin_parser
+
+    if value.is_a?(String)
       dummy_time_value = value.sub(/\A(\d\d\d\d-\d\d-\d\d |)/, Date.current.to_s + ' ')
       Timeliness::Parser.parse(dummy_time_value, :datetime, zone: :current)
     else
       value.in_time_zone
     end
   end
-end
+}
 
-ActiveModel::Type::DateTime.class_eval do
+ActiveModel::Type::DateTime.prepend Module.new {
   def user_input_in_time_zone(value)
     if value.is_a?(String) && ValidatesTimeliness.use_plugin_parser
       Timeliness::Parser.parse(value, :datetime, zone: :current)
@@ -46,4 +46,4 @@ ActiveModel::Type::DateTime.class_eval do
       value.in_time_zone
     end
   end
-end
+}
