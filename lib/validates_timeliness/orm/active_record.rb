@@ -11,7 +11,7 @@ module ValidatesTimeliness
   end
 end
 
-class ActiveRecord::Base
+ActiveSupport.on_load(:active_record) do
   include ValidatesTimeliness::AttributeMethods
   include ValidatesTimeliness::ORM::ActiveRecord
 end
