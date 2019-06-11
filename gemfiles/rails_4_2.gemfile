@@ -11,8 +11,4 @@ gem "appraisal"
 gem "sqlite3"
 gem "nokogiri", "1.6.7"
 
-group :active_record do
-  gem "sqlite3-ruby", require: "sqlite3"
-end
-
 gemspec path: "../"
