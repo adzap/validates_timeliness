@@ -6,15 +6,19 @@ before_script:
   - bundle install
 cache: bundler
 bundler_args: --verbose
-gemfile:
-  - gemfiles/rails_4_0.gemfile
-  - gemfiles/rails_4_1.gemfile
-  - gemfiles/rails_4_2.gemfile
 
-rvm:
-  - "2.3.7"
-  - "2.4.4"
-  - "2.5.5"
+matrix:
+  include:
+    - rvm: "2.3.7"
+      gemfile: gemfiles/rails_4_0.gemfile
+    - rvm: "2.3.7"
+      gemfile: gemfiles/rails_4_1.gemfile
+    - rvm: "2.3.7"
+      gemfile: gemfiles/rails_4_2.gemfile
+    - rvm: "2.4.6"
+      gemfile: gemfiles/rails_4_2.gemfile
+    - rvm: "2.5.5"
+      gemfile: gemfiles/rails_4_2.gemfile
 
 script: 'bundle exec rspec'
 
