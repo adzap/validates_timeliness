@@ -1,3 +1,8 @@
+= 4.1.0 [2019-06-11]
+* Relaxed Timeliness dependency version to >= 0.3.10 and < 1, which allows
+  version 0.4 with threadsafety fix for use_us_formats and use_euro_formats
+  hot switching in a request.
+
 = 4.0.2 [2016-01-07]
 * Fix undefine_generated_methods ivar guard setting to false
 
