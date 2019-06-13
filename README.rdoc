@@ -5,7 +5,7 @@
 
 == Description
 
-Complete validation of dates, times and datetimes for Rails 5.0.x and ActiveModel.
+Complete validation of dates, times and datetimes for Rails 5.x and ActiveModel.
 
 If you a looking for the old version for Rails 4.x go here [https://github.com/adzap/validates_timeliness/tree/4-0-stable].
 
