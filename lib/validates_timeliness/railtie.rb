@@ -11,5 +11,10 @@ module ValidatesTimeliness
     initializer "validates_timeliness.initialize_restriction_errors" do
       ValidatesTimeliness.ignore_restriction_errors = !Rails.env.test?
     end
+
+    initializer "validates_timeliness.reraise_validation_errors" do
+      ValidatesTimeliness.reraise_validation_errors = false # for backwards compatibility. initializer file should set to true.
+    end
+
   end
 end

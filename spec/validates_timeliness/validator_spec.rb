@@ -181,6 +181,26 @@ RSpec.describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe "reraise validation errors" do
+    let(:person) { Person.new(:birth_date => Date.today) }
+
+    before do
+      Person.validates_time :birth_date, :is_at => lambda { raise "oops" }, :before => lambda { raise }
+    end
+
+    it "should raise an error when reraise_validation_errors is true" do
+      with_config(:reraise_validation_errors, true) do
+        expect {person.valid?}.to raise_exception("oops")
+      end
+    end
+
+    it "should not raise an error when reraise_validation_errors is false" do
+      with_config(:reraise_validation_errors, false) do
+        expect {person.valid?}.not_to raise_exception
+      end
+    end
+  end
+
   describe "restriction value errors" do
     let(:person) { Person.new(:birth_date => Date.today) }
 
