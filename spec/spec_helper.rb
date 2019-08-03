@@ -10,6 +10,8 @@ require 'timecop'
 require 'validates_timeliness'
 require 'validates_timeliness/orm/active_model'
 
+require 'rails/railtie'
+
 require 'support/test_model'
 require 'support/model_helpers'
 require 'support/config_helper'
