@@ -36,8 +36,8 @@ module ValidatesTimeliness
 
   # Shorthand time and date symbols for restrictions
   self.restriction_shorthand_symbols = {
-    :now   => lambda { Time.current },
-    :today => lambda { Date.current }
+    now:   proc { Time.current },
+    today: proc { Date.current }
   }
 
   # Use the plugin date/time parser which is stricter and extensible
