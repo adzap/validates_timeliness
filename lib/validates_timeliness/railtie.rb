@@ -12,7 +12,7 @@ module ValidatesTimeliness
       ValidatesTimeliness.ignore_restriction_errors = !Rails.env.test?
     end
 
-    initializer "validates_timeliness.initialize_timeliness_ambiguous_date_format" do
+    initializer "validates_timeliness.initialize_timeliness_ambiguous_date_format", :after => 'load_config_initializers' do
       if Timeliness.respond_to?(:ambiguous_date_format) # i.e. v0.4+
         # Set default for each new thread if you have changed the default using
         # the format switching methods.
