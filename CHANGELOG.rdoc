@@ -9,6 +9,11 @@ Breaking Changes
   which stores a hash of multiparamter values as the value before type cast, no longer a mushed datetime string
 * Removed all custom plugin attribute methods and method overrides in favour using ActiveModel type system
 
+= 4.1.0 [2019-06-11]
+* Relaxed Timeliness dependency version to >= 0.3.10 and < 1, which allows
+  version 0.4 with threadsafety fix for use_us_formats and use_euro_formats
+  hot switching in a request.
+
 = 4.0.2 [2016-01-07]
 * Fix undefine_generated_methods ivar guard setting to false
 
