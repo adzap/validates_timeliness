@@ -1,3 +1,10 @@
+= 4.1.1 [2019-08-06]
+* Add initializer to ensure Timeliness default ambigiuous date handling config
+  in Timeliness v0.4.1+ is set correctly when using `use_us_formats` or
+  `use_euro_formats` switcher to set default.
+* Removed build support for Ruby 2.3 and Rails 4.0 and 4.1 to EOL official
+  support for those.
+
 = 4.1.0 [2019-06-11]
 * Relaxed Timeliness dependency version to >= 0.3.10 and < 1, which allows
   version 0.4 with threadsafety fix for use_us_formats and use_euro_formats
