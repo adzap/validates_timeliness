@@ -5,7 +5,8 @@
 
 == Description
 
-Complete validation of dates, times and datetimes for Rails 4.x and ActiveModel.
+Complete validation of dates, times and datetimes for Rails 4.2.x and ActiveModel. Rails 4.0.x and 4.1.x may
+still work but official support has ended.
 
 If you a looking for the old version for Rails 3.x go here[http://github.com/adzap/validates_timeliness/tree/v3.x].
 
