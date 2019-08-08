@@ -3,6 +3,8 @@
 * Relaxed Timeliness dependency version which allows for >= 0.4.0 with
   threadsafety fix for use_us_formats and use_euro_formats for hot switching
 	in a request.
+* Add initializer to ensure Timeliness v0.4+ ambiguous date config is set
+  correctly when using `use_euro_formats` or `remove_use_formats'.
 
 Breaking Changes
 * Update Multiparameter extension to use ActiveRecord type classes with multiparameter handling
