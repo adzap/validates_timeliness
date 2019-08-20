@@ -17,8 +17,7 @@ module ModelHelpers
 
   def with_each_person_value(attr_name, values)
     record = Person.new
-    values = [values] unless values.is_a?(Array)
-    values.each do |value|
+    Array.wrap(values).each do |value|
       record.send("#{attr_name}=", value)
       yield record, value
     end
