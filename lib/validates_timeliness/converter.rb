@@ -10,6 +10,7 @@ module ValidatesTimeliness
     end
 
     def type_cast_value(value)
+      return value if infinity?(value) && type_supports_infinity?
       return nil if value.nil? || !value.respond_to?(:to_time)
 
       value = value.in_time_zone if value.acts_like?(:time) && time_zone_aware?
@@ -79,6 +80,14 @@ module ValidatesTimeliness
 
     def time_zone_aware?
       @time_zone_aware
+    end
+
+    def infinity?(value)
+      [Float::INFINITY, -Float::INFINITY].include? value
+    end
+
+    def type_supports_infinity?
+      [:date, :datetime].include? type
     end
   end
 end

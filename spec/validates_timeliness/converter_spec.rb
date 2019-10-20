@@ -31,6 +31,14 @@ RSpec.describe ValidatesTimeliness::Converter do
       it 'should return nil for invalid value types' do
         expect(type_cast_value(12)).to eq(nil)
       end
+
+      it "should return the original value for Infinity" do
+        expect(type_cast_value(Float::INFINITY)).to eq Float::INFINITY
+      end
+
+      it "should return the original value for -Infinity" do
+        expect(type_cast_value(-Float::INFINITY)).to eq -Float::INFINITY
+      end
     end
 
     describe "for time type" do
@@ -54,6 +62,14 @@ RSpec.describe ValidatesTimeliness::Converter do
 
       it 'should return nil for invalid value types' do
         expect(type_cast_value(12)).to eq(nil)
+      end
+
+      it "should return nil for Infinity" do
+        expect(type_cast_value(Float::INFINITY)).to eq nil
+      end
+
+      it "should return nil for -Infinity" do
+        expect(type_cast_value(-Float::INFINITY)).to eq nil
       end
     end
 
@@ -83,6 +99,14 @@ RSpec.describe ValidatesTimeliness::Converter do
 
       it 'should return nil for invalid value types' do
         expect(type_cast_value(12)).to eq(nil)
+      end
+
+      it "should return the original value for Infinity" do
+        expect(type_cast_value(Float::INFINITY)).to eq Float::INFINITY
+      end
+
+      it "should return the original value for -Infinity" do
+        expect(type_cast_value(-Float::INFINITY)).to eq -Float::INFINITY
       end
     end
 
