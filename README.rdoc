@@ -30,7 +30,7 @@ If you a looking for the old version for Rails 4.x go here [https://github.com/a
 == Installation
 
   # in Gemfile
-  gem 'validates_timeliness', '~> 5.0.0.alpha3'
+  gem 'validates_timeliness', '~> 5.0.0.beta1'
 
   # Run bundler
   $ bundle install
