@@ -49,21 +49,21 @@ NOTE: You may wish to enable the plugin parser and the extensions to start. Plea
 
   validates_datetime :occurred_at
 
-  validates_date :date_of_birth, :before => lambda { 18.years.ago },
-                                 :before_message => "must be at least 18 years old"
+  validates_date :date_of_birth, before: lambda { 18.years.ago },
+                                 before_message: "must be at least 18 years old"
 
-  validates_datetime :finish_time, :after => :start_time # Method symbol
+  validates_datetime :finish_time, after: :start_time # Method symbol
 
-  validates_date :booked_at, :on => :create, :on_or_after => :today # See Restriction Shorthand.
+  validates_date :booked_at, on: :create, on_or_after: :today # See Restriction Shorthand.
 
-  validates_time :booked_at, :between => ['9:00am', '5:00pm'] # On or after 9:00AM and on or before 5:00PM
-  validates_time :booked_at, :between => '9:00am'..'5:00pm' # The same as previous example
-  validates_time :booked_at, :between => '9:00am'...'5:00pm' # On or after 9:00AM and strictly before 5:00PM
+  validates_time :booked_at, between: ['9:00am', '5:00pm'] # On or after 9:00AM and on or before 5:00PM
+  validates_time :booked_at, between: '9:00am'..'5:00pm' # The same as previous example
+  validates_time :booked_at, between: '9:00am'...'5:00pm' # On or after 9:00AM and strictly before 5:00PM
 
-  validates_time :breakfast_time, :on_or_after => '6:00am',
-                                  :on_or_after_message => 'must be after opening time',
-                                  :before => :lunchtime,
-                                  :before_message => 'must be before lunch time'
+  validates_time :breakfast_time, on_or_after: '6:00am',
+                                  on_or_after_message: 'must be after opening time',
+                                  before: :lunchtime,
+                                  before_message: 'must be before lunch time'
 
 
 == Usage
@@ -72,14 +72,14 @@ To validate a model with a date, time or datetime attribute you just use the
 validation method
 
   class Person < ActiveRecord::Base
-    validates_date :date_of_birth, :on_or_before => lambda { Date.current }
+    validates_date :date_of_birth, on_or_before: lambda { Date.current }
     # or
-    validates :date_of_birth, :timeliness => {:on_or_before => lambda { Date.current }, :type => :date}
+    validates :date_of_birth, timeliness: {on_or_before: lambda { Date.current }, type: :date}
   end
 
 or even on a specific record, per ActiveModel API.
 
-  @person.validates_date :date_of_birth, :on_or_before => lambda { Date.current }
+  @person.validates_date :date_of_birth, on_or_before: lambda { Date.current }
 
 
 The list of validation methods available are as follows:
@@ -206,14 +206,14 @@ plugin allows you to use shorthand symbols for often used relative times or date
 
 Just provide the symbol as the option value like so:
 
-  validates_date :birth_date, :on_or_before => :today
+  validates_date :birth_date, on_or_before: :today
 
 The :today symbol is evaluated as <tt>lambda { Date.today }</tt>. The :now and :today
 symbols are pre-configured. Configure your own like so:
 
   # in the setup block
   config.restriction_shorthand_symbols.update(
-    :yesterday => lambda { 1.day.ago }
+    yesterday: lambda { 1.day.ago }
   )
 
 
