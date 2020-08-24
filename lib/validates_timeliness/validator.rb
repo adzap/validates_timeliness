@@ -86,7 +86,7 @@ module ValidatesTimeliness
     def add_error(record, attr_name, message, value=nil)
       value = format_error_value(value) if value
       message_options = { :message => options.fetch(:"#{message}_message", options[:message]), :restriction => value }
-      record.errors.add(attr_name, message, message_options)
+      record.errors.add(attr_name, message, **message_options)
     end
 
     def format_error_value(value)

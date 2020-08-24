@@ -15,11 +15,11 @@ module TestModel
       self.model_attributes[name] = type
     end
 
-    def define_method_attribute=(attr_name)
+    def define_method_attribute=(attr_name, owner: nil)
       generated_attribute_methods.module_eval("def #{attr_name}=(new_value); @attributes['#{attr_name}']=self.class.type_cast('#{attr_name}', new_value); end", __FILE__, __LINE__)
     end
 
-    def define_method_attribute(attr_name)
+    def define_method_attribute(attr_name, owner: nil)
       generated_attribute_methods.module_eval("def #{attr_name}; @attributes['#{attr_name}']; end", __FILE__, __LINE__)
     end
 
