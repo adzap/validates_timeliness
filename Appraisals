@@ -18,3 +18,7 @@ end
 appraise "rails_6_1" do
   gem "rails", "~> 6.1.0"
 end
+
+appraise "rails_edge" do
+  gem "rails", git: "https://github.com/rails/rails.git", branch: "main"
+end

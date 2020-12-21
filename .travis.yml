@@ -1,3 +1,5 @@
+dist: focal
+os: linux
 language: ruby
 before_install: gem install bundler
 cache: bundler
@@ -8,9 +10,36 @@ gemfile:
   - gemfiles/rails_5_2.gemfile
   - gemfiles/rails_6_0.gemfile
   - gemfiles/rails_6_1.gemfile
+  - gemfiles/rails_edge.gemfile
 
 rvm:
-  - "2.5.3"
+  - "2.5.8"
+  - "2.6.6"
+  - "2.7.2"
+  - ruby-head
+
+jobs:
+  allow_failures:
+    - rvm: ruby-head
+    - gemfile: gemfiles/rails_edge.gemfile
+  exclude:
+    - rvm: 2.5.8
+      gemfile: gemfiles/rails_edge.gemfile
+    - rvm: 2.6.6
+      gemfile: gemfiles/rails_edge.gemfile
+    - rvm: 2.7.2
+      gemfile: gemfiles/rails_5_0.gemfile
+    - rvm: 2.7.2
+      gemfile: gemfiles/rails_5_1.gemfile
+    - rvm: 2.7.2
+      gemfile: gemfiles/rails_5_2.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/rails_5_0.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/rails_5_1.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/rails_5_2.gemfile
+  fast_finish: true
 
 script: 'bundle exec rspec'
 
