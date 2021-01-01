@@ -5,6 +5,7 @@
 	in a request.
 * Add initializer to ensure Timeliness v0.4+ ambiguous date config is set
   correctly when using `use_euro_formats` or `remove_use_formats'.
+* Add Ruby 3 compatibility
 * Add Rails 6.1 compatibility
 
 Breaking Changes
