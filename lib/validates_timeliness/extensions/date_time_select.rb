@@ -43,7 +43,7 @@ module ValidatesTimeliness
           values[POSITION.key(position.to_i)] = value.to_i
         end
 
-        DateTimeValue.new(values)
+        DateTimeValue.new(**values)
       end
     end
   end

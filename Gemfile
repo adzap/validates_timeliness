@@ -2,11 +2,11 @@ source 'http://rubygems.org'
 
 gemspec
 
-gem 'rails', '~> 5.2.4'
+gem 'rails', '~> 6.1.0'
 gem 'rspec'
 gem 'rspec-rails', '~> 3.7'
+gem 'sqlite3'
 gem 'timecop'
 gem 'byebug'
 gem 'appraisal'
-gem 'sqlite3', '~> 1.3.6'
 gem 'nokogiri', '~> 1.8'
