@@ -5,9 +5,6 @@ before_install: gem install bundler
 cache: bundler
 
 gemfile:
-  - gemfiles/rails_5_0.gemfile
-  - gemfiles/rails_5_1.gemfile
-  - gemfiles/rails_5_2.gemfile
   - gemfiles/rails_6_0.gemfile
   - gemfiles/rails_6_1.gemfile
   - gemfiles/rails_edge.gemfile
@@ -28,24 +25,6 @@ jobs:
       gemfile: gemfiles/rails_edge.gemfile
     - rvm: 2.6.6
       gemfile: gemfiles/rails_edge.gemfile
-    - rvm: 2.7.2
-      gemfile: gemfiles/rails_5_0.gemfile
-    - rvm: 2.7.2
-      gemfile: gemfiles/rails_5_1.gemfile
-    - rvm: 2.7.2
-      gemfile: gemfiles/rails_5_2.gemfile
-    - rvm: 3.0.0
-      gemfile: gemfiles/rails_5_0.gemfile
-    - rvm: 3.0.0
-      gemfile: gemfiles/rails_5_1.gemfile
-    - rvm: 3.0.0
-      gemfile: gemfiles/rails_5_2.gemfile
-    - rvm: ruby-head
-      gemfile: gemfiles/rails_5_0.gemfile
-    - rvm: ruby-head
-      gemfile: gemfiles/rails_5_1.gemfile
-    - rvm: ruby-head
-      gemfile: gemfiles/rails_5_2.gemfile
   fast_finish: true
 
 script: 'bundle exec rspec'

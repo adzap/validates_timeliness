@@ -5,9 +5,13 @@
 
 == Description
 
-Complete validation of dates, times and datetimes for Rails 5.x and ActiveModel.
+Complete validation of dates, times and datetimes for Rails 6.x and ActiveModel.
 
-If you a looking for the old version for Rails 4.x go here [https://github.com/adzap/validates_timeliness/tree/4-0-stable].
+Old Rails versions:
+
+* Rails 4.x: [https://github.com/adzap/validates_timeliness/tree/4-0-stable]
+
+* Rails 5.x: [https://github.com/adzap/validates_timeliness/tree/5-0-stable]
 
 
 == Features
@@ -30,7 +34,7 @@ If you a looking for the old version for Rails 4.x go here [https://github.com/a
 == Installation
 
   # in Gemfile
-  gem 'validates_timeliness', '~> 5.0.0.beta1'
+  gem 'validates_timeliness', '~> 6.0.0.alpha1'
 
   # Run bundler
   $ bundle install
