@@ -19,10 +19,11 @@ end
 
 desc 'Generate documentation for plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
+  rdoc.main = 'README.rdoc'
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'ValidatesTimeliness'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README')
+  rdoc.options << '--line-numbers'
+  rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 

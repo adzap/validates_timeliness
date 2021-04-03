@@ -1,7 +1,7 @@
 = ValidatesTimeliness {<img src="https://travis-ci.org/adzap/validates_timeliness.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/adzap/validates_timeliness]
 
-* Source:  http://github.com/adzap/validates_timeliness
-* Issues:  http://github.com/adzap/validates_timeliness/issues
+* Source:  https://github.com/adzap/validates_timeliness
+* Issues:  https://github.com/adzap/validates_timeliness/issues
 
 == Description
 
@@ -18,7 +18,7 @@ If you a looking for the old version for Rails 4.x go here [https://github.com/a
 
 * Only Rails date/time validation plugin offering complete validation (See ORM/ODM support)
 
-* Uses extensible date/time parser (Using {timeliness gem}[http://github.com/adzap/timeliness]. See Plugin Parser)
+* Uses extensible date/time parser (Using {timeliness gem}[https://github.com/adzap/timeliness]. See Plugin Parser)
 
 * Adds extensions to fix Rails date/time select issues (See Extensions)
 
@@ -36,7 +36,7 @@ If you a looking for the old version for Rails 4.x go here [https://github.com/a
   $ bundle install
 
 Then run
-  
+
   $ rails generate validates_timeliness:install
 
 This creates configuration initializer and locale files. In the initializer, there are a number of config
@@ -97,7 +97,7 @@ Temporal options (or restrictions):
   :on_or_before - Attribute must be equal to or before this value to be valid
   :after        - Attribute must be after this value to be valid
   :on_or_after  - Attribute must be equal to or after this value to be valid
-  :between      - Attribute must be between the values to be valid. Range or Array of 2 values. 
+  :between      - Attribute must be between the values to be valid. Range or Array of 2 values.
 
 Regular validation options:
   :allow_nil    - Allow a nil value to be valid
@@ -142,7 +142,7 @@ like so
 
   end
 
-By default the plugin extends ActiveRecord if loaded. If you wish to extend another ORM then look at the {wiki page}[http://github.com/adzap/validates_timeliness/wiki/ORM-Support] for more information.
+By default the plugin extends ActiveRecord if loaded. If you wish to extend another ORM then look at the {wiki page}[https://github.com/adzap/validates_timeliness/wiki/ORM-Support] for more information.
 
 It is not required that you use a shim, but you will not catch errors when the attribute value is invalid and evaluated to nil.
 
@@ -184,7 +184,7 @@ It is highly recommended you use the I18n system for error messages.
 
 === Plugin Parser
 
-The plugin uses the {timeliness gem}[http://github.com/adzap/timeliness] as a fast, configurable and extensible date and time parser.
+The plugin uses the {timeliness gem}[https://github.com/adzap/timeliness] as a fast, configurable and extensible date and time parser.
 You can add or remove valid formats for dates, times, and datetimes. It is also more strict than the
 Ruby parser, which means it won't accept day of the month if it's not a valid number for the month.
 
@@ -194,12 +194,12 @@ By default the parser is disabled. To enable it:
   config.use_plugin_parser = true
 
 Enabling the parser will mean that strings assigned to attributes validated with the plugin will be parsed
-using the gem. See the wiki[http://github.com/adzap/validates_timeliness/wiki/Plugin-Parser] for more details about the parser configuration.
+using the gem. See the wiki[https://github.com/adzap/validates_timeliness/wiki/Plugin-Parser] for more details about the parser configuration.
 
 
 === Restriction Shorthand
 
-It is common to restrict an attribute to being on or before the current time or current day. 
+It is common to restrict an attribute to being on or before the current time or current day.
 To specify this you need to use a lambda as an option value e.g. <tt>lambda { Time.current }</tt>.
 This can be tedious noise amongst your validations for something so common. To combat this the
 plugin allows you to use shorthand symbols for often used relative times or dates.
@@ -208,7 +208,7 @@ Just provide the symbol as the option value like so:
 
   validates_date :birth_date, on_or_before: :today
 
-The :today symbol is evaluated as <tt>lambda { Date.today }</tt>. The :now and :today
+The :today symbol is evaluated as <tt>lambda { Date.current }</tt>. The :now and :today
 symbols are pre-configured. Configure your own like so:
 
   # in the setup block
@@ -220,7 +220,7 @@ symbols are pre-configured. Configure your own like so:
 === Default Timezone
 
 The plugin needs to know the default timezone you are using when parsing or type casting values. If you are using
-ActiveRecord then the default is automatically set to the same default zone as ActiveRecord. If you are using 
+ActiveRecord then the default is automatically set to the same default zone as ActiveRecord. If you are using
 another ORM you may need to change this setting.
 
   # in the setup block
@@ -286,12 +286,12 @@ To activate it, uncomment this line in the initializer:
 
 == Contributors
 
-To see the generous people who have contributed code, take a look at the {contributors list}[http://github.com/adzap/validates_timeliness/contributors].
+To see the generous people who have contributed code, take a look at the {contributors list}[https://github.com/adzap/validates_timeliness/contributors].
 
 
 == Maintainers
 
-* {Adam Meehan}[http://github.com/adzap]
+* {Adam Meehan}[https://github.com/adzap]
 
 
 == License
