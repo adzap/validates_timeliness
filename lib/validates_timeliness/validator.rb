@@ -85,12 +85,12 @@ module ValidatesTimeliness
 
     def add_error(record, attr_name, message, value=nil)
       value = format_error_value(value) if value
-      message_options = { :message => options.fetch(:"#{message}_message", options[:message]), :restriction => value }
-      record.errors.add(attr_name, message, **message_options)
+      message_options = { message: options.fetch(:"#{message}_message", options[:message]), restriction: value }
+      record.errors.add(attr_name, message, message_options)
     end
 
     def format_error_value(value)
-      format = I18n.t(@type, :default => DEFAULT_ERROR_VALUE_FORMATS[@type], :scope => 'validates_timeliness.error_value_formats')
+      format = I18n.t(@type, default: DEFAULT_ERROR_VALUE_FORMATS[@type], scope: 'validates_timeliness.error_value_formats')
       value.strftime(format)
     end
 
