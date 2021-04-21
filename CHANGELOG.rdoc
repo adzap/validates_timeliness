@@ -1,4 +1,4 @@
-= [UNRELEASED]
+= 5.0.0 [2021-04-03]
 * Fix DateTimeSelect extension support (AquisTech)
 * Relaxed Timeliness dependency version which allows for >= 0.4.0 with
   threadsafety fix for use_us_formats and use_euro_formats for hot switching
