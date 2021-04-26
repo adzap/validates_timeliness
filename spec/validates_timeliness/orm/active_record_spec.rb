@@ -35,6 +35,28 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
       record.valid?
       expect(record.errors[:birth_date]).to be_empty
     end
+
+    context 'with hash syntax' do
+      class Employee < ActiveRecord::Base
+        validates_date :some_other_date, { allow_nil: true, allow_blank: true }
+      end
+
+      let(:record) { Employee.new }
+
+      it 'allows nil' do
+        record[:some_other_date] = nil
+        expect(record.valid?).to eq(true)
+        expect(record.errors.empty?).to eq(true)
+      end
+
+      it 'allows blank' do
+        ['', {}, []].each do |blank_val|
+          record[:some_other_date] = blank_val
+          expect(record.valid?).to eq(true)
+          expect(record.errors.empty?).to eq(true)
+        end
+      end
+    end
   end
 
   context 'attribute timezone awareness' do
