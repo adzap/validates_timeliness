@@ -91,7 +91,7 @@ module ValidatesTimeliness
 
     def format_error_value(value)
       format = I18n.t(@type, :default => DEFAULT_ERROR_VALUE_FORMATS[@type], :scope => 'validates_timeliness.error_value_formats')
-      value.strftime(format)
+      I18n.localize(value, format: format)
     end
 
     def attribute_raw_value(record, attr_name)
