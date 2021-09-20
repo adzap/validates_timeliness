@@ -99,9 +99,23 @@ module ValidatesTimeliness
         record.read_timeliness_attribute_before_type_cast(attr_name.to_s)
     end
 
+    def time_zone_aware_enabled?
+      defined?(ActiveRecord::Base) ? ActiveRecord::Base.time_zone_aware_attributes : true
+    end
+
+    def class_is_time_zone_aware?(record)
+      if defined?(ActiveRecord::Base) && ActiveRecord::Base.respond_to?(:time_zone_aware_types)
+        ActiveRecord::Base.time_zone_aware_types.include?(record.class.name.underscore.to_sym)
+      else
+        true
+      end
+    end
+
     def time_zone_aware?(record, attr_name)
-      record.class.respond_to?(:skip_time_zone_conversion_for_attributes) &&
-        !record.class.skip_time_zone_conversion_for_attributes.include?(attr_name.to_sym)
+      time_zone_aware_enabled? &&
+        class_is_time_zone_aware?(record) &&
+          record.class.respond_to?(:skip_time_zone_conversion_for_attributes) &&
+            !record.class.skip_time_zone_conversion_for_attributes.include?(attr_name.to_sym)
     end
 
     def initialize_converter(record, attr_name)
