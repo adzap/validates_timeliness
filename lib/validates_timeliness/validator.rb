@@ -103,9 +103,10 @@ module ValidatesTimeliness
       defined?(ActiveRecord::Base) ? ActiveRecord::Base.time_zone_aware_attributes : true
     end
 
-    def class_is_time_zone_aware?(record)
+    def class_is_time_zone_aware?(record, attr_name)
       if defined?(ActiveRecord::Base) && ActiveRecord::Base.respond_to?(:time_zone_aware_types)
-        ActiveRecord::Base.time_zone_aware_types.include?(record.class.name.underscore.to_sym)
+        attr_type = record.class.columns.find { |c| c.name == attr_name.to_s }&.type
+        attr_type.present?? ActiveRecord::Base.time_zone_aware_types.include?(attr_type) : false
       else
         true
       end
