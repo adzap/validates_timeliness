@@ -17,5 +17,6 @@ Gem::Specification.new do |s|
   s.test_files       = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc", "LICENSE"]
 
-  s.add_runtime_dependency(%q<timeliness>, [">= 0.3.10", "< 1"])
+  s.add_runtime_dependency("activemodel", [">= 6.0.0", "< 7"])
+  s.add_runtime_dependency("timeliness", [">= 0.3.10", "< 1"])
 end
