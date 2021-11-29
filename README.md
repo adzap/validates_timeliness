@@ -1,4 +1,4 @@
-# ValidatesTimeliness [<img src="https://travis-ci.org/adzap/validates_timeliness.svg?branch=master" alt="Build Status" />](https://travis-ci.com/adzap/validates_timeliness)
+# ValidatesTimeliness [![build](https://github.com/adzap/validates_timeliness/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/adzap/validates_timeliness/actions/workflows/ci.yml)
 
 *   Source:  https://github.com/adzap/validates_timeliness
 *   Issues:  https://github.com/adzap/validates_timeliness/issues
