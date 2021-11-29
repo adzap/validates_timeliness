@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.require_paths    = ["lib"]
   s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock autotest/discover.rb Appraisals Travis.yml } - Dir['gemsfiles/*']
   s.test_files       = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc", "LICENSE"]
+  s.extra_rdoc_files = ["README.md", "CHANGELOG.rdoc", "LICENSE"]
 
   s.add_runtime_dependency("activemodel", [">= 6.0.0", "< 7"])
   s.add_runtime_dependency("timeliness", [">= 0.3.10", "< 1"])
