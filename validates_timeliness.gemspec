@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
 
   s.require_paths    = ["lib"]
-  s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock autotest/discover.rb Appraisals Travis.yml } - Dir['gemsfiles/*']
+  s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock autotest/discover.rb Appraisals } - Dir['gemsfiles/*']
   s.test_files       = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.extra_rdoc_files = ["README.md", "CHANGELOG.rdoc", "LICENSE"]
 
