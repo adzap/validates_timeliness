@@ -40,7 +40,7 @@ Old Rails versions:
 ## Installation
 
     # in Gemfile
-    gem 'validates_timeliness', '~> 6.0.0.alpha1'
+    gem 'validates_timeliness', '~> 6.0.0.beta2'
 
     # Run bundler
     $ bundle install
