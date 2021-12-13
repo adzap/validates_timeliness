@@ -21,7 +21,8 @@ jobs:
             ruby: 3.0
 
     name: ${{ matrix.gemfile }}, ruby ${{ matrix.ruby }}
-
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
     steps:
     - uses: actions/checkout@v2
 
@@ -29,13 +30,7 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-        bundler-cache: false
-
-    - name: Bundle install
-      run: |
-        bundle config set gemfile "${GITHUB_WORKSPACE}/gemfiles/${{ matrix.gemfile }}.gemfile"
-        bundle install --jobs 4 --retry 3
+        bundler-cache: true
 
     - name: Run specs
-      run: |
-        bundle exec rspec
+      run: bundle exec rspec
