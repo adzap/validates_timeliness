@@ -2,7 +2,7 @@ module ValidatesTimeliness
   class Railtie < Rails::Railtie
     initializer "validates_timeliness.initialize_active_record", :after => 'active_record.initialize_timezone' do
       ActiveSupport.on_load(:active_record) do
-        ValidatesTimeliness.default_timezone = ActiveRecord::Base.default_timezone
+        ValidatesTimeliness.default_timezone = (::ActiveRecord.respond_to?(:default_timezone) ? ::ActiveRecord.default_timezone : ::ActiveRecord::Base.default_timezone)
         ValidatesTimeliness.extend_orms << :active_record
         ValidatesTimeliness.load_orms
       end
