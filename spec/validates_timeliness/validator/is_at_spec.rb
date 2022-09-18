@@ -1,6 +1,10 @@
 RSpec.describe ValidatesTimeliness::Validator, ":is_at option" do
   before do
-    Timecop.freeze(Time.local(2010, 1, 1, 0, 0, 0))
+    travel_to Time.local(2010, 1, 1, 0, 0, 0)
+  end
+
+  after do
+    travel_back
   end
 
   describe "for date type" do
