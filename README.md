@@ -28,9 +28,9 @@ Old Rails versions:
 
 ## Installation
 
-In Gemfile:
+In Gemfile
 ```ruby
-gem 'validates_timeliness', '~> 6.0.0.beta2'
+gem 'validates_timeliness', '~> 6.0.0'
 ```
 
 Run bundler:
