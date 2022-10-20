@@ -1,6 +1,10 @@
 RSpec.describe ValidatesTimeliness::Validator do
   before do
-    Timecop.freeze(Time.local(2010, 1, 1, 0, 0, 0))
+    travel_to Time.local(2010, 1, 1, 0, 0, 0)
+  end
+
+  after do
+    travel_back
   end
 
   describe "Model.validates with :timeliness option" do

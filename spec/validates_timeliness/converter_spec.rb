@@ -7,7 +7,11 @@ RSpec.describe ValidatesTimeliness::Converter do
   let(:ignore_usec) { false }
 
   before do
-    Timecop.freeze(Time.mktime(2010, 1, 1, 0, 0, 0))
+    travel_to Time.mktime(2010, 1, 1, 0, 0, 0)
+  end
+
+  after do
+    travel_back
   end
 
   delegate :type_cast_value, :evaluate, :parse, :dummy_time, to: :converter
@@ -195,10 +199,6 @@ RSpec.describe ValidatesTimeliness::Converter do
     end
 
     context "restriction shorthand" do
-      before do
-        Timecop.freeze(Time.mktime(2010, 1, 1, 0, 0, 0))
-      end
-
       it 'should evaluate :now as current time' do
         expect(evaluate(:now, person)).to eq(Time.now)
       end

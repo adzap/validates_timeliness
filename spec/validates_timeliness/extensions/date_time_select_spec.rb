@@ -115,7 +115,11 @@ RSpec.describe 'ValidatesTimeliness::Extensions::DateTimeSelect' do
 
   describe "time_select" do
     before do
-      Timecop.freeze Time.mktime(2009,1,1)
+      travel_to Time.mktime(2009,1,1)
+    end
+
+    after do
+      travel_back
     end
 
     it "should use param values when attribute is nil" do
@@ -158,5 +162,5 @@ RSpec.describe 'ValidatesTimeliness::Extensions::DateTimeSelect' do
       expect(@output).not_to have_tag("select[id=person_#{attribute}_#{index}i] option[selected=selected]")
     end
   end
-  
+
 end

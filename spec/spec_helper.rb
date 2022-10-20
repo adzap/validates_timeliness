@@ -5,7 +5,7 @@ require 'active_model'
 require 'active_model/validations'
 require 'active_record'
 require 'action_view'
-require 'timecop'
+require 'active_support/testing/time_helpers'
 
 require 'validates_timeliness'
 require 'validates_timeliness/orm/active_model'
@@ -89,6 +89,7 @@ RSpec.configure do |c|
   c.include(TagMatcher)
   c.include(ModelHelpers)
   c.include(ConfigHelper)
+  c.include(ActiveSupport::Testing::TimeHelpers)
   c.before do
     reset_validation_setup_for(Person)
     reset_validation_setup_for(PersonWithShim)
