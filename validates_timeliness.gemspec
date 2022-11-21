@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["README.md", "CHANGELOG.md", "LICENSE"]
 
   s.metadata = {
+    "rubygems_mfa_required" => "true",
     "bug_tracker_uri" => "#{github_url}/issues",
     "changelog_uri"   => "#{github_url}/blob/master/CHANGELOG.md",
     "source_code_uri" => "#{github_url}",
