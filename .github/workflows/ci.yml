@@ -8,8 +8,6 @@ jobs:
       matrix:
         include:
           - gemfile: rails_7_0
-            ruby: 2.6
-          - gemfile: rails_7_0
             ruby: 2.7
           - gemfile: rails_7_0
             ruby: 3.0
