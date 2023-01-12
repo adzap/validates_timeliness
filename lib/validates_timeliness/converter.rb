@@ -23,8 +23,9 @@ module ValidatesTimeliness
       else
         value
       end
+
       if ignore_usec && value.is_a?(Time)
-        Timeliness::Parser.make_time(Array(value).reverse[4..9], (:current if time_zone_aware?))
+        value.change(usec: 0)
       else
         value
       end
