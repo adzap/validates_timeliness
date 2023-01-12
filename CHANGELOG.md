@@ -1,3 +1,13 @@
+# 6.0.1 [2023-01-12]
+*   Ensure Date value is converted to time in zone for zone aware attributes
+*   Use ActiveSupport #change method to zero out usec
+
+# 6.0.0 [2022-10-21]
+*   Add Ruby 3 compatibility fixes
+*   Add Rails 6.0 and 6.1 compatibility
+*   Restrict upper version of ActiveModel to < 7
+*   README and gemspec improvements and fixes
+
 # 5.0.0 [2021-04-03]
 *   Fix DateTimeSelect extension support (AquisTech)
 *   Relaxed Timeliness dependency version which allows for >= 0.4.0 with
@@ -6,8 +16,6 @@
 	in a request.
 *   Add initializer to ensure Timeliness v0.4+ ambiguous date config is set
     correctly when using `use_euro_formats` or `remove_use_formats'.
-*   Add Ruby 3 compatibility
-*   Add Rails 6.1 compatibility
 
 
 Breaking Changes
