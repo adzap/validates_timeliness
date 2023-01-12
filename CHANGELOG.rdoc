@@ -1,3 +1,7 @@
+= 5.0.1 [2023-01-12]
+* Ensure Date value is converted to time in zone for zone aware attributes
+* Use ActiveSupport #change method to zero out usec
+
 = 5.0.0 [2021-04-03]
 * Fix DateTimeSelect extension support (AquisTech)
 * Relaxed Timeliness dependency version which allows for >= 0.4.0 with
