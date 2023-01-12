@@ -19,7 +19,7 @@ module ValidatesTimeliness
       when :date
         value.to_date
       when :datetime
-        value.is_a?(Time) ? value : value.to_time
+        value.is_a?(Time) ? value : (time_zone_aware? ? value.in_time_zone : value.to_time)
       else
         value
       end

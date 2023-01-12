@@ -63,30 +63,61 @@ RSpec.describe ValidatesTimeliness::Converter do
 
     describe "for datetime type" do
       let(:type) { :datetime }
-      let(:time_zone_aware) { true }
-
-      it "should return Date as Time value" do
-        expect(type_cast_value(Date.new(2010, 1, 1))).to eq(Time.local(2010, 1, 1, 0, 0, 0))
-      end
-
-      it "should return same Time value" do
-        value = Time.utc(2010, 1, 1, 12, 34, 56)
-        expect(type_cast_value(Time.utc(2010, 1, 1, 12, 34, 56))).to eq(value)
-      end
-
-      it "should return as Time with same component values" do
-        expect(type_cast_value(DateTime.civil_from_format(:utc, 2010, 1, 1, 12, 34, 56))).to eq(Time.utc(2010, 1, 1, 12, 34, 56))
-      end
-
-      it "should return same Time in correct zone if timezone aware" do
-        value = Time.utc(2010, 1, 1, 12, 34, 56)
-        result = type_cast_value(value)
-        expect(result).to eq(Time.zone.local(2010, 1, 1, 23, 34, 56))
-        expect(result.zone).to eq('AEDT')
-      end
 
       it 'should return nil for invalid value types' do
         expect(type_cast_value(12)).to eq(nil)
+      end
+
+      context "time zone aware" do
+        let(:time_zone_aware) { true }
+
+        around { |example|
+          Time.use_zone("Perth", &example)
+        }
+
+        it "should return Date as Time value" do
+          Time.use_zone('London') do
+            result = type_cast_value(Date.new(2010, 1, 1))
+            expected = Time.zone.local(2010, 1, 1, 0, 0, 0)
+
+            expect(result).to eq(expected)
+            expect(result.zone).to eq(expected.zone)
+          end
+        end
+
+        it "should return same Time value" do
+          value = Time.utc(2010, 1, 1, 12, 34, 56)
+          expect(type_cast_value(value)).to eq(value)
+        end
+
+        it "should return as Time with same component values" do
+          expect(type_cast_value(DateTime.civil_from_format(:utc, 2010, 1, 1, 12, 34, 56))).to eq(Time.utc(2010, 1, 1, 12, 34, 56))
+        end
+
+        it "should return same Time in correct zone if timezone aware" do
+          value = Time.utc(2010, 1, 1, 12, 34, 56)
+          result = type_cast_value(value)
+
+          expect(result).to eq(Time.zone.local(2010, 1, 1, 20, 34, 56))
+          expect(result.zone).to eq('AWST')
+        end
+      end
+
+      context "not time zone aware" do
+        let(:time_zone_aware) { false }
+
+        it "should return Date as Time value" do
+          expect(type_cast_value(Date.new(2010, 1, 1))).to eq(Time.local(2010, 1, 1, 0, 0, 0))
+        end
+
+        it "should return same Time value" do
+          value = Time.utc(2010, 1, 1, 12, 34, 56)
+          expect(type_cast_value(Time.utc(2010, 1, 1, 12, 34, 56))).to eq(value)
+        end
+
+        it "should return as Time with same component values" do
+          expect(type_cast_value(DateTime.civil_from_format(:utc, 2010, 1, 1, 12, 34, 56))).to eq(Time.utc(2010, 1, 1, 12, 34, 56))
+        end
       end
     end
 
