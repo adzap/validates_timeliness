@@ -20,7 +20,7 @@ module ActiveModel
 
       def timeliness_validation_for(attr_names, type=nil)
         options = _merge_attributes(attr_names)
-        options.update(:type => type) if type
+        options.update(type: type) if type
         validates_with TimelinessValidator, options
       end
     end
