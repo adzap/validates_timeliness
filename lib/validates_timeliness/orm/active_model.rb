@@ -59,7 +59,7 @@ module ValidatesTimeliness
       end
 
       def read_timeliness_attribute_before_type_cast(attr_name)
-        @timeliness_cache && @timeliness_cache[attr_name] || @attributes[attr_name]
+        @timeliness_cache && @timeliness_cache[attr_name] || @attributes[attr_name].value_before_type_cast
       end
 
       def _clear_timeliness_cache
