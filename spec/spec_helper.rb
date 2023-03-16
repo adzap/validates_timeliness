@@ -22,7 +22,6 @@ ValidatesTimeliness.setup do |c|
   c.enable_date_time_select_extension!
   c.enable_multiparameter_extension!
   c.default_timezone = :utc
-  c.use_plugin_parser = true
 end
 
 Time.zone = 'Australia/Melbourne'

@@ -14,6 +14,8 @@ class FormatTestModel
 end
 
 RSpec.describe ValidatesTimeliness::Validator, ":format option" do
+  with_config(:use_plugin_parser, true)
+
   describe "for date type" do
     it "should not be valid for string given in the wrong format" do
       model = FormatTestModel.new(date: "01-01-2010")
