@@ -33,8 +33,6 @@ I18n.available_locales = ['en', 'es']
 # Extend TestModel as you would another ORM/ODM module
 module TestModelShim
   extend ActiveSupport::Concern
-  include ValidatesTimeliness::AttributeMethods
-  include ValidatesTimeliness::ORM::ActiveModel
 
   module ClassMethods
     # Hook into native time zone handling check, if any
@@ -46,11 +44,10 @@ end
 
 class Person
   include TestModel
+
   attribute :birth_date, :date
   attribute :birth_time, :time
   attribute :birth_datetime, :datetime
-
-  define_attribute_methods model_attributes.keys
 end
 
 class PersonWithShim < Person
