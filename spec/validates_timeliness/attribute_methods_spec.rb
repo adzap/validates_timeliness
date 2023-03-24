@@ -44,9 +44,11 @@ RSpec.describe ValidatesTimeliness::AttributeMethods do
       class PersonWithParser
         include TestModel
         include TestModelShim
+
         attribute :birth_date, :date
         attribute :birth_time, :time
         attribute :birth_datetime, :datetime
+
         validates_date :birth_date
         validates_time :birth_time
         validates_datetime :birth_datetime
@@ -54,8 +56,10 @@ RSpec.describe ValidatesTimeliness::AttributeMethods do
 
       it 'should parse a string value' do
         expect(Timeliness::Parser).to receive(:parse)
+
         r = PersonWithParser.new
         r.birth_date = '2010-01-01'
+        r.birth_date # parsing happens on read not write
       end
 
     end

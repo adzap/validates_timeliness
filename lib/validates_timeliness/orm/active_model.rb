@@ -6,30 +6,54 @@ module ValidatesTimeliness
       module ClassMethods
         public
 
+        # Hook into bulk method definitions for non-attribute based methods validated.
         def define_attribute_methods(*attr_names)
-          super.tap { define_timeliness_methods }
+          super.tap {
+            define_timeliness_methods
+          }
+        end
+
+        # Called when `attribute` methods is called and the timeliness overrides are defined here
+        def define_attribute_method(attr_name)
+          super.tap {
+            define_attribute_timeliness_methods(attr_name)
+          }
         end
 
         def undefine_attribute_methods
-          super.tap { undefine_timeliness_attribute_methods }
+          super.tap {
+            undefine_timeliness_attribute_methods
+          }
         end
 
         def define_timeliness_methods(before_type_cast=false)
           return if timeliness_validated_attributes.blank?
+
           timeliness_validated_attributes.each do |attr_name|
-            define_attribute_timeliness_methods(attr_name, before_type_cast)
+            unless timeliness_method_already_implemented?(attr_name)
+              define_attribute_timeliness_methods(attr_name, before_type_cast)
+            end
           end
         end
 
+        def define_timeliness_method(attr_name, before_type_cast=false)
+          define_attribute_timeliness_methods(attr_name, before_type_cast)
+        end
+
+        # Lazy instantiate module as container of timeliness methods included in the model
         def generated_timeliness_methods
           @generated_timeliness_methods ||= Module.new { |m|
             extend Mutex_m
           }.tap { |mod| include mod }
         end
 
+        def timeliness_method_already_implemented?(method_name)
+          generated_timeliness_methods.method_defined?(method_name)
+        end
+
         def undefine_timeliness_attribute_methods
           generated_timeliness_methods.module_eval do
-            instance_methods.each { |m| undef_method(m) }
+            undef_method(*instance_methods)
           end
         end
 
@@ -44,7 +68,7 @@ module ValidatesTimeliness
               @timeliness_cache ||= {}
               @timeliness_cache['#{attr_name}'] = value
 
-              @attributes['#{attr_name}'] = super
+              super
             end
           STR
         end
