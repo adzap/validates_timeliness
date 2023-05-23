@@ -185,6 +185,27 @@ RSpec.describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe "custom option" do
+    class PersonWithCustomOption
+      include TestModel
+      include TestModelShim
+      attribute :birth_date, :date
+      attribute :birth_time, :time
+      attribute :birth_datetime, :datetime
+      validates_date :birth_date, :format => 'dd-mm-yyyy', :custom_option => "custom option"
+    end
+
+    let(:person) { PersonWithCustomOption.new }
+
+    with_config(:use_plugin_parser, true)
+
+    it "should be included in the errors" do
+      person.birth_date = '1913-12-11'
+      person.valid?
+      expect(person.errors.first.options).to include(:custom_option => "custom option")
+    end
+  end
+
   describe "restriction value errors" do
     let(:person) { Person.new(:birth_date => Date.today) }
 
