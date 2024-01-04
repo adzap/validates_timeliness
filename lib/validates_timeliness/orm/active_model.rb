@@ -42,9 +42,7 @@ module ValidatesTimeliness
 
         # Lazy instantiate module as container of timeliness methods included in the model
         def generated_timeliness_methods
-          @generated_timeliness_methods ||= Module.new { |m|
-            extend Mutex_m
-          }.tap { |mod| include mod }
+          @generated_timeliness_methods ||= Module.new.tap { |mod| include mod }
         end
 
         def timeliness_method_already_implemented?(method_name)
