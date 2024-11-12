@@ -28,6 +28,6 @@ Gem::Specification.new do |s|
     "wiki_uri"        => "#{github_url}/wiki",
   }
 
-  s.add_runtime_dependency("activemodel", [">= 7.0.0", "< 8"])
+  s.add_runtime_dependency("activemodel", [">= 8.0.0", "< 9"])
   s.add_runtime_dependency("timeliness", [">= 0.3.10", "< 1"])
 end
