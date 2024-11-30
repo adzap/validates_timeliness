@@ -1,6 +1,6 @@
 module ValidatesTimeliness
   module Extensions
-    module TimelinessDateTimeSelect
+    module DateTimeSelect
       # Intercepts the date and time select helpers to reuse the values from
       # the params rather than the parsed value. This allows invalid date/time
       # values to be redisplayed instead of blanks to aid correction by the user.
