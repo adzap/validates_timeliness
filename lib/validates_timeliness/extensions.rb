@@ -4,6 +4,7 @@ module ValidatesTimeliness
   end
 
   def self.enable_date_time_select_extension!
+    require 'uri' # Do we need this? No, but the test suite fails without it.
     ::ActionView::Helpers::Tags::DateSelect.send(:prepend, ValidatesTimeliness::Extensions::TimelinessDateTimeSelect)
   end
 
