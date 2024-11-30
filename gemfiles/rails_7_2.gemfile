@@ -9,5 +9,6 @@ gem "sqlite3", "~> 1.4"
 gem "byebug"
 gem "appraisal"
 gem "nokogiri"
+gem "uri"
 
 gemspec path: "../"
