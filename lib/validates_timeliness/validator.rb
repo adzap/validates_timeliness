@@ -95,8 +95,9 @@ module ValidatesTimeliness
     end
 
     def attribute_raw_value(record, attr_name)
-      record.respond_to?(:read_timeliness_attribute_before_type_cast) &&
+      if record.respond_to?(:read_timeliness_attribute_before_type_cast)
         record.read_timeliness_attribute_before_type_cast(attr_name.to_s)
+      end
     end
 
     def time_zone_aware?(record, attr_name)
