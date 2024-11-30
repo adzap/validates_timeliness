@@ -185,6 +185,26 @@ RSpec.describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe "custom option" do
+    it "should pass custom options to the error" do
+      Person.validates_datetime :birth_datetime, :on_or_before => Time.utc(2010,1,2,3,4,5), :custom => 'option'
+
+      with_each_model_value(:birth_datetime, Time.utc(2010,1,2,3,4,5,10000), Person) do |record, value|
+        expect(record).to_not be_valid
+        expect(record.errors.where(:birth_datetime).first.options).to include(custom: 'option')
+      end
+    end
+
+    it "should not pass config options to the error" do
+      Person.validates_datetime :birth_datetime, :on_or_before => Time.utc(2010,1,2,3,4,5), :custom => 'option'
+
+      with_each_model_value(:birth_datetime, Time.utc(2010,1,2,3,4,5,10000), Person) do |record, value|
+        expect(record).to_not be_valid
+        expect(record.errors.where(:birth_datetime).first.options.keys).to_not include(:on_or_before)
+      end
+    end
+  end
+
   describe "restriction value errors" do
     let(:person) { Person.new(:birth_date => Date.today) }
 

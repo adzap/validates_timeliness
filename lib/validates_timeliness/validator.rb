@@ -21,6 +21,8 @@ module ValidatesTimeliness
 
     RESTRICTION_ERROR_MESSAGE = "Error occurred validating %s for %s restriction:\n%s"
 
+    RESERVED_OPTIONS = RESTRICTIONS.keys + RESTRICTIONS.keys.map { |option| :"#{option}_message" }
+
     def self.kind
       :timeliness
     end
@@ -72,7 +74,7 @@ module ValidatesTimeliness
         begin
           restriction_value = @converter.type_cast_value(@converter.evaluate(options[restriction], record))
           unless value.send(RESTRICTIONS[restriction], restriction_value)
-            add_error(record, attr_name, restriction, restriction_value) and break
+            add_error(record, attr_name, restriction, value: value, restriction_value: restriction_value) and break
           end
         rescue => e
           unless ValidatesTimeliness.ignore_restriction_errors
@@ -83,13 +85,20 @@ module ValidatesTimeliness
       end
     end
 
-    def add_error(record, attr_name, message, value=nil)
-      value = format_error_value(value) if value
-      message_options = { message: options.fetch(:"#{message}_message", options[:message]), restriction: value }
-      record.errors.add(attr_name, message, **message_options)
+    def add_error(record, attr_name, message, restriction_value: nil, value: nil)
+      error_options = options.except(*RESERVED_OPTIONS).merge!(
+        restriction: format_error_value(restriction_value),
+        value: value
+      )
+
+      message_text = options[:"#{message}_message"]
+      error_options[:message] = message_text if message_text.present?
+
+      record.errors.add(attr_name, message, **error_options)
     end
 
     def format_error_value(value)
+      return unless value
       format = I18n.t(@type, default: DEFAULT_ERROR_VALUE_FORMATS[@type], scope: 'validates_timeliness.error_value_formats')
       value.strftime(format)
     end
