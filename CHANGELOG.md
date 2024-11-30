@@ -1,3 +1,12 @@
+# 7.0.0 [2024-11-30]
+*   Removed all method overrides in ActiveModel now that the datetime type correctly stores before_type_cast values.
+
+# 6.0.1 [2023-01-12]
+*   TODO need to complete this
+
+# 6.0.0 [2022-10-20]
+*   TODO need to complete this
+
 # 5.0.0 [2021-04-03]
 *   Fix DateTimeSelect extension support (AquisTech)
 *   Relaxed Timeliness dependency version which allows for >= 0.4.0 with
