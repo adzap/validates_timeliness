@@ -30,7 +30,7 @@ Older Rails versions:
 
 In Gemfile
 ```ruby
-gem 'validates_timeliness', '~> 7.0.0.beta1'
+gem 'validates_timeliness', '~> 7.0.0'
 ```
 
 Run bundler:
