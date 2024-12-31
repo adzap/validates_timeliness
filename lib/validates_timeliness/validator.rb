@@ -21,7 +21,7 @@ module ValidatesTimeliness
 
     RESTRICTION_ERROR_MESSAGE = "Error occurred validating %s for %s restriction:\n%s"
 
-    RESERVED_OPTIONS = RESTRICTIONS.keys + RESTRICTIONS.keys.map { |option| :"#{option}_message" }
+    RESERVED_OPTIONS = (RESTRICTIONS.keys + RESTRICTIONS.keys.map { |option| :"#{option}_message" }).freeze
 
     def self.kind
       :timeliness
