@@ -1,4 +1,8 @@
+# 7.1.0 [2024-12-31]
+*   Support passing non-reserved validation options to errors
+
 # 7.0.0 [2024-11-30]
+*   Support Rails v7.x
 *   Removed all method overrides in ActiveModel now that the datetime type correctly stores before_type_cast values.
 
 # 6.0.1 [2023-01-12]
