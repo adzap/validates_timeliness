@@ -10,7 +10,7 @@ module ValidatesTimeliness
     end
 
     def type_cast_value(value)
-      return nil if value.nil? || !value.respond_to?(:to_time)
+      return nil if value.nil? || !value.respond_to?(:to_time) || value.is_a?(Numeric)
 
       value = value.in_time_zone if value.acts_like?(:time) && time_zone_aware?
       value = case type
