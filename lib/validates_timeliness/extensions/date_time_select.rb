@@ -34,7 +34,7 @@ module ValidatesTimeliness
       def value(*object)
         return super unless @template_object.params[@object_name]
 
-        pairs = @template_object.params[@object_name].select {|k,v| k =~ /^#{@method_name}\(/ }
+        pairs = @template_object.params[@object_name].select { |k,v| k.match?(/^#{@method_name}\(/) }
         return super if pairs.empty?
 
         values = {}
