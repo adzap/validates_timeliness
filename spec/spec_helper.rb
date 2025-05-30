@@ -1,6 +1,5 @@
 require 'rspec'
 
-require 'byebug'
 require 'active_model'
 require 'active_model/validations'
 require 'active_record'

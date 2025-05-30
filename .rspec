@@ -1,4 +1,4 @@
 --format documentation
 --color
 --require spec_helper
---require byebug
+--require debug
