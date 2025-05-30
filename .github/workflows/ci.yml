@@ -11,6 +11,8 @@ jobs:
             ruby: 3.2
           - gemfile: rails_8_0
             ruby: 3.3
+          - gemfile: rails_8_0
+            ruby: 3.4
 
     name: ${{ matrix.gemfile }}, ruby ${{ matrix.ruby }}
     env:
