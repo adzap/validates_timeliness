@@ -1,0 +1,46 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        channel: ['stable']
+        include:
+          - gemfile: activesupport_5_2
+            ruby-version: 2.7
+          - gemfile: activesupport_6_1
+            ruby-version: 3.1
+          - gemfile: activesupport_7_0
+            ruby-version: 3.0
+          - gemfile: activesupport_7_0
+            ruby-version: 3.1
+          - gemfile: activesupport_7_1
+            ruby-version: 3.1
+          - gemfile: activesupport_7_1
+            ruby-version: 3.2
+          - gemfile: activesupport_7_2
+            ruby-version: 3.1
+          - gemfile: activesupport_7_2
+            ruby-version: 3.2
+          - gemfile: activesupport_8_0
+            ruby-version: 3.2
+          - gemfile: activesupport_8_0
+            ruby-version: 3.3
+          - gemfile: activesupport_8_0
+            ruby-version: 3.4
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby ${{ matrix.ruby-version }}
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true # 'bundle install' and cache gems
+        ruby-version: ${{ matrix.ruby-version }}
+    - name: Run tests
+      env:
+          RUBYOPT: ${{ matrix.ruby == 'ruby-head' && '--enable=frozen-string-literal' || '' }}
+      run: bundle exec rspec
