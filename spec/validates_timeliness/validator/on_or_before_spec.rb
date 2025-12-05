@@ -48,7 +48,7 @@ RSpec.describe ValidatesTimeliness::Validator, ":on_or_before option" do
       valid!(:birth_datetime, DateTime.civil_from_format(:local, 2010, 1, 1, 12, 0, 0))
     end
 
-    it "should not be valid for datetime before restriction" do
+    it "should be valid for datetime before restriction" do
       valid!(:birth_datetime, DateTime.civil_from_format(:local, 2010, 1, 1, 11, 59, 59))
     end
   end

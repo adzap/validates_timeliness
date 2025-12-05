@@ -1,7 +1,7 @@
 RSpec.describe 'ValidatesTimeliness::Extensions::MultiparameterHandler' do
 
-  context "time column" do
-    it 'should be nil invalid date portion' do
+  context "datetime column" do
+    it 'should be nil for invalid date portion' do
       employee = record_with_multiparameter_attribute(:birth_datetime, [2000, 2, 31, 12, 0, 0])
       expect(employee.birth_datetime).to be_nil
     end
