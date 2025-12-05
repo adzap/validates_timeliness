@@ -20,7 +20,7 @@ RSpec.describe ValidatesTimeliness, 'HelperMethods' do
     expect(record.errors[:birth_date]).not_to be_empty
   end
 
-  it 'should validate instance using instance valiation method' do
+  it 'should validate instance using instance validation method' do
     record.validates_date :birth_date
 
     expect(record.errors[:birth_date]).not_to be_empty

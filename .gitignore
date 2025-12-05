@@ -4,3 +4,4 @@ pkg/
 Gemfile.lock
 gemfiles/*.lock
 .byebug_history
+vendor/

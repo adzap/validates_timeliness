@@ -1,7 +1,7 @@
 require 'validates_timeliness/railtie'
 
 RSpec.describe ValidatesTimeliness::Railtie do
-  context "intializers" do
+  context "initializers" do
     context "validates_timeliness.initialize_timeliness_ambiguous_date_format" do
       it 'should set the timeliness default ambiguous date format from the current format' do
         expect(Timeliness.configuration.ambiguous_date_format).to eq :us

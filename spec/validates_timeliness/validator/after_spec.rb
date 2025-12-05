@@ -44,11 +44,11 @@ RSpec.describe ValidatesTimeliness::Validator, ":after option" do
       invalid!(:birth_datetime, DateTime.civil_from_format(:local, 2010, 1, 1, 12, 0, 0), 'must be after 2010-01-01 12:00:00')
     end
 
-    it "should be valid for datetime is before restriction" do
+    it "should not be valid for datetime before restriction" do
       invalid!(:birth_datetime, DateTime.civil_from_format(:local, 2010, 1, 1, 11, 59, 59), 'must be after 2010-01-01 12:00:00')
     end
 
-    it "should be valid for datetime is after restriction" do
+    it "should be valid for datetime after restriction" do
       valid!(:birth_datetime, DateTime.civil_from_format(:local, 2010, 1, 1, 12, 0, 1))
     end
   end
