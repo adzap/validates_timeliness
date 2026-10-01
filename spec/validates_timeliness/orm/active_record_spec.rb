@@ -107,6 +107,14 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
         context 'timezone aware' do
           with_config(:default_timezone, 'Australia/Melbourne')
 
+          let(:expected_time) do
+            if ActiveRecord.gem_version >= Gem::Version.new('8.1')
+              Time.zone.local(2000, 1, 1, 12, 30)
+            else
+              '12:30'.in_time_zone
+            end
+          end
+
           before do
             unless ActiveRecord::Base.time_zone_aware_types.include?(:time)
               ActiveRecord::Base.time_zone_aware_types.push(:time)
@@ -116,7 +124,7 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
           it 'should parse a string value' do
             record.birth_time = '12:30'
 
-            expect(record.birth_time).to eq('12:30'.in_time_zone)
+            expect(record.birth_time).to eq(expected_time)
             expect(Timeliness::Parser).to have_received(:parse)
           end
 
@@ -130,8 +138,8 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
           it 'should store a Time value after parsing string' do
             record.birth_time = '12:30'
 
-            expect(record.birth_time).to eq('12:30'.in_time_zone)
-            expect(record.birth_time.utc_offset).to eq '12:30'.in_time_zone.utc_offset
+            expect(record.birth_time).to eq(expected_time)
+            expect(record.birth_time.utc_offset).to eq expected_time.utc_offset
           end
         end
 
