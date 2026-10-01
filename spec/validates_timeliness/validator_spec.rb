@@ -43,6 +43,24 @@ RSpec.describe ValidatesTimeliness::Validator do
     expect(record.errors[:birth_date].first).to eq('is not a valid date')
   end
 
+  it 'should keep converters separate when validations overlap' do
+    Person.validates_datetime :birth_datetime, :birth_time, before: '2010-01-01 12:00:00', allow_nil: true
+    allow(Person).to receive(:skip_time_zone_conversion_for_attributes).and_return([:birth_time])
+
+    local_record = Person.new(birth_datetime: Time.utc(2010,1,1,11))
+    utc_record = Person.new(birth_time: Time.utc(2010,1,1,11))
+    validator = Person.validators.first
+
+    allow(validator).to receive(:validate_restrictions).and_wrap_original do |original, record, *args|
+      if record.equal?(local_record)
+        expect(Thread.new { utc_record.valid? }.value).to eq(true)
+      end
+      original.call(record, *args)
+    end
+
+    expect(local_record).not_to be_valid
+  end
+
   describe ":allow_nil option" do
     it 'should not allow nil by default' do
       Person.validates_date :birth_date

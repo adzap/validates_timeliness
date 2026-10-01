@@ -3,7 +3,7 @@ require 'active_model/validator'
 
 module ValidatesTimeliness
   class Validator < ActiveModel::EachValidator
-    attr_reader :type, :attributes, :converter
+    attr_reader :type, :attributes
 
     RESTRICTIONS = {
       :is_at        => :==,
@@ -59,20 +59,20 @@ module ValidatesTimeliness
       raw_value = attribute_raw_value(record, attr_name) || value
       return if (@allow_nil && raw_value.nil?) || (@allow_blank && raw_value.blank?)
 
-      @converter = initialize_converter(record, attr_name)
+      converter = initialize_converter(record, attr_name)
 
-      value = @converter.parse(raw_value) if value.is_a?(String) || options[:format]
-      value = @converter.type_cast_value(value)
+      value = converter.parse(raw_value) if value.is_a?(String) || options[:format]
+      value = converter.type_cast_value(value)
 
       add_error(record, attr_name, :"invalid_#{@type}") and return if value.blank?
 
-      validate_restrictions(record, attr_name, value)
+      validate_restrictions(record, attr_name, value, converter)
     end
 
-    def validate_restrictions(record, attr_name, value)
+    def validate_restrictions(record, attr_name, value, converter)
       @restrictions_to_check.each do |restriction|
         begin
-          restriction_value = @converter.type_cast_value(@converter.evaluate(options[restriction], record))
+          restriction_value = converter.type_cast_value(converter.evaluate(options[restriction], record))
           unless value.send(RESTRICTIONS[restriction], restriction_value)
             add_error(record, attr_name, restriction, value: value, restriction_value: restriction_value) and break
           end
