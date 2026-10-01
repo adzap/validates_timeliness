@@ -37,6 +37,43 @@ RSpec.describe ValidatesTimeliness, 'ActiveRecord' do
     end
   end
 
+  context 'formatted value persistence' do
+    with_config(:use_plugin_parser, true)
+
+    class EmployeeWithFormattedValues < ActiveRecord::Base
+      self.table_name = 'employees'
+      validates_date :birth_date, format: 'dd/mm/yyyy', on_or_after: Date.new(2026,2,1), allow_nil: true
+      validates_datetime :birth_datetime, format: 'dd/mm/yyyy hh:nn:ss.u',
+        on_or_after: Time.utc(2026,2,1), ignore_usec: true, allow_nil: true
+      validates_date :first_name, format: 'dd/mm/yyyy', allow_nil: true
+    end
+
+    it 'should persist the date used to validate the restriction' do
+      record = EmployeeWithFormattedValues.create!(birth_date: '01/02/2026')
+
+      expect(record.reload.birth_date).to eq(Date.new(2026,2,1))
+    end
+
+    it 'should persist the datetime without discarding microseconds ignored by the restriction' do
+      record = EmployeeWithFormattedValues.create!(birth_datetime: '01/02/2026 12:34:56.123456')
+
+      expect(record.reload.birth_datetime).to eq(Time.zone.local(2026,2,1,12,34,56,123456))
+    end
+
+    it 'should retain invalid formatted input across repeated validations' do
+      record = EmployeeWithFormattedValues.new(birth_date: '2026-02-01')
+
+      2.times { expect(record).not_to be_valid }
+      expect(record.birth_date_before_type_cast).to eq('2026-02-01')
+    end
+
+    it 'should preserve formatted input stored in a string column' do
+      record = EmployeeWithFormattedValues.create!(first_name: '01/02/2026')
+
+      expect(record.reload.first_name).to eq('01/02/2026')
+    end
+  end
+
   context 'attribute timezone awareness' do
     let(:klass) {
       Class.new(ActiveRecord::Base) do
