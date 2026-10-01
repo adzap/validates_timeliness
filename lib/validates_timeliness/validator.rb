@@ -73,14 +73,14 @@ module ValidatesTimeliness
       @restrictions_to_check.each do |restriction|
         begin
           restriction_value = @converter.type_cast_value(@converter.evaluate(options[restriction], record))
-          unless value.send(RESTRICTIONS[restriction], restriction_value)
-            add_error(record, attr_name, restriction, value: value, restriction_value: restriction_value) and break
-          end
+          valid = value.send(RESTRICTIONS[restriction], restriction_value)
         rescue => e
           unless ValidatesTimeliness.ignore_restriction_errors
             message = RESTRICTION_ERROR_MESSAGE % [ attr_name, restriction.inspect, e.message ]
             add_error(record, attr_name, message) and break
           end
+        else
+          add_error(record, attr_name, restriction, value: value, restriction_value: restriction_value) and break unless valid
         end
       end
     end

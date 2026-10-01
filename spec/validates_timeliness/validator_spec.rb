@@ -105,6 +105,19 @@ RSpec.describe ValidatesTimeliness::Validator do
     end
   end
 
+  describe ':strict option' do
+    [false, true].each do |ignore_restriction_errors|
+      it "raises the restriction error when ignore_restriction_errors is #{ignore_restriction_errors}" do
+        Person.validates_date :birth_date, before: :today, strict: true
+
+        with_config(:ignore_restriction_errors, ignore_restriction_errors) do
+          expect { Person.new(birth_date: Date.today).valid? }
+            .to raise_error(ActiveModel::StrictValidationFailed, 'Birth date must be before 2010-01-01')
+        end
+      end
+    end
+  end
+
   describe ":between option" do
     describe "array value" do
       it 'should be split option into :on_or_after and :on_or_before values' do
