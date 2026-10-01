@@ -61,7 +61,15 @@ module ValidatesTimeliness
 
       @converter = initialize_converter(record, attr_name)
 
+      normalize_formatted_value = options[:format] && raw_value.is_a?(String) && !value.is_a?(String)
       value = @converter.parse(raw_value) if value.is_a?(String) || options[:format]
+
+      writer = :"#{attr_name}="
+      if normalize_formatted_value && value && record.respond_to?(writer)
+        record.public_send(writer, value)
+        value = record.public_send(attr_name)
+      end
+
       value = @converter.type_cast_value(value)
 
       add_error(record, attr_name, :"invalid_#{@type}") and return if value.blank?
