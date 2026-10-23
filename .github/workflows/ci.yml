@@ -13,12 +13,22 @@ jobs:
             ruby: 3.3
           - gemfile: rails_8_0
             ruby: 3.4
+          - gemfile: rails_8_0
+            ruby: "4.0"
+          - gemfile: rails_8_1
+            ruby: 3.2
+          - gemfile: rails_8_1
+            ruby: 3.3
+          - gemfile: rails_8_1
+            ruby: 3.4
+          - gemfile: rails_8_1
+            ruby: "4.0"
 
     name: ${{ matrix.gemfile }}, ruby ${{ matrix.ruby }}
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
